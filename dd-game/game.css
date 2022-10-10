@@ -1,0 +1,13 @@
+#game {
+    width: 640px;
+    height: 640px;
+    background: slategray;
+}
+
+.minion {
+    width: 64px;
+    height: 64px;
+    background: red;
+    margin: 0;
+    padding: 0;
+}
