@@ -1,4 +1,6 @@
-import * as METH from "../meth/meth.lib.js";
+import * as METH from "../lib-meth/meth.js";
+
+
 
 export class Base {
     hp: number;
@@ -8,7 +10,26 @@ export class Base {
     height: number;
 }
 
+
+
 export class Minion {
+    type: MinionType;
+    elem: HTMLElement;
+
+    #x: number;
+    get x()  {return this.#x;}
+    set x(v) {
+        this.#x = v;
+        this.elem.style.left = '' + v + "px";
+    }
+
+    #y: number;
+    get y()  {return this.#y;}
+    set y(v) {
+        this.#y = v;
+        this.elem.style.top = '' + v + "px";
+    }
+    
     constructor(
         x: number,
         y: number,
@@ -29,23 +50,19 @@ export class Minion {
         this.y = y;
         this.type = type;
     }
-    #x: number;
-    get x() {return this.#x;}
-    set x (v:number) {
-        this.#x = v;
-        this.elem.style.left = "" + v + "px";
-    }
-    #y: number;
-    get y() {return this.#y;};
-    set y (v:number) {
-        this.#y = v;
-        this.elem.style.top = "" + v + "px";
-    };
-    type: MinionType;
-    elem: HTMLElement;
 }
 
+
+
 export class MinionType {
+    movSpd: number;
+    atkSpd: number;
+    atkDmg: number;
+    spawnMinX: number;
+    spawnMaxX: number;
+    spawnMinY: number;
+    spawnMaxY: number;
+
     constructor(
         movSpd: number,
         atkSpd: number,
@@ -62,14 +79,8 @@ export class MinionType {
         this.spawnMaxX = spawnMaxX;
         this.spawnMinY = spawnMinY;
         this.spawnMaxY = spawnMaxY;
-    };
-    movSpd: number;
-    atkSpd: number;
-    atkDmg: number;
-    spawnMinX: number;
-    spawnMaxX: number;
-    spawnMinY: number;
-    spawnMaxY: number;
+    }
+
     spawn (elem?:HTMLElement) {
         return new Minion (
             METH.rand (this.spawnMinX, this.spawnMaxX),
@@ -77,5 +88,5 @@ export class MinionType {
             this,
             elem,
         );
-    };
+    }
 }
