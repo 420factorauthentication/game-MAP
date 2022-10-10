@@ -1,19 +1,10 @@
-export class Base {
-    hp: number;
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-}
-
-
-export class Minion extends HTMLElement {
+export class Minion {
     type: MinionType;
     elem: HTMLElement;
-    _x: number;
+    #x: number;
     get x (): number
     set x (v)
-    _y: number;
+    #y: number;
     get y (): number
     set y (v)
     constructor(
@@ -29,18 +20,16 @@ export class MinionType {
     movSpd: number;
     atkSpd: number;
     atkDmg: number;
-    spawnMinX: number;
-    spawnMaxX: number;
-    spawnMinY: number;
-    spawnMaxY: number;
-    constructor(
-        movSpd: number,
-        atkSpd: number,
-        atkDmg: number,
-        spawnMinX: number,
-        spawnMaxX: number,
-        spawnMinY: number,
-        spawnMaxY: number,
-    )
-    spawn (elem?:HTMLElement) : Minion
+    constructor (movSpd: number, atkSpd: number, atkDmg: number)
+    spawnAt (spawner: MinionSpawner, minionElem?: HTMLElement) : Minion
+}
+
+
+export class MinionSpawner {
+    minX: number;
+    maxX: number;
+    minY: number;
+    maxY: number;
+    constructor (minX?: number, maxX?: number,  minY?: number, maxY?: number)
+    spawn (minionType: MinionType, minionElem?: HTMLElement) : Minion
 }

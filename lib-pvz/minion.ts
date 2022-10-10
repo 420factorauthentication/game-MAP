@@ -2,16 +2,6 @@ import * as METH from "../lib-meth/meth.js";
 
 
 
-export class Base {
-    hp: number;
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-}
-
-
-
 export class Minion {
     type: MinionType;
     elem: HTMLElement;
@@ -58,35 +48,44 @@ export class MinionType {
     movSpd: number;
     atkSpd: number;
     atkDmg: number;
-    spawnMinX: number;
-    spawnMaxX: number;
-    spawnMinY: number;
-    spawnMaxY: number;
 
-    constructor(
-        movSpd: number,
-        atkSpd: number,
-        atkDmg: number,
-        spawnMinX: number,
-        spawnMaxX: number,
-        spawnMinY: number,
-        spawnMaxY: number,
-    ){
+    constructor (movSpd: number, atkSpd: number, atkDmg: number) {
         this.movSpd = movSpd;
         this.atkSpd = atkSpd;
         this.atkDmg = atkDmg;
-        this.spawnMinX = spawnMinX;
-        this.spawnMaxX = spawnMaxX;
-        this.spawnMinY = spawnMinY;
-        this.spawnMaxY = spawnMaxY;
     }
 
-    spawn (elem?:HTMLElement) {
+    spawnAt (spawner: MinionSpawner, minionElem?:HTMLElement) {
+        return spawner.spawn(this, minionElem);
+    }
+}
+
+
+
+export class MinionSpawner {
+    minX: number = 480;
+    maxX: number = 600;
+    minY: number = 40;
+    maxY: number = 440;
+
+    constructor (
+        minX: number = 480,
+        maxX: number = 600,
+        minY: number = 40,
+        maxY: number = 440,
+    ){
+        this.minX = minX;
+        this.maxX = maxX;
+        this.minY = minY;
+        this.maxY = maxY;
+    }
+
+    spawn (minionType: MinionType, minionElem?: HTMLElement) {
         return new Minion (
-            METH.rand (this.spawnMinX, this.spawnMaxX),
-            METH.rand (this.spawnMinY, this.spawnMaxX),
-            this,
-            elem,
+            METH.rand (this.minX, this.maxX),
+            METH.rand (this.minY, this.maxY),
+            minionType,
+            minionElem,
         );
     }
 }

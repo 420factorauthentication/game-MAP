@@ -1,7 +1,10 @@
-import * as MINION_TYPE from "./minions.js";
+import * as MINION from "../../lib-pvz/minion.js"
+import * as MinionTypes from "./minions.js";
 
 const game = document.getElementById("game");
 
-let axeman0 = MINION_TYPE.Axeman.spawn();
+const spawner = new MINION.MinionSpawner();
+
+let axeman0 = MinionTypes.Axeman.spawnAt(spawner);
 axeman0.elem.className = "minion";
 game.appendChild(axeman0.elem);
