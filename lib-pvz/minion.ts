@@ -2,6 +2,14 @@ import * as METH from "../lib-meth/meth.js";
 
 
 
+export interface MinionType {
+    movSpd: number;
+    atkSpd: number;
+    atkDmg: number;
+}
+
+
+
 export class Minion {
     type: MinionType;
     elem: HTMLElement;
@@ -44,42 +52,14 @@ export class Minion {
 
 
 
-export class MinionType {
-    movSpd: number;
-    atkSpd: number;
-    atkDmg: number;
-
-    constructor (movSpd: number, atkSpd: number, atkDmg: number) {
-        this.movSpd = movSpd;
-        this.atkSpd = atkSpd;
-        this.atkDmg = atkDmg;
-    }
-
-    spawnAt (spawner: MinionSpawner, minionElem?:HTMLElement) {
-        return spawner.spawn(this, minionElem);
-    }
-}
-
-
-
 export class MinionSpawner {
-    minX: number = 480;
-    maxX: number = 600;
-    minY: number = 40;
-    maxY: number = 440;
-
     constructor (
-        minX: number = 480,
-        maxX: number = 600,
-        minY: number = 40,
-        maxY: number = 440,
-    ){
-        this.minX = minX;
-        this.maxX = maxX;
-        this.minY = minY;
-        this.maxY = maxY;
-    }
-
+        public minX: number = 480,
+        public maxX: number = 600,
+        public minY: number = 40,
+        public maxY: number = 440,
+    ){}
+    
     spawn (minionType: MinionType, minionElem?: HTMLElement) {
         return new Minion (
             METH.rand (this.minX, this.maxX),

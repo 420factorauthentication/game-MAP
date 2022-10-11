@@ -1,3 +1,5 @@
-import * as MINION from "../../lib-pvz/minion.js";
-
-export const Axeman = new MINION.MinionType(1, 1, 1);
+export const Axeman = {
+    movSpd: 1,
+    atkSpd: 1,
+    atkDmg: 1,
+}

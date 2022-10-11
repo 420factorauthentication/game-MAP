@@ -1,3 +1,9 @@
+export interface MinionType {
+    movSpd: number;
+    atkSpd: number;
+    atkDmg: number;
+}
+
 export class Minion {
     type: MinionType;
     elem: HTMLElement;
@@ -14,16 +20,6 @@ export class Minion {
         elem?: HTMLElement,
     )
 }
-
-
-export class MinionType {
-    movSpd: number;
-    atkSpd: number;
-    atkDmg: number;
-    constructor (movSpd: number, atkSpd: number, atkDmg: number)
-    spawnAt (spawner: MinionSpawner, minionElem?: HTMLElement) : Minion
-}
-
 
 export class MinionSpawner {
     minX: number;

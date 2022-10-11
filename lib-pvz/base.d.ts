@@ -1,4 +1,4 @@
-export class Base {
+export interface Base {
     hp: number;
     x: number;
     y: number;
