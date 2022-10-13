@@ -1,34 +1,9 @@
-////////////////////////
-// JavaScript Imports //
-////////////////////////
+import { Base, MinionType } from "./types";
+import { State } from "../lib-smac/types";
+import { htmlAttributeValue } from "../lib-meth/types";
 
-// Functions //
 import { rand } from "../lib-meth/meth.js";
-
-// Classes //
-import { StateMachine } from "../lib-statemac/statemac.js";
-
-
-////////////////////////
-// TypeScript Imports //
-////////////////////////
-
-// Types //
-import { Hz, PXperSEC, htmlAttributeValue } from "../lib-meth/meth";
-
-// Interfaces //
-import { Base } from "./base";
-import { State } from "../lib-statemac/statemac";
-
-
-//////////////////////////
-// Defines Minion stats //
-//////////////////////////
-export interface MinionType {
-    movSpd: PXperSEC;
-    atkSpd: Hz;
-    atkDmg: number;
-}
+import { StateMachine } from "../lib-smac/smac.js";
 
 
 /////////////////////////////////////////////////////////////
@@ -92,7 +67,8 @@ export class Minion {
                     this.ai.set(this.attackState);
             },
         };
-        this.ai = new StateMachine(this.moveState);
+        this.ai = new StateMachine();
+        this.ai.set(this.moveState);
     }
 
     protected static initElem() {

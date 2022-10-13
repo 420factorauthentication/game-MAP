@@ -30,3 +30,6 @@ Thumbs.db
 
 # Compiled TypeScript to JavaScript
 _out/
+
+# Package Managers
+node_modules/

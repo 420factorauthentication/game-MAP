@@ -1,42 +1,5 @@
-////////////////////////
-// TypeScript Imports //
-////////////////////////
-
-// Types //
-import { MS, percent, timeoutID, intervalID } from "../lib-meth/meth.js"
-
-
-/////////////////////////////////////////////////////////////////////////////////////////////
-// Describes state transition behavior                                                     //
-// Transition time:  0 + previousState.exitTime + newState.enterTime + stateLink.extraTime //
-// While transitioning, it stays on previous state until all time has elapsed              //
-/////////////////////////////////////////////////////////////////////////////////////////////
-export interface State {
-    name: string,
-    enterTime?: MS,  // Extra transition time when entering this state
-    exitTime?: MS,   // Extra transition time when leaving this state
-    loopTime?: MS,   // After transitioned, time inbetween each onLoop run
-    onEnter?: (...params) => void,  // Function to run after transitioning to this State
-    onExit?: (...params) => void,   // Function to run aftter transitioning away from this State
-    onLoop?: (...params) => void,   // Function to continuously run while set to this State
-}
-
-
-///////////////////////////////////////////////////////////////////////////////////////
-// Describes behavior if transitioning specifically from oldState and/or to newState //
-// If both oldState and newState are defined, it must be from oldState to newState   //
-// If only oldState is defined, it's from oldState to any State                      //
-// if only newState is defined, it's from any State to newState                      //
-///////////////////////////////////////////////////////////////////////////////////////
-export interface StateLink {
-    oldState?: State,
-    newState?: State,
-    extraTime?: MS,   // Extra transition time for transitions that match this StateLink
-    updateTime?: MS,  // While transitioning, time inbetween each onUpdate run
-    onStart?: (...params) => void,   // Function to run on transition start
-    onFinish?: (...params) => void,  // Function to run on transition finish
-    onUpdate?: (totalProgress: percent, ...params) => void,  // Function to run while transitioning
-}
+import { percent, timeoutID, intervalID } from "../lib-meth/types"
+import { State, StateLink } from "./types"
 
 
 //////////////////////////////////////////
@@ -57,9 +20,8 @@ export class StateMachine {
 
 
     // CONSTRUCTOR //
-    constructor (initialState?: State, stateLinks: StateLink[] = []) {
+    constructor (stateLinks: StateLink[] = []) {
         this.stateLinks = stateLinks;
-        this.set(initialState);
     }
 
     // Set a state, delaying by time parameters //
@@ -77,7 +39,7 @@ export class StateMachine {
         }
 
         if (time) {
-            this.#currTransID = setTimeout (this.instantSet, time, state, ...params);
+            this.#currTransID = window.setTimeout (this.instantSet, time, state, ...params);
 
             for (const link of this.stateLinks) {
                 if (this.#checkStateLink (link, state)) {
@@ -87,7 +49,7 @@ export class StateMachine {
 
                     if (link.onUpdate) {
                         this.#currUpdateIDs.push(
-                            setInterval (this.#transitionUpdate, link.updateTime,
+                            window.setInterval (this.#transitionUpdate, link.updateTime,
                                 link.updateTime, time, link.onUpdate, ...params)
                         );
                     }
@@ -127,7 +89,7 @@ export class StateMachine {
         if (this.#currLoopID)
             clearInterval(this.#currLoopID);
         if (state.onLoop)
-            this.#currLoopID = setInterval(state.onLoop, state.loopTime, ...params);
+            this.#currLoopID = window.setInterval(state.onLoop, state.loopTime, ...params);
         else
             this.#currLoopID = undefined;
 
