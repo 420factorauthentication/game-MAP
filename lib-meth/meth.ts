@@ -10,3 +10,8 @@ export type percent = number;  // 0 to 0.9999999...
 
 export type timeoutID = number;   // An event ID returned by setTimeout()
 export type intervalID = number;  // An event ID returned by setInterval()
+
+export type htmlAttributeName = string;
+export type htmlAttributeValue = string;
+export type cssPropertyName = string;
+export type cssPropertyValue = string;

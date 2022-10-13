@@ -14,7 +14,7 @@ import { StateMachine } from "../lib-statemac/statemac.js";
 ////////////////////////
 
 // Types //
-import { Hz, PXperSEC } from "../lib-meth/meth";
+import { Hz, PXperSEC, htmlAttributeValue } from "../lib-meth/meth";
 
 // Interfaces //
 import { Base } from "./base";
@@ -63,14 +63,14 @@ export class Minion {
         y: number,
         type: MinionType,
         target: Base,
-        cssClass?: string,
+        htmlClass?: htmlAttributeValue,
         parent?: Node,
         elem?: HTMLElement,
     ){
         if (elem)  this.elem = elem;
         else       this.elem = Minion.initElem();
         if (parent) parent.appendChild(this.elem);
-        if (cssClass) this.elem.className += ' ' + cssClass;
+        if (htmlClass) this.elem.className += ' ' + htmlClass;
 
         this.x = x;
         this.y = y;
@@ -120,7 +120,7 @@ export class MinionSpawner {
     ){}
     
     spawn (type: MinionType,
-            cssClass?: string,
+            htmlClass?: htmlAttributeValue,
             parent?: Node,
             elem?: HTMLElement,
     ){
@@ -129,7 +129,7 @@ export class MinionSpawner {
             rand (this.minY, this.maxY),
             type,
             this.target,
-            cssClass,
+            htmlClass,
             parent,
             elem,
         );
