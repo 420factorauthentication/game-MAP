@@ -3,5 +3,5 @@
         "target": "ES6",
         "outDir": "../_out",
     },
-    "include": ["./src/**/*"],
+    "include": ["./src/**/*", "const/minions.ts"],
 }
