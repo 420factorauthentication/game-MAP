@@ -1,9 +1,9 @@
-import { percent, timeoutID, intervalID } from "../lib-meth/types"
 import { State, StateLink } from "./types"
+import { percent, timeoutID, intervalID } from "../lib-meth/types"
 
 
 //////////////////////////////////////////
-// Handles transitioning between states //
+// Handles transitioning between States //
 //////////////////////////////////////////
 export class StateMachine {
 

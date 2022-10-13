@@ -2,7 +2,7 @@ import { MS, percent } from "../lib-meth/types"
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////
-// A state in a StateMachine                                                               //
+// A State in a StateMachine                                                               //
 // Transition time:  0 + previousState.exitTime + newState.enterTime + stateLink.extraTime //
 // While transitioning, it stays on previous state until all time has elapsed              //
 /////////////////////////////////////////////////////////////////////////////////////////////

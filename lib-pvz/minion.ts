@@ -2,8 +2,8 @@ import { Base, MinionType } from "./types";
 import { State } from "../lib-smac/types";
 import { htmlAttributeValue } from "../lib-meth/types";
 
-import { rand } from "../lib-meth/meth.js";
 import { StateMachine } from "../lib-smac/smac.js";
+import { rand } from "../lib-meth/meth.js";
 
 
 /////////////////////////////////////////////////////////////
