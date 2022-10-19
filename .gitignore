@@ -33,3 +33,6 @@ _out/
 
 # Package Managers
 node_modules/
+
+# Temp Assets
+temp/

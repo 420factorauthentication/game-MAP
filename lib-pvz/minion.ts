@@ -5,6 +5,8 @@ import { htmlAttributeValue } from "../lib-meth/types";
 import { StateMachine } from "../lib-smac/smac.js";
 import { rand } from "../lib-meth/meth.js";
 
+import Spriteling from "../node_modules/spriteling/dist/spriteling.js";
+
 
 /////////////////////////////////////////////////////////////
 // An enemy represented by an HTMLElement                  //
@@ -15,17 +17,18 @@ export class Minion {
     readonly target: Base;
     readonly elem: HTMLElement;
     readonly ai: StateMachine;
+    readonly spriteling: Spriteling;
 
     #x: number;
-    get x()  {return this.#x;}
-    set x(v) {
+    get x ()  {return this.#x;}
+    set x (v) {
         this.#x = v;
         this.elem.style.left = '' + v + "px";
     }
 
     #y: number;
-    get y()  {return this.#y;}
-    set y(v) {
+    get y ()  {return this.#y;}
+    set y (v) {
         this.#y = v;
         this.elem.style.top = '' + v + "px";
     }
@@ -33,45 +36,41 @@ export class Minion {
     readonly moveState: State;
     readonly attackState: State;
     
-    constructor(
+    constructor (
         x: number,
         y: number,
         type: MinionType,
         target: Base,
-        htmlClass?: htmlAttributeValue,
-        parent?: Node,
-        elem?: HTMLElement,
+        initOptions?: {
+            elem?: HTMLElement,
+            parent?: Node,
+            htmlClass?: htmlAttributeValue,
+        }
     ){
-        if (elem)  this.elem = elem;
-        else       this.elem = Minion.initElem();
-        if (parent) parent.appendChild(this.elem);
-        if (htmlClass) this.elem.className += ' ' + htmlClass;
+        if (initOptions?.elem)
+            this.elem = initOptions.elem;
+        else
+            this.elem = Minion.getInitElem();
+
+        if (initOptions?.parent)
+            initOptions?.parent.appendChild(this.elem);
+
+        if (initOptions?.htmlClass)
+            this.elem.className += ' ' + initOptions.htmlClass;
 
         this.x = x;
         this.y = y;
         this.type = type;
         this.target = target;
 
-        this.attackState = {
-            name: "minionAttack",
-            loopTime: (1000 / this.type.atkSpd),
-            onLoop: () => {
-                this.target.hp -= this.type.atkDmg;
-            }
-        };
-        this.moveState = {
-            name: "minionMove",
-            loopTime: (1000 / this.type.movSpd),
-            onLoop: () => {
-                if (--this.x < this.target.x)
-                    this.ai.set(this.attackState);
-            },
-        };
+        this.moveState = this.getInitAiMoveState();
+        this.attackState = this.getInitAiAttackState();
+        
         this.ai = new StateMachine();
         this.ai.set(this.moveState);
     }
 
-    protected static initElem() {
+    protected static getInitElem() {
         const elem = <HTMLElement> document.createElement("a");
         elem.style.position = "absolute";
         elem.style.width = "64px";
@@ -79,6 +78,29 @@ export class Minion {
         elem.style.background = "content-box radial-gradient(crimson, skyblue)";
         document.body.appendChild(elem);
         return elem;
+    }
+
+    protected getInitAiMoveState() {
+        const moveState: State = {
+            name: "minionMove",
+            loopTime: (1000 / this.type.movSpd),
+            onLoop: () => {
+                if (--this.x < this.target.x)
+                    this.ai.set(this.attackState);
+            },
+        };
+        return moveState;
+    }
+
+    protected getInitAiAttackState() {
+        const attackState: State = {
+            name: "minionAttack",
+            loopTime: (1000 / this.type.atkSpd),
+            onLoop: () => {
+                this.target.hp -= this.type.atkDmg;
+            }
+        };
+        return attackState;
     }
 }
 
@@ -95,19 +117,20 @@ export class MinionSpawner {
         public maxY: number = 440,
     ){}
     
-    spawn (type: MinionType,
-            htmlClass?: htmlAttributeValue,
-            parent?: Node,
+    spawn (
+        type: MinionType,
+        initOptions?: {
             elem?: HTMLElement,
+            parent?: Node,
+            htmlClass?: htmlAttributeValue,
+        }
     ){
         return new Minion (
             rand (this.minX, this.maxX),
             rand (this.minY, this.maxY),
             type,
             this.target,
-            htmlClass,
-            parent,
-            elem,
+            initOptions,
         );
     }
 }

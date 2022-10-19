@@ -11,3 +11,5 @@ export type htmlAttributeName = string;
 export type htmlAttributeValue = string;
 export type cssPropertyName = string;
 export type cssPropertyValue = string;
+
+export type char = string;
