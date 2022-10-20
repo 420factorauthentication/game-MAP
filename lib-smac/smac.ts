@@ -1,86 +1,108 @@
 import { State, StateLink } from "./types"
-import { percent, timeoutID, intervalID } from "../lib-meth/types"
+import { MS, percent, timeoutID, intervalID } from "../lib-meth/types"
 
 
-//////////////////////////////////////////
-// Handles transitioning between States //
-//////////////////////////////////////////
 export class StateMachine {
 
-    // Relationships between specific states //
-    stateLinks: StateLink[] = [];
+    ////////////
+    // CONFIG //
+    ////////////
+    constructor (public stateLinks: StateLink[] = []) {}
 
-    // Current State //
+
+    ////////////
+    // STATUS //
+    ////////////
     #currState: State | undefined;
     get currState() {return this.#currState;}
 
-    // Current Transition Progress //
-    #currTransProgress: percent = 0;
-    get currTransProgress() {return this.#currTransProgress;}
+    #currProgress: percent = 0;
+    get currProgress() {return this.#currProgress;}
 
 
-    // CONSTRUCTOR //
-    constructor (stateLinks: StateLink[] = []) {
-        this.stateLinks = stateLinks;
+    /////////
+    // API //
+    /////////
+    set (state: State, ...params) {
+        this.#cleanupTransition();
+        this.#startLinks(state, ...params);
+        const time = this.getTimeToTransitionTo(state);
+        if (time) {
+            this.#startTransition(time, state, ...params);
+            this.#startLinkUpdates(time, state, ...params);
+        } else {
+            this.#finishTransition(state, ...params);
+            this.#currState = state;
+        }
+    }
+    
+    override (state: State, ...params) {
+        this.#finishTransition(state, ...params);
+        this.#cleanupTransition();
+        this.#currState = state;
     }
 
-    // Set a state, delaying by time parameters //
-    set (state: State, ...params) {
-        this.#clearTransitionEvents();
-
+    
+    //////////////////////
+    // HELPER FUNCTIONS //
+    //////////////////////
+    getTimeToTransitionTo (state: State) {
         let time = 0;
         if (this.currState?.exitTime)
             time += this.currState.exitTime;
         if (state.enterTime)
             time += state.enterTime;
         for (const link of this.stateLinks) {
-            if (link.extraTime && this.#checkStateLink(link, state))
+            if (link.extraTime && this.#testLink(link, state))
                 time += link.extraTime;
         }
+        return time;
+    }
 
-        if (time) {
-            this.#currTransID = window.setTimeout (this.instantSet, time, state, ...params);
+    #testLink (link: StateLink, newState: State) {
+        const oldState = this.currState;
+        return (
+            (link.oldState == undefined || link.oldState == oldState) &&
+            (link.newState == undefined || link.newState == newState)
+        );
+    }
 
-            for (const link of this.stateLinks) {
-                if (this.#checkStateLink (link, state)) {
-
-                    if (link.onStart)
-                        link.onStart(...params);
-
-                    if (link.onUpdate) {
-                        this.#currUpdateIDs.push(
-                            window.setInterval (this.#transitionUpdate, link.updateTime,
-                                link.updateTime, time, link.onUpdate, ...params)
-                        );
-                    }
-                }
+    #startLinks (state: State, ...params) {
+        for (const link of this.stateLinks) {
+            if (this.#testLink (link, state)) {
+                if (link.onStart) link.onStart(...params);
+                if (link.onUpdate) link.onUpdate(0, ...params);
             }
-        } else {
-            this.#handleAllStateFuncs(state, ...params);
-            this.#currState = state;
         }
     }
 
-    // Set a state, ignoring time parameters //
-    instantSet (state: State, ...params) {
-        this.#handleAllStateFuncs(state, ...params);
-        this.#clearTransitionEvents();
-        this.#currState = state;
+    #startLinkUpdates (time: MS, state: State, ...params) {
+        for (const link of this.stateLinks) {
+            if (this.#testLink (link, state)) {
+                if (link.onUpdate) {
+                    this.#currUpdateIDs.push(
+                        window.setInterval (this.#updateTransition, link.updateTime,
+                            link.updateTime, time, link.onUpdate, ...params)
+                    );
+                }
+            }
+        }
     }
 
+    #startTransition (time: MS, state: State, ...params) {
+        this.#currTransID = window.setTimeout (this.override, time, state, ...params);
+    }
 
-    // PRIVATE //
-    // If defined, current state has a looping function
-    #currLoopID: intervalID | undefined;
+    #updateTransition (deltaTime: number,
+                        endTime: number,
+                        onUpdate: (totalProgress: percent, ...params) => void,
+                        ...params
+    ){
+        this.#currProgress += (deltaTime / endTime);
+        onUpdate(this.#currProgress, ...params);
+    }
 
-    // If defined, state transition in progress
-    #currTransID: timeoutID | undefined;
-
-    // If defined, ongoing transition has looping functions
-    #currUpdateIDs: intervalID[] = [];
-
-    // Check and run functions from all States and StateLinks
-    #handleAllStateFuncs (state: State, ...params) {
+    #finishTransition (state: State, ...params) {
         if (this.currState?.onExit)
             this.currState.onExit(...params);
         if (state.onEnter)
@@ -94,33 +116,28 @@ export class StateMachine {
             this.#currLoopID = undefined;
 
         for (const link of this.stateLinks)
-            if (link.onFinish && this.#checkStateLink(link, state))
+            if (link.onFinish && this.#testLink(link, state))
                 link.onFinish(...params);
     }
 
-    // Cleanup Timeout/Interval events
-    #clearTransitionEvents() {
+    #cleanupTransition() {
         clearTimeout(this.#currTransID);
         this.#currTransID = undefined;
         for (const id of this.#currUpdateIDs) clearTimeout(id);
         this.#currUpdateIDs = [];
     }
 
-    // When about to transition, check if the old State and the new State match a StateLink
-    #checkStateLink (link: StateLink, newState: State, oldState = this.currState) {
-        return (
-            (link.oldState == undefined || link.oldState == oldState) &&
-            (link.newState == undefined || link.newState == newState)
-        );
-    }
 
-    // Calculates how much a transition has progressed based on delta time
-    #transitionUpdate (deltaTime: number,
-                        endTime: number,
-                        onUpdate: (totalProgress: percent, ...params) => void,
-                        ...params
-    ){
-        this.#currTransProgress += (deltaTime / endTime);
-        onUpdate(this.#currTransProgress, ...params);
-    }
+    /////////////
+    // PRIVATE //
+    /////////////
+
+    // If defined, current state has a looping function
+    #currLoopID: intervalID | undefined;
+
+    // If defined, state transition in progress
+    #currTransID: timeoutID | undefined;
+
+    // If defined, ongoing transition has looping functions
+    #currUpdateIDs: intervalID[] = [];
 }

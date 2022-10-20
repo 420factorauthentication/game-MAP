@@ -29,5 +29,5 @@ export interface StateLink {
     updateTime?: MS,  // While transitioning, time inbetween each onUpdate run
     onStart?: (...params) => void,   // Function to run on transition start
     onFinish?: (...params) => void,  // Function to run on transition finish
-    onUpdate?: (totalProgress: percent, ...params) => void,  // Function to run while transitioning
+    onUpdate?: (totalProgress: percent, ...params) => void,  // Function to run while transitioning. Runs at least once.
 }
