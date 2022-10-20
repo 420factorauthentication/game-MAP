@@ -1,17 +1,17 @@
 import { Base } from "../../lib-pvz/types";
 
 import * as MinionTypes from "../const/minions.js";
-import { MinionSpawner } from "../../lib-pvz/minion.js";
-import { Hotbar, HotbarSlot } from "../../lib-hotbar/hotbar.js";
+
+import { MinionSpawner } from "../../lib-pvz/spawner.js";
+// import { Hotbar, HotbarSlot } from "../../lib-hotbar/hotbar.js";
 
 
-// Init HTMLElements //
+// Init Node Handles //
 const gameDiv = document.getElementById("game");
 
 // Init UI //
-const hotbar = new Hotbar(4);
-new HotbarSlot(hotbar, "A", () => {return true});
-
+// const hotbar = new Hotbar(4);
+// const hotbarSlot = new HotbarSlot(hotbar, "A", () => {console.log("Pressed A")});
 
 
 // Init Minion System //

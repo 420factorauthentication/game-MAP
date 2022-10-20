@@ -13,3 +13,4 @@ export type cssPropertyName = string;
 export type cssPropertyValue = string;
 
 export type char = string;
+export type key = string;
