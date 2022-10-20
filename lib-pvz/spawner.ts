@@ -8,7 +8,7 @@ import { rand } from "../lib-meth/meth.js";
 //////////////////////////////////////////////////////////
 // Defines a spawn location and target Base for Minions //
 //////////////////////////////////////////////////////////
-export class MinionSpawner {
+class MinionSpawner {
     constructor (
         public target: Base,
         public minX: number = 480,
@@ -34,3 +34,5 @@ export class MinionSpawner {
         );
     }
 }
+
+export default MinionSpawner;
