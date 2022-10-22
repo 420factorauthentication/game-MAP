@@ -1,7 +1,5 @@
 import { HotbarContainer, HotbarItem } from "./types";
 
-import HotbarButton from "./button.js";
-
 
 //////////////////////
 // A row of buttons //
@@ -42,8 +40,9 @@ class Hotbar implements HotbarContainer {
     remove (item: HotbarItem)
     remove (v: number | HotbarItem) {
         let index = (typeof v === "number") ? v : this.items.indexOf(v);
-        if (index < 0) return;
-        this.elem.removeChild(this.items[index].elem);
+        let item = (typeof v === "number") ? this.items[v] : v;
+        Hotbar.removeEventsOf(item);
+        this.elem.removeChild(item.elem);
         this.#items.splice(index, 1);
     }
 
@@ -87,6 +86,11 @@ class Hotbar implements HotbarContainer {
     private updateAllSizes() {
         for (const item of this.items)
             this.updateSize(item);
+    }
+
+    private static removeEventsOf (item: HotbarItem) {
+        for (const eventType of item.eventTypes)
+            removeEventListener(eventType, item);
     }
 }
 

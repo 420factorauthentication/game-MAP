@@ -9,4 +9,6 @@ export interface HotbarContainer {
 
 export interface HotbarItem {
     elem: HTMLElement;
+    eventTypes: readonly (keyof WindowEventMap) [];
+    handleEvent (e: Event);
 }

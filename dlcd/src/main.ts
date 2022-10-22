@@ -12,10 +12,10 @@ const gameDiv = document.getElementById("game");
 
 // Init UI //
 const hotbar = new Hotbar(4);
-new HotbarButton (hotbar, "Q", () => {console.log("Pressed Q")});
-new HotbarButton (hotbar, "W", () => {console.log("Pressed W")});
-new HotbarButton (hotbar, "E", () => {console.log("Pressed E")});
-new HotbarButton (hotbar, "R", () => {console.log("Pressed R")});
+new HotbarButton (hotbar, "q", () => {console.log("Pressed q")});
+new HotbarButton (hotbar, "w", () => {console.log("Pressed w")});
+new HotbarButton (hotbar, "e", () => {console.log("Pressed e")});
+new HotbarButton (hotbar, "r", () => {console.log("Pressed r")});
 
 // Test removing buttons
 // setTimeout(() => {hotbar.remove(0);}, 1000);

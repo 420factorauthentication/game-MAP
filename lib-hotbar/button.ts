@@ -19,7 +19,7 @@ class HotbarButton implements HotbarItem {
     ){
         if (elem) this.#elem = elem;
         this.hotbar.add(this);
-        this.registerEvents();
+        addEventListener("keydown", this);
     }
 
 
@@ -30,6 +30,12 @@ class HotbarButton implements HotbarItem {
 
     #elem: HTMLElement = HotbarButton.elemInit;
     get elem() {return this.#elem;}
+
+
+    ///////////////
+    // CONSTANTS //
+    ///////////////
+    eventTypes: readonly (keyof WindowEventMap) [] = ["keydown"];
 
 
     //////////
@@ -48,13 +54,8 @@ class HotbarButton implements HotbarItem {
     //////////////////////
     // HELPER FUNCTIONS //
     //////////////////////
-    private registerEvents() {
-        // Object.defineProperty(elem, "handleEvent", {
-        //     value: (e: KeyboardEvent) => {
-                // if (e.key == this.hotkey) this.onPress();
-        //     }
-        // })
-        // addEventListener()
+    handleEvent (e: KeyboardEvent) {
+        if (e.key == this.hotkey) this.onPress();
     }
 }
 
