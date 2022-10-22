@@ -52,7 +52,7 @@ class StateMachine {
         let time = 0;
         if (this.currState?.exitTime)
             time += this.currState.exitTime;
-        if (state.enterTime)
+        if (state?.enterTime)
             time += state.enterTime;
         for (const link of this.stateLinks) {
             if (link.extraTime && this.testLink(link, state))
@@ -107,12 +107,12 @@ class StateMachine {
     private finishTransition (state: State, ...params) {
         if (this.currState?.onExit)
             this.currState.onExit(...params);
-        if (state.onEnter)
+        if (state?.onEnter)
             state.onEnter(...params);
 
         if (this.loopID)
             clearInterval(this.loopID);
-        if (state.onLoop)
+        if (state?.onLoop)
             this.loopID = window.setInterval(state.onLoop, state.loopTime, ...params);
         else
             this.loopID = undefined;

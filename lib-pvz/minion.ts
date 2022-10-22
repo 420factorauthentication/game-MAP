@@ -1,4 +1,4 @@
-import { Base, MinionType } from "./types";
+import { Base, MinionEntity, MinionManager, MinionType } from "./types";
 import { State } from "../lib-smac/types";
 import { cssPropertyName, htmlAttributeValue, MS } from "../lib-meth/types";
 
@@ -12,12 +12,13 @@ import Spriteling from "../node_modules/spriteling/dist/spriteling.js";
 // An enemy represented by an HTMLElement                  //
 // Moves left until it reaches a target Base, then attacks //
 /////////////////////////////////////////////////////////////
-class Minion {
+class Minion implements MinionEntity {
 
     ////////////
     // CONFIG //
     ////////////
     constructor (
+        readonly manager: MinionManager,
         readonly type: MinionType,
         readonly target: Base,
         private _x: number,
@@ -42,10 +43,16 @@ class Minion {
     set x (v)  {this._x = v;  this.setPos("left", v);}
     set y (v)  {this._y = v;  this.setPos("top", v);}
 
+    get hp     ()  {return this.stats.current("hp");}
     get movSpd ()  {return this.stats.current("movSpd");}
     get atkSpd ()  {return this.stats.current("atkSpd");}
     get atkDmg ()  {return this.stats.current("atkDmg");}
 
+    modHp (amount: number, time: MS) {
+        this.stats.addMod ("hp", amount, time);
+        if (this.hp <= 0) this.manager.kill(this);
+        setTimeout(() => {if (this.hp <= 0) this.manager.kill(this);}, time);
+    }
     modMovSpd (amount: number, time: MS) {
         this.stats.addMod ("movSpd", amount, time);
         this.refreshMoveState();
@@ -62,6 +69,10 @@ class Minion {
         setTimeout(() => {this.refreshAttackState();}, time+1);
     }
 
+    changeHp (amount: number) {
+        this.stats.change ("hp", amount);
+        if (this.hp <= 0) this.manager.kill(this);
+    }
     changeMovSpd (amount: number) {
         this.stats.change ("movSpd", amount);
         this.refreshMoveState();
@@ -86,6 +97,7 @@ class Minion {
 
     protected moveState: State = this.moveStateInit;
     protected attackState: State = this.attackStateInit;
+    protected static dieState: State = {name: "minionDie"};
 
 
     //////////
@@ -148,6 +160,11 @@ class Minion {
     //////////////////////
     // HELPER FUNCTIONS //
     //////////////////////
+    die() {
+        this.ai.set(Minion.dieState);
+        this.elem.parentNode.removeChild(this.elem);
+    }
+
     private setPos (cssProp: cssPropertyName, distance: number) {
         this.elem.style[cssProp] = '' + distance + "px";
     }

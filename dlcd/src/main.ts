@@ -1,6 +1,7 @@
 import { Base } from "../../lib-pvz/types";
 
 import * as MinionTypes from "../const/minions.js";
+import * as Spells from  "../const/spells.js"
 
 import MinionSpawner from "../../lib-pvz/spawner.js";
 import Hotbar from "../../lib-hotbar/hotbar.js";
@@ -13,12 +14,14 @@ const gameDiv = document.getElementById("game");
 
 // Init UI //
 const hotbar = new Hotbar(4);
-new HotbarButton (hotbar, "q", () => {console.log("Pressed q")});
-new HotbarButton (hotbar, "w", () => {console.log("Pressed w")});
-new HotbarButton (hotbar, "e", () => {console.log("Pressed e")});
-new HotbarButton (hotbar, "r", () => {console.log("Pressed r")});
+
+
 
 // Test removing buttons
+// new HotbarButton (hotbar, "q", () => {console.log("Pressed q")});
+// new HotbarButton (hotbar, "w", () => {console.log("Pressed w")});
+// new HotbarButton (hotbar, "e", () => {console.log("Pressed e")});
+// new HotbarButton (hotbar, "r", () => {console.log("Pressed r")});
 // setTimeout(() => {hotbar.remove(0);}, 1000);
 // setTimeout(() => {hotbar.remove(0);}, 2000);
 // setTimeout(() => {hotbar.remove(0);}, 3000);
@@ -37,7 +40,12 @@ const base: Base = {
 const spawner = new MinionSpawner(base);
 
 // Spawn Minions //
-const axeman0 = spawner.spawn (MinionTypes.Axeman, {parent: gameDiv, htmlClass: "minion"});
+spawner.spawn (MinionTypes.Axeman, {parent: gameDiv, htmlClass: "minion"});
+
+
+// Test Spells //
+const swordSpell = Spells.getSwordSpell(spawner);
+new HotbarButton (hotbar, "q", swordSpell);
 
 
 
@@ -62,4 +70,8 @@ const axeman0 = spawner.spawn (MinionTypes.Axeman, {parent: gameDiv, htmlClass: 
 
 
 // Test Minion Stats
-axeman0.modMovSpd(100, 2000);
+// axeman0.modMovSpd(100, 2000);
+
+// console.log(axeman0.hp);
+// axeman0.changeHp(-1);
+// console.log(axeman0.hp);

@@ -34,6 +34,14 @@ class Stats {
         }, time);
     }
 
+    // Remove stat modifier
+    removeMod (mod: StatMod) {
+        const index = this.#mods.indexOf(mod)
+        if (index === -1) return;
+        this.#mods.splice (this.#mods.indexOf(mod), 1);
+        this.change(mod.key, -mod.amount);
+    }
+
     // All temporary and permanent stat modifiers
     #mods: StatMod[] = [];
     get mods(): readonly StatMod[] {return this.#mods;}

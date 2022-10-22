@@ -6,7 +6,3 @@ export interface StatMod {
     amount: number;
     time: MS;  // 0 = permanent
 }
-
-export interface StatContainer {
-    get mods(): readonly StatMod[];
-}
