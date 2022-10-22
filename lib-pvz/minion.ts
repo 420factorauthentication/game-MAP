@@ -26,7 +26,10 @@ class Minion {
             parent?: Node,
             htmlClass?: htmlAttributeValue,
         },
-    ){this.construct(initOptions);}
+    ){
+        this.parseInitOptions (initOptions);
+        this.ai.set (this.moveState);
+    }
 
 
     /////////
@@ -54,20 +57,9 @@ class Minion {
     protected attackState: State = this.attackStateInit;
 
 
-    /////////////////
-    // CONSTRUCTOR //
-    /////////////////
-    private construct (
-        initOptions?: {
-            elem?: HTMLElement,
-            parent?: Node,
-            htmlClass?: htmlAttributeValue,
-        }
-    ){
-        this.parseInitOptions (initOptions);
-        this.ai.set (this.moveState);
-    }
-
+    //////////
+    // INIT //
+    //////////
     private parseInitOptions (initOptions?: {
         elem?: HTMLElement,
         parent?: Node,

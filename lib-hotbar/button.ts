@@ -16,7 +16,11 @@ class HotbarButton implements HotbarItem {
         public hotkey: string,
         public onPress: Function,
         elem?: HTMLElement,
-    ){this.construct(elem);}
+    ){
+        if (elem) this.#elem = elem;
+        this.hotbar.add(this);
+        this.registerEvents();
+    }
 
 
     ////////////////
@@ -28,15 +32,9 @@ class HotbarButton implements HotbarItem {
     get elem() {return this.#elem;}
 
 
-    /////////////////
-    // CONSTRUCTOR //
-    /////////////////
-    private construct (elem?: HTMLElement) {
-        if (elem) this.#elem = elem;
-        this.hotbar.add(this);
-        this.registerEvents();
-    }
-
+    //////////
+    // INIT //
+    //////////
     private static get elemInit() {
         const elem = <HTMLElement> document.createElement("div");
         elem.style.display = "block";

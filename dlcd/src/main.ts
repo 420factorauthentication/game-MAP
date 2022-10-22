@@ -12,12 +12,16 @@ const gameDiv = document.getElementById("game");
 
 // Init UI //
 const hotbar = new Hotbar(4);
-const button0 = hotbar.newButton ("Q", () => {console.log("Pressed Q")});
-const button1 = hotbar.newButton ("W", () => {console.log("Pressed W")});
-const button2 = hotbar.newButton ("E", () => {console.log("Pressed E")});
-const button3 = hotbar.newButton ("R", () => {console.log("Pressed R")});
+new HotbarButton (hotbar, "Q", () => {console.log("Pressed Q")});
+new HotbarButton (hotbar, "W", () => {console.log("Pressed W")});
+new HotbarButton (hotbar, "E", () => {console.log("Pressed E")});
+new HotbarButton (hotbar, "R", () => {console.log("Pressed R")});
 
-
+// Test removing buttons
+// setTimeout(() => {hotbar.remove(0);}, 1000);
+// setTimeout(() => {hotbar.remove(0);}, 2000);
+// setTimeout(() => {hotbar.remove(0);}, 3000);
+// setTimeout(() => {hotbar.remove(0);}, 4000);
 
 // Init Minion System //
 const base: Base = {

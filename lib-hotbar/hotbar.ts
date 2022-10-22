@@ -14,49 +14,53 @@ class Hotbar implements HotbarContainer {
     constructor(
         public _maxItems: number,
         elem?: HTMLElement,
-    ){this.construct(elem);}
+    ){
+        if (elem) this.#elem = elem;
+    }
 
 
     /////////
     // API //
     /////////
     get maxItems()   {return this._maxItems;}
-    set maxItems(v)  {this._maxItems = v; this.updateAllSizes();}
+    set maxItems(v)  {
+        if (v < this.items.length)
+            throw new Error("Cant set max items below current length");
+        this._maxItems = v;
+        this.updateAllSizes();
+    }
 
     add (item: HotbarItem) {
+        if (this.items.length >= this.maxItems) throw new Error("Max items")
         this.#items.push (item);
         this.elem.appendChild (item.elem);
         this.updateSize (item);
         return item;
     }
 
-    remove (item: HotbarItem) {
-        let index = this.items.indexOf(item);
-        if (index > -1) this.#items.splice(index, 1);
-    }
-
-    newButton (hotkey: string, onPress: Function, elem?: HTMLElement) {
-        return this.add (new HotbarButton (this, hotkey, onPress, elem));
+    remove (index: number)
+    remove (item: HotbarItem)
+    remove (v: number | HotbarItem) {
+        let index = (typeof v === "number") ? v : this.items.indexOf(v);
+        if (index < 0) return;
+        this.elem.removeChild(this.items[index].elem);
+        this.#items.splice(index, 1);
     }
 
 
     ////////////////
     // COMPONENTS //
     ////////////////
-    #items: HotbarItem[]   = [];
-    get items(): readonly HotbarItem[]   {return this.#items;}
+    #items: HotbarItem[]  = [];
+    get items(): readonly HotbarItem[]  {return this.#items;}
 
-    #elem: HTMLElement   = Hotbar.elemInit;
-    get elem()   {return this.#elem;}
+    #elem: HTMLElement  = Hotbar.elemInit;
+    get elem()  {return this.#elem;}
 
 
-    /////////////////
-    // CONSTRUCTOR //
-    /////////////////
-    private construct (elem?: HTMLElement) {
-        if (elem) this.#elem = elem;
-    }
-
+    //////////
+    // INIT //
+    //////////
     private static get elemInit() {
         const elem = <HTMLElement> document.createElement("div");
         elem.style.position = "absolute";

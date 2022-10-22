@@ -3,6 +3,7 @@ export interface HotbarContainer {
     items: readonly HotbarItem[];
     maxItems: number;
     add (item: HotbarItem);
+    remove (index: number);
     remove (item: HotbarItem);
 }
 
