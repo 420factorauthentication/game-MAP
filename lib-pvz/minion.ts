@@ -1,6 +1,6 @@
 import { Base, MinionType } from "./types";
 import { State } from "../lib-smac/types";
-import { htmlAttributeValue } from "../lib-meth/types";
+import { cssPropertyName, htmlAttributeValue } from "../lib-meth/types";
 
 import StateMachine from "../lib-smac/smac.js";
 
@@ -29,25 +29,14 @@ class Minion {
     ){this.construct(initOptions);}
 
 
-    ////////////
-    // STATUS //
-    ////////////
-    get x ()  {return this._x;}
-    get y ()  {return this._y;}
-
-
     /////////
     // API //
     /////////
-    set x (v) {
-        this._x = v;
-        this.elem.style.left = '' + v + "px";
-    }
+    get x ()  {return this._x;}
+    get y ()  {return this._y;}
 
-    set y (v) {
-        this._y = v;
-        this.elem.style.top = '' + v + "px";
-    }
+    set x (v)  {this._x = v;  this.setPos("left", v);}
+    set y (v)  {this._y = v;  this.setPos("top", v);}
 
 
     ////////////////
@@ -131,6 +120,13 @@ class Minion {
                 this.target.hp -= this.type.atkDmg;
             }
         }; return attackState;
+    }
+
+    //////////////////////
+    // HELPER FUNCTIONS //
+    //////////////////////
+    private setPos (cssProp: cssPropertyName, distance: number) {
+        this.elem.style[cssProp] = '' + distance + "px";
     }
 }
 

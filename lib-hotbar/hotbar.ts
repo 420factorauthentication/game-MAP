@@ -1,5 +1,6 @@
+import { HotbarContainer, HotbarItem } from "./types";
 
-import { HotbarContainer } from "./types";
+import HotbarButton from "./button.js";
 
 
 //////////////////////
@@ -11,7 +12,7 @@ class Hotbar implements HotbarContainer {
     // CONFIG //
     ////////////
     constructor(
-        public maxItems: number,
+        public _maxItems: number,
         elem?: HTMLElement,
     ){this.construct(elem);}
 
@@ -19,14 +20,34 @@ class Hotbar implements HotbarContainer {
     /////////
     // API //
     /////////
-    items: unknown[] = [];
+    get maxItems()   {return this._maxItems;}
+    set maxItems(v)  {this._maxItems = v; this.updateAllSizes();}
+
+    add (item: HotbarItem) {
+        this.#items.push (item);
+        this.elem.appendChild (item.elem);
+        this.updateSize (item);
+        return item;
+    }
+
+    remove (item: HotbarItem) {
+        let index = this.items.indexOf(item);
+        if (index > -1) this.#items.splice(index, 1);
+    }
+
+    newButton (hotkey: string, onPress: Function, elem?: HTMLElement) {
+        return this.add (new HotbarButton (this, hotkey, onPress, elem));
+    }
 
 
     ////////////////
     // COMPONENTS //
     ////////////////
-    #elem: HTMLElement = Hotbar.elemInit;
-    get elem() {return this.#elem;}
+    #items: HotbarItem[]   = [];
+    get items(): readonly HotbarItem[]   {return this.#items;}
+
+    #elem: HTMLElement   = Hotbar.elemInit;
+    get elem()   {return this.#elem;}
 
 
     /////////////////
@@ -48,6 +69,20 @@ class Hotbar implements HotbarContainer {
         elem.style.flexDirection = "row";
         document.body.appendChild(elem);
         return elem;
+    }
+
+
+    //////////////////////
+    // HELPER FUNCTIONS //
+    //////////////////////
+    private updateSize (item: HotbarItem) {
+        item.elem.style.width = '' + (100 / this.maxItems) + '%';
+        item.elem.style.height = "100%";
+    }
+
+    private updateAllSizes() {
+        for (const item of this.items)
+            this.updateSize(item);
     }
 }
 
