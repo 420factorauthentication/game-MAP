@@ -35,7 +35,7 @@ class HotbarButton implements HotbarItem {
     ///////////////
     // CONSTANTS //
     ///////////////
-    eventTypes: readonly (keyof WindowEventMap) [] = ["keydown"];
+    readonly eventTypes: readonly (keyof WindowEventMap) [] = ["keydown"];
 
 
     //////////
@@ -51,9 +51,9 @@ class HotbarButton implements HotbarItem {
     }
 
 
-    //////////////////////
-    // HELPER FUNCTIONS //
-    //////////////////////
+    ////////////
+    // EVENTS //
+    ////////////
     handleEvent (e: KeyboardEvent) {
         if (e.key == this.hotkey) this.onPress();
     }

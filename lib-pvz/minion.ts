@@ -3,6 +3,7 @@ import { State } from "../lib-smac/types";
 import { cssPropertyName, htmlAttributeValue } from "../lib-meth/types";
 
 import StateMachine from "../lib-smac/smac.js";
+import Stats from "../lib-statsys/stats.js";
 
 import Spriteling from "../node_modules/spriteling/dist/spriteling.js";
 
@@ -47,6 +48,7 @@ class Minion {
     ////////////////
     protected elem: HTMLElement = Minion.elemInit;
     protected ai: StateMachine = new StateMachine();
+    protected stats: Stats = new Stats(this.type);
     // protected anim: Spriteling = this.spritelingInit;
 
     
@@ -96,7 +98,7 @@ class Minion {
     private get moveStateInit() {
         const moveState: State = {
             name: "minionMove",
-            loopTime: (1000 / this.type.movSpd),
+            loopTime: (1000 / this.stats.current("movSpd")),
             onLoop: () => {
                 if (--this.x < this.target.x)
                     this.ai.set(this.attackState);
@@ -107,9 +109,9 @@ class Minion {
     private get attackStateInit() {
         const attackState: State = {
             name: "minionAttack",
-            loopTime: (1000 / this.type.atkSpd),
+            loopTime: (1000 / this.stats.current("atkSpd")),
             onLoop: () => {
-                this.target.hp -= this.type.atkDmg;
+                this.target.hp -= this.stats.current("atkDmg");
             }
         }; return attackState;
     }

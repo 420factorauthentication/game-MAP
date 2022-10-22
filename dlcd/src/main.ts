@@ -5,6 +5,7 @@ import * as MinionTypes from "../const/minions.js";
 import MinionSpawner from "../../lib-pvz/spawner.js";
 import Hotbar from "../../lib-hotbar/hotbar.js";
 import HotbarButton from "../../lib-hotbar/button.js";
+import Stats from "../../lib-statsys/stats.js";
 
 
 // Init Node Handles //
@@ -23,6 +24,8 @@ new HotbarButton (hotbar, "r", () => {console.log("Pressed r")});
 // setTimeout(() => {hotbar.remove(0);}, 3000);
 // setTimeout(() => {hotbar.remove(0);}, 4000);
 
+
+
 // Init Minion System //
 const base: Base = {
     hp: 20,
@@ -35,3 +38,20 @@ const spawner = new MinionSpawner(base);
 
 // Spawn Minions //
 const axeman0 = spawner.spawn (MinionTypes.Axeman, {parent: gameDiv, htmlClass: "minion"});
+
+
+
+// Test Stat System //
+// const stats = new Stats(MinionTypes.Axeman);
+
+// function checkStats() {
+//     for (const key in stats.base) {
+//         console.log(`${key}: ${stats.base[key]} base, ${stats.current(key)} current`);
+//     }
+//     console.log("-------");
+// }
+
+// checkStats();
+// stats.addMod("atkDmg", 1, 1000);
+// checkStats();
+// setTimeout(checkStats, 1500);
