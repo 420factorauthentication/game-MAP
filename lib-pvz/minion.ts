@@ -1,6 +1,6 @@
 import { Base, MinionType } from "./types";
 import { State } from "../lib-smac/types";
-import { cssPropertyName, htmlAttributeValue } from "../lib-meth/types";
+import { cssPropertyName, htmlAttributeValue, MS } from "../lib-meth/types";
 
 import StateMachine from "../lib-smac/smac.js";
 import Stats from "../lib-statsys/stats.js";
@@ -42,6 +42,39 @@ class Minion {
     set x (v)  {this._x = v;  this.setPos("left", v);}
     set y (v)  {this._y = v;  this.setPos("top", v);}
 
+    get movSpd ()  {return this.stats.current("movSpd");}
+    get atkSpd ()  {return this.stats.current("atkSpd");}
+    get atkDmg ()  {return this.stats.current("atkDmg");}
+
+    modMovSpd (amount: number, time: MS) {
+        this.stats.addMod ("movSpd", amount, time);
+        this.refreshMoveState();
+        setTimeout(() => {this.refreshMoveState();}, time+1);
+    }
+    modAtkSpd (amount: number, time: MS) {
+        this.stats.addMod ("atkSpd", amount, time);
+        this.refreshAttackState();
+        setTimeout(() => {this.refreshAttackState();}, time+1);
+    }
+    modAtkDmg (amount: number, time: MS) {
+        this.stats.addMod ("atkDmg", amount, time);
+        this.refreshAttackState();
+        setTimeout(() => {this.refreshAttackState();}, time+1);
+    }
+
+    changeMovSpd (amount: number) {
+        this.stats.change ("movSpd", amount);
+        this.refreshMoveState();
+    }
+    changeAtkSpd (amount: number) {
+        this.stats.change ("atkSpd", amount);
+        this.refreshAttackState();
+    }
+    changeAtkDmg (amount: number) {
+        this.stats.change ("atkDmg", amount);
+        this.refreshAttackState();
+    }
+
 
     ////////////////
     // COMPONENTS //
@@ -51,10 +84,6 @@ class Minion {
     protected stats: Stats = new Stats(this.type);
     // protected anim: Spriteling = this.spritelingInit;
 
-    
-    ///////////////
-    // CONSTANTS //
-    ///////////////
     protected moveState: State = this.moveStateInit;
     protected attackState: State = this.attackStateInit;
 
@@ -121,6 +150,18 @@ class Minion {
     //////////////////////
     private setPos (cssProp: cssPropertyName, distance: number) {
         this.elem.style[cssProp] = '' + distance + "px";
+    }
+
+    private refreshMoveState() {
+        this.moveState = this.moveStateInit;
+        if (this.ai.currState.name == "minionMove")
+            this.ai.set(this.moveState);
+    }
+
+    private refreshAttackState() {
+        this.attackState = this.attackStateInit;
+        if (this.ai.currState.name == "minionAttack")
+            this.ai.set(this.attackState);
     }
 }
 

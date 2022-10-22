@@ -3,28 +3,43 @@ import { StatMod } from "./types.js";
 
 
 class Stats {
-    // StatsObj.base[key]: Get base stat
+    // obj.base[key]: Get base stat
     constructor (public base: object) {}
 
-    // StatsObj.current(key): Get current stat
+    // obj.current(key): Get current stat
     current (key: string) {
         let value = this.base[key];
-        if (value === undefined || value === null) return value;
-        for (const mod of this.mods) if (mod.key == key) value += mod.amount;
+        if (value === undefined || value === null)   return value;
+        if (this.changes[key] !== undefined)         value += this.changes[key];
         return value;
     }
-    
-    // All temporary and permanent stat modifiers
-    #mods: StatMod[] = [];
-    get mods(): readonly StatMod[] {return this.#mods;}
+
+    // Change current stat without adding a modifier
+    change (key: string, amount: number) {
+        if (this.changes[key] === undefined)
+            this.changes[key] = 0;
+        this.changes[key] += amount;
+        return this.changes[key];
+    }
 
     // Add stat modifier
     addMod (key: string, amount: number, time: MS) {
         const newMod: StatMod = {key, amount, time};
         this.#mods.push(newMod);
+        this.change(key, amount);
         if (time <= 0) return;
-        setTimeout(() => {this.#mods.splice (this.#mods.indexOf(newMod), 1);}, time);
+        setTimeout(() => {
+            this.#mods.splice (this.#mods.indexOf(newMod), 1);
+            this.change(key, -amount);
+        }, time);
     }
+
+    // All temporary and permanent stat modifiers
+    #mods: StatMod[] = [];
+    get mods(): readonly StatMod[] {return this.#mods;}
+
+    // Tracks modified stat numbers
+    private changes = {};
 }
 
 export default Stats;

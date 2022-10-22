@@ -52,6 +52,14 @@ const axeman0 = spawner.spawn (MinionTypes.Axeman, {parent: gameDiv, htmlClass: 
 // }
 
 // checkStats();
-// stats.addMod("atkDmg", 1, 1000);
+
+// stats.addMod("movSpd", 20, 1000);
 // checkStats();
 // setTimeout(checkStats, 1500);
+
+// stats.change("movSpd", 20);
+// checkStats();
+
+
+// Test Minion Stats
+axeman0.modMovSpd(100, 2000);
