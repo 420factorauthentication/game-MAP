@@ -41,5 +41,6 @@ export interface MinionEntity {
 
 export interface MinionManager {
     get minions(): readonly MinionEntity[];
+    get minionsSortedByX(): readonly MinionEntity[];
     kill (minion: MinionEntity): void;
 }

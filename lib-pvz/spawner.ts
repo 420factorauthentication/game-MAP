@@ -15,11 +15,20 @@ class MinionSpawner implements MinionManager {
         public minX: number = 480,
         public maxX: number = 600,
         public minY: number = 40,
-        public maxY: number = 440,
+        public maxY: number = 300,
     ){}
 
     #minions: MinionEntity[] = [];
     get minions(): readonly MinionEntity[]   {return this.#minions;}
+    get minionsSortedByX(): readonly MinionEntity[] {
+        const minionsCopy = [...this.minions];
+        minionsCopy.sort ((a,b) => {
+            if (a.x < b.x) return -1;
+            if (a.x > b.x) return 1;
+            return 0;
+        });
+        return minionsCopy;
+    }
     
     spawn (
         type: MinionType,

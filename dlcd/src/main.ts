@@ -44,6 +44,12 @@ spawner.spawn (MinionTypes.Axeman, {parent: gameDiv, htmlClass: "minion"});
 
 
 // Test Spells //
+spawner.spawn (MinionTypes.Axeman, {parent: gameDiv, htmlClass: "minion"});
+spawner.spawn (MinionTypes.Axeman, {parent: gameDiv, htmlClass: "minion"});
+spawner.spawn (MinionTypes.Axeman, {parent: gameDiv, htmlClass: "minion"});
+spawner.minions[1].changeMovSpd(10);
+spawner.minions[2].changeMovSpd(20);
+spawner.minions[3].changeMovSpd(30);
 const swordSpell = Spells.getSwordSpell(spawner);
 new HotbarButton (hotbar, "q", swordSpell);
 
@@ -75,3 +81,24 @@ new HotbarButton (hotbar, "q", swordSpell);
 // console.log(axeman0.hp);
 // axeman0.changeHp(-1);
 // console.log(axeman0.hp);
+
+
+
+
+// TEST //
+// let arr = [[3, 4], [1, 2]];
+// let arrCopy = [...arr];
+
+// arrCopy.sort((a, b) => {
+//     if (a[0] < b[0]) return -1;
+//     if (a[0] > b[0]) return 1;
+//     return 0;
+// });
+
+// console.log(arr);
+// console.log(arrCopy);
+// console.log("-------");
+
+// arrCopy[0].push(300);
+// console.log(arr);
+// console.log(arrCopy);

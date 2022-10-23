@@ -29,6 +29,8 @@ class Minion implements MinionEntity {
             htmlClass?: htmlAttributeValue,
         },
     ){
+        this.setPos("left", _x);
+        this.setPos("top", _y);
         this.parseInitOptions (initOptions);
         this.ai.set (this.moveState);
     }
