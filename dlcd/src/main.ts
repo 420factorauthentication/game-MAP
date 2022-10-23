@@ -50,8 +50,7 @@ spawner.spawn (MinionTypes.Axeman, {parent: gameDiv, htmlClass: "minion"});
 spawner.minions[1].changeMovSpd(2);
 spawner.minions[2].changeMovSpd(4);
 spawner.minions[3].changeMovSpd(6);
-const swordSpell = Spells.getSwordSpell(spawner);
-new HotbarButton (hotbar, "q", swordSpell);
+new HotbarButton (hotbar, "q", Spells.getSwordSpell(spawner), Spells.getSwordElem());
 
 
 
