@@ -1,17 +1,17 @@
-import { Hz, PXperSEC, MS } from "../lib-meth/types";
+import { Hz, viewPerSec, ms, vw, vh } from "../lib-meth/types";
 
 
 export interface Base {
     hp: number;
-    x: number;
-    y: number;
-    width: number;
-    height: number;
+    x: vw;
+    y: vh;
+    width: vw;
+    height: vh;
 }
 
 export interface MinionType {
     hp: number;
-    movSpd: PXperSEC;
+    movSpd: viewPerSec;
     atkSpd: Hz;
     atkDmg: number;
 }
@@ -28,13 +28,13 @@ export interface MinionEntity {
     get movSpd ();
     get atkSpd ();
     get atkDmg ();
-    modHp (amount: number, time: MS): void;
-    modMovSpd (amount: number, time: MS): void;
-    modAtkSpd (amount: number, time: MS): void;
-    modAtkDmg (amount: number, time: MS): void;
+    modHp (amount: number, time: ms): void;
+    modMovSpd (amount: viewPerSec, time: ms): void;
+    modAtkSpd (amount: Hz, time: ms): void;
+    modAtkDmg (amount: number, time: ms): void;
     changeHp (amount: number): void;
-    changeMovSpd (amount: number): void;
-    changeAtkSpd (amount: number): void;
+    changeMovSpd (amount: viewPerSec): void;
+    changeAtkSpd (amount: Hz): void;
     changeAtkDmg (amount: number): void;
     die(): void;
 }

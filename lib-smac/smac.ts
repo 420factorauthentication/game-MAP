@@ -1,5 +1,5 @@
 import { State, StateLink } from "./types"
-import { MS, percent, timeoutID, intervalID } from "../lib-meth/types"
+import { ms, percent, timeoutID, intervalID } from "../lib-meth/types"
 
 
 class StateMachine {
@@ -78,7 +78,7 @@ class StateMachine {
         }
     }
 
-    private startLinkUpdates (time: MS, state: State, ...params) {
+    private startLinkUpdates (time: ms, state: State, ...params) {
         for (const link of this.stateLinks) {
             if (this.testLink (link, state)) {
                 if (link.onUpdate) {
@@ -91,7 +91,7 @@ class StateMachine {
         }
     }
 
-    private startTransition (time: MS, state: State, ...params) {
+    private startTransition (time: ms, state: State, ...params) {
         this.transitionID = window.setTimeout (this.override, time, state, ...params);
     }
 

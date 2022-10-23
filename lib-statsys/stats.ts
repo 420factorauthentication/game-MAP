@@ -1,4 +1,4 @@
-import { MS } from "../lib-meth/types.js";
+import { ms } from "../lib-meth/types.js";
 import { StatMod } from "./types.js";
 
 
@@ -23,7 +23,7 @@ class Stats {
     }
 
     // Add stat modifier
-    addMod (key: string, amount: number, time: MS) {
+    addMod (key: string, amount: number, time: ms) {
         const newMod: StatMod = {key, amount, time};
         this.#mods.push(newMod);
         this.change(key, amount);

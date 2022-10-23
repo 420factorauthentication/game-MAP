@@ -1,5 +1,5 @@
 import { Base, MinionType, MinionManager, MinionEntity } from "./types";
-import { htmlAttributeValue } from "../lib-meth/types";
+import { htmlAttributeValue, vw, vh } from "../lib-meth/types";
 
 import Minion from "./minion.js";
 import { rand } from "../lib-meth/meth.js";
@@ -12,10 +12,10 @@ import { rand } from "../lib-meth/meth.js";
 class MinionSpawner implements MinionManager {
     constructor (
         public target: Base,
-        public minX: number = 480,
-        public maxX: number = 600,
-        public minY: number = 40,
-        public maxY: number = 300,
+        public minX: vw = 50,  //left
+        public maxX: vw = 80,  //right
+        public minY: vh = 10,  //top
+        public maxY: vh = 50,  //bottom
     ){}
 
     #minions: MinionEntity[] = [];

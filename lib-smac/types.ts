@@ -1,4 +1,4 @@
-import { MS, percent } from "../lib-meth/types"
+import { ms, percent } from "../lib-meth/types"
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -8,9 +8,9 @@ import { MS, percent } from "../lib-meth/types"
 /////////////////////////////////////////////////////////////////////////////////////////////
 export interface State {
     name: string,
-    enterTime?: MS,  // Extra transition time when entering this state
-    exitTime?: MS,   // Extra transition time when leaving this state
-    loopTime?: MS,   // After transitioned, time inbetween each onLoop run
+    enterTime?: ms,  // Extra transition time when entering this state
+    exitTime?: ms,   // Extra transition time when leaving this state
+    loopTime?: ms,   // After transitioned, time inbetween each onLoop run
     onEnter?: (...params) => void,  // Function to run after transitioning to this State
     onExit?: (...params) => void,   // Function to run aftter transitioning away from this State
     onLoop?: (...params) => void,   // Function to continuously run while set to this State
@@ -25,8 +25,8 @@ export interface State {
 export interface StateLink {
     oldState?: State,
     newState?: State,
-    extraTime?: MS,   // Extra transition time for transitions that match this StateLink
-    updateTime?: MS,  // While transitioning, time inbetween each onUpdate run
+    extraTime?: ms,   // Extra transition time for transitions that match this StateLink
+    updateTime?: ms,  // While transitioning, time inbetween each onUpdate run
     onStart?: (...params) => void,   // Function to run on transition start
     onFinish?: (...params) => void,  // Function to run on transition finish
     onUpdate?: (totalProgress: percent, ...params) => void,  // Function to run while transitioning. Runs at least once.

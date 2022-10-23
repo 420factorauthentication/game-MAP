@@ -1,6 +1,6 @@
 import { Base, MinionEntity, MinionManager, MinionType } from "./types";
 import { State } from "../lib-smac/types";
-import { cssPropertyName, htmlAttributeValue, MS } from "../lib-meth/types";
+import { cssPropertyName, htmlAttributeValue, ms, vw, vh } from "../lib-meth/types";
 
 import StateMachine from "../lib-smac/smac.js";
 import Stats from "../lib-statsys/stats.js";
@@ -29,8 +29,8 @@ class Minion implements MinionEntity {
             htmlClass?: htmlAttributeValue,
         },
     ){
-        this.setPos("left", _x);
-        this.setPos("top", _y);
+        this.setElemX(_x);
+        this.setElemY(_y);
         this.parseInitOptions (initOptions);
         this.ai.set (this.moveState);
     }
@@ -42,30 +42,30 @@ class Minion implements MinionEntity {
     get x ()  {return this._x;}
     get y ()  {return this._y;}
 
-    set x (v)  {this._x = v;  this.setPos("left", v);}
-    set y (v)  {this._y = v;  this.setPos("top", v);}
+    set x (v)  {this._x = v;  this.setElemX(v);}
+    set y (v)  {this._y = v;  this.setElemY(v);}
 
     get hp     ()  {return this.stats.current("hp");}
     get movSpd ()  {return this.stats.current("movSpd");}
     get atkSpd ()  {return this.stats.current("atkSpd");}
     get atkDmg ()  {return this.stats.current("atkDmg");}
 
-    modHp (amount: number, time: MS) {
+    modHp (amount: number, time: ms) {
         this.stats.addMod ("hp", amount, time);
         if (this.hp <= 0) this.manager.kill(this);
         setTimeout(() => {if (this.hp <= 0) this.manager.kill(this);}, time);
     }
-    modMovSpd (amount: number, time: MS) {
+    modMovSpd (amount: number, time: ms) {
         this.stats.addMod ("movSpd", amount, time);
         this.refreshMoveState();
         setTimeout(() => {this.refreshMoveState();}, time+1);
     }
-    modAtkSpd (amount: number, time: MS) {
+    modAtkSpd (amount: number, time: ms) {
         this.stats.addMod ("atkSpd", amount, time);
         this.refreshAttackState();
         setTimeout(() => {this.refreshAttackState();}, time+1);
     }
-    modAtkDmg (amount: number, time: MS) {
+    modAtkDmg (amount: number, time: ms) {
         this.stats.addMod ("atkDmg", amount, time);
         this.refreshAttackState();
         setTimeout(() => {this.refreshAttackState();}, time+1);
@@ -162,24 +162,32 @@ class Minion implements MinionEntity {
     //////////////////////
     // HELPER FUNCTIONS //
     //////////////////////
+    
+    // Use spawner.kill() instead of this function
+    //  since this function doesnt remove handle from spawner.minions
+    //  This is for spawner to access private properties in spawner.kill()
     die() {
         this.ai.set(Minion.dieState);
-        this.elem.parentNode.removeChild(this.elem);
+        this.elem?.parentNode?.removeChild(this.elem);
     }
 
-    private setPos (cssProp: cssPropertyName, distance: number) {
-        this.elem.style[cssProp] = '' + distance + "px";
+    private setElemX (left: vw) {
+        this.elem.style.left = '' + left + "vw";
+    }
+
+    private setElemY (top: vh) {
+        this.elem.style.top = '' + top + "vh";
     }
 
     private refreshMoveState() {
         this.moveState = this.moveStateInit;
-        if (this.ai.currState.name == "minionMove")
+        if (this.ai.currState?.name == "minionMove")
             this.ai.set(this.moveState);
     }
 
     private refreshAttackState() {
         this.attackState = this.attackStateInit;
-        if (this.ai.currState.name == "minionAttack")
+        if (this.ai.currState?.name == "minionAttack")
             this.ai.set(this.attackState);
     }
 }

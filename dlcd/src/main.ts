@@ -32,10 +32,10 @@ const hotbar = new Hotbar(4);
 // Init Minion System //
 const base: Base = {
     hp: 20,
-    x: 64,
-    y: 240,
-    width: 64,
-    height: 64,
+    x: 10,
+    y: 50,
+    width: 5,
+    height: 5,
 }
 const spawner = new MinionSpawner(base);
 
@@ -47,9 +47,9 @@ spawner.spawn (MinionTypes.Axeman, {parent: gameDiv, htmlClass: "minion"});
 spawner.spawn (MinionTypes.Axeman, {parent: gameDiv, htmlClass: "minion"});
 spawner.spawn (MinionTypes.Axeman, {parent: gameDiv, htmlClass: "minion"});
 spawner.spawn (MinionTypes.Axeman, {parent: gameDiv, htmlClass: "minion"});
-spawner.minions[1].changeMovSpd(10);
-spawner.minions[2].changeMovSpd(20);
-spawner.minions[3].changeMovSpd(30);
+spawner.minions[1].changeMovSpd(2);
+spawner.minions[2].changeMovSpd(4);
+spawner.minions[3].changeMovSpd(6);
 const swordSpell = Spells.getSwordSpell(spawner);
 new HotbarButton (hotbar, "q", swordSpell);
 
@@ -67,16 +67,16 @@ new HotbarButton (hotbar, "q", swordSpell);
 
 // checkStats();
 
-// stats.addMod("movSpd", 20, 1000);
+// stats.addMod("movSpd", 2, 1000);
 // checkStats();
 // setTimeout(checkStats, 1500);
 
-// stats.change("movSpd", 20);
+// stats.change("movSpd", 2);
 // checkStats();
 
 
 // Test Minion Stats
-// axeman0.modMovSpd(100, 2000);
+// axeman0.modMovSpd(10, 2000);
 
 // console.log(axeman0.hp);
 // axeman0.changeHp(-1);
