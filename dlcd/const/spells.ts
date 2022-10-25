@@ -1,38 +1,57 @@
 import { MinionManager } from "../../lib-pvz/types";
 
 
-// A function assigned to HotbarButton.onPress
-export type Spell = () => void;
+///////////////////////////////////////
+// Template for designing new Spells //
+///////////////////////////////////////
+export type Spell = {
 
-// Generates a Spell function at runtime
-export type GetSpell = (manager: MinionManager) => Spell;
+    // Generates a Spell function at runtime,
+    // using the MinionManager to find targets.
+    // This func is assigned to HotbarButton.onPress
+    func (manager: MinionManager): () => void;
 
-
-// Generates a HotbarButton elem with the desired style
-export type GetSpellElem = () => HTMLElement;
-
-// Default HotbarButton elem
-const getDefaultElem: GetSpellElem = () => {
-    const elem = <HTMLElement> document.createElement("a");
-    elem.style.display = "block";
-    elem.style.boxSizing = "border-box";
-    // elem.style.background = "content-box radial-gradient(slategray, gray)";
-    elem.style.border = "2px solid black";
-    elem.style.fontSize = "16px";
-    elem.style.textAlign = "center";
-    elem.style.lineHeight = "15vh";  //center vertically (one line only)
-    return elem;
+    // Generates a new HTMLElement at runtime,
+    // with the desired style for a HotbarButton
+    get elem(): HTMLElement;
 }
 
 
+/////////////
+// DEFAULT //
+/////////////
+export const Default: Spell = {
+    func() {return () => {}},
 
-// SWORD SPELL: deal 3 damage to front minion //
-export const getSwordSpell: GetSpell = (manager: MinionManager) => {
-    return () => {manager.minionsSortedByX[0].changeHp(-3);}
+    get elem() {
+        const newElem = <HTMLElement> document.createElement("a");
+        newElem.style.display = "block";
+        newElem.style.boxSizing = "border-box";
+        // newElem.style.background = "content-box radial-gradient(slategray, gray)";
+        newElem.style.border = "2px solid black";
+        newElem.style.fontSize = "16px";
+        newElem.style.textAlign = "center";
+        newElem.style.lineHeight = "15vh";  //center vertically (one line only)
+        return newElem;
+    }
 }
-export const getSwordElem: GetSpellElem = () => {
-    const elem = getDefaultElem();
-    elem.style.background = "rgba(169, 69, 42, 169)";
-    elem.innerHTML = "Sword of Semantics";
-    return elem;
+
+////////////////////////////////////////////
+// SWORD SPELL                            //
+//   Deal 3 damage to front minion.       //
+// FLAVOR TEXT                            //
+//   It'll give you major and minor cuts. //
+//   You'll need to patch yourself up.    //
+////////////////////////////////////////////
+export const Sword: Spell = {
+    func (manager) {
+        return () => {manager.minionsSortedByX[0].changeHp(-3);}
+    },
+
+    get elem() {
+        const newElem = Default.elem;
+        newElem.style.background = "rgba(169, 69, 42, 169)";
+        newElem.innerHTML = "Sword of Semver";
+        return newElem;
+    }
 }
