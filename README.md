@@ -1,3 +1,3 @@
 # GameMAP
 ### Game and Media Modules and Projects
-**GameMAP** is a monorepo of HTML5 game projects and modular JS libraries.
+**GameMAP** is a monorepo of personal HTML5 game projects and related ES6 modules.
