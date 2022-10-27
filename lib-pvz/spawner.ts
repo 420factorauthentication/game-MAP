@@ -36,7 +36,7 @@ class MinionSpawner implements MinionManager {
                 setTimeout(() => {this.spawn(spawnGroup.type);},
                     (spawnGroup.timeStart + (spawnGroup.timeStep * i)));
     }
-SZ
+
     kill (minion: MinionEntity) {
         minion.die();
         this.#minions.splice (this.#minions.indexOf(minion), 1);
