@@ -4,7 +4,7 @@ import { MinionManager } from "../../lib-pvz/types";
 ///////////////////////////////////////
 // Template for designing new Spells //
 ///////////////////////////////////////
-export type Spell = {
+export type Spell = Readonly<{
 
     // Generates a Spell function at runtime,
     // using the MinionManager to find targets.
@@ -14,7 +14,7 @@ export type Spell = {
     // Generates a new HTMLElement at runtime,
     // with the desired style for a HotbarButton
     get elem(): HTMLElement;
-}
+}>;
 
 
 /////////////

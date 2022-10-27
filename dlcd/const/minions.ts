@@ -1,7 +1,7 @@
 import { MinionType } from "../../lib-pvz/types";
 
 
-export const Axeman: MinionType = {
+export const Axeman: Readonly<MinionType> = {
     hp: 2,
     movSpd: 2,
     atkSpd: 1,
