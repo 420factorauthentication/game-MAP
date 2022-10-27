@@ -22,10 +22,10 @@ export interface MinionEntity {
     readonly target : Base;
     x: number;
     y: number;
-    hp    : number;
-    movSpd: viewPerSec;
-    atkSpd: Hz;
-    atkDmg: number;
+    get hp    (): number;
+    get movSpd(): viewPerSec;
+    get atkSpd(): Hz;
+    get atkDmg(): number;
     modHp       : (amount: number, time: ms)     => void;
     modMovSpd   : (amount: viewPerSec, time: ms) => void;
     modAtkSpd   : (amount: Hz, time: ms)         => void;
