@@ -52,40 +52,40 @@ class Minion implements MinionEntity {
 
     modHp (amount: number, time: ms) {
         this.stats.addMod ("hp", amount, time);
-        if (this.hp <= 0) this.manager.kill(this);
-        setTimeout(() => {if (this.hp <= 0) this.manager.kill(this);}, time);
+        this.onHpChange();
+        setTimeout(() => {this.onHpChange();}, time+1);
     }
     modMovSpd (amount: number, time: ms) {
         this.stats.addMod ("movSpd", amount, time);
-        this.refreshMoveState();
-        setTimeout(() => {this.refreshMoveState();}, time+1);
+        this.onMovChange();
+        setTimeout(() => {this.onMovChange();}, time+1);
     }
     modAtkSpd (amount: number, time: ms) {
         this.stats.addMod ("atkSpd", amount, time);
-        this.refreshAttackState();
-        setTimeout(() => {this.refreshAttackState();}, time+1);
+        this.onAtkChange();
+        setTimeout(() => {this.onAtkChange();}, time+1);
     }
     modAtkDmg (amount: number, time: ms) {
         this.stats.addMod ("atkDmg", amount, time);
-        this.refreshAttackState();
-        setTimeout(() => {this.refreshAttackState();}, time+1);
+        this.onAtkChange();
+        setTimeout(() => {this.onAtkChange();}, time+1);
     }
 
     changeHp (amount: number) {
         this.stats.change ("hp", amount);
-        if (this.hp <= 0) this.manager.kill(this);
+        this.onHpChange();
     }
     changeMovSpd (amount: number) {
         this.stats.change ("movSpd", amount);
-        this.refreshMoveState();
+        this.onMovChange();
     }
     changeAtkSpd (amount: number) {
         this.stats.change ("atkSpd", amount);
-        this.refreshAttackState();
+        this.onAtkChange();
     }
     changeAtkDmg (amount: number) {
         this.stats.change ("atkDmg", amount);
-        this.refreshAttackState();
+        this.onAtkChange();
     }
 
 
@@ -171,24 +171,28 @@ class Minion implements MinionEntity {
         this.elem?.parentNode?.removeChild(this.elem);
     }
 
+    private onHpChange() {
+        if (this.hp <= 0) this.manager.kill(this);
+    }
+
+    private onMovChange() {
+        this.moveState = this.moveStateInit;
+        if (this.ai.currState?.name == "minionMove")
+            this.ai.set(this.moveState);
+    }
+
+    private onAtkChange() {
+        this.attackState = this.attackStateInit;
+        if (this.ai.currState?.name == "minionAttack")
+            this.ai.set(this.attackState);
+    }
+
     private setElemX (left: vw) {
         this.elem.style.left = '' + left + "vw";
     }
 
     private setElemY (top: vh) {
         this.elem.style.top = '' + top + "vh";
-    }
-
-    private refreshMoveState() {
-        this.moveState = this.moveStateInit;
-        if (this.ai.currState?.name == "minionMove")
-            this.ai.set(this.moveState);
-    }
-
-    private refreshAttackState() {
-        this.attackState = this.attackStateInit;
-        if (this.ai.currState?.name == "minionAttack")
-            this.ai.set(this.attackState);
     }
 }
 
