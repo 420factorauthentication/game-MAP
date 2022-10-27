@@ -2,7 +2,7 @@ import { ms } from "../lib-meth/types";
 
 
 export interface StatMod {
-    key: string;
+    key   : string;
     amount: number;
-    time: ms;  // 0 = permanent
+    time  : ms;      // 0 = permanent
 }

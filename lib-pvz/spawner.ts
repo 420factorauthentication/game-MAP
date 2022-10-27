@@ -20,7 +20,7 @@ class MinionSpawner implements MinionManager {
 
     #minions: MinionEntity[] = [];
     get minions(): readonly MinionEntity[]   {return this.#minions;}
-    get minionsSortedByX(): readonly MinionEntity[] {
+    get minionsSortX(): readonly MinionEntity[] {
         const minionsCopy = [...this.minions];
         minionsCopy.sort ((a,b) => {
             if (a.x < b.x) return -1;

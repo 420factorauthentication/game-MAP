@@ -45,7 +45,7 @@ export const Default: Spell = {
 ////////////////////////////////////////////
 export const Sword: Spell = {
     func (manager) {
-        return () => {manager.minionsSortedByX[0].changeHp(-3);}
+        return () => {manager.minionsSortX[0].changeHp(-3);}
     },
 
     get elem() {
