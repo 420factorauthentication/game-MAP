@@ -1,4 +1,4 @@
-import { Hz, viewPerSec, ms, vw, vh } from "../lib-meth/types";
+import { Hz, viewPerSec, ms, vw, vh, htmlAttributeValue } from "../lib-meth/types";
 
 
 export interface Base {
@@ -38,7 +38,17 @@ export interface MinionEntity {
 }
 
 export interface MinionManager {
-    get minions()     : readonly MinionEntity[];
-    get minionsSortX(): readonly MinionEntity[];
+    minions     : readonly MinionEntity[];
+    minionsSortX: readonly MinionEntity[];
+    startLevel (level: SpawnGroup[]);
     kill (minion: MinionEntity): void;
+    spawn (type: MinionType, initOptions?:
+        {elem?: HTMLElement, parent?: Node, htmlClass?: htmlAttributeValue});
+}
+
+export interface SpawnGroup {
+    type: MinionType;
+    amount: number;
+    timeStart: ms;
+    timeStep: ms;
 }

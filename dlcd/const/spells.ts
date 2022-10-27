@@ -34,7 +34,7 @@ export const Default: Spell = {
         newElem.style.lineHeight = "15vh";  //center vertically (one line only)
         return newElem;
     }
-}
+};
 
 ////////////////////////////////////////////
 // SWORD SPELL                            //
@@ -54,4 +54,4 @@ export const Sword: Spell = {
         newElem.innerHTML = "Sword of Semver";
         return newElem;
     }
-}
+};

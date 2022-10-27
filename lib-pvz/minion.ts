@@ -1,6 +1,6 @@
 import { Base, MinionEntity, MinionManager, MinionType } from "./types";
 import { State } from "../lib-smac/types";
-import { cssPropertyName, htmlAttributeValue, ms, vw, vh } from "../lib-meth/types";
+import { htmlAttributeValue, ms, vw, vh } from "../lib-meth/types";
 
 import StateMachine from "../lib-smac/smac.js";
 import Stats from "../lib-statsys/stats.js";

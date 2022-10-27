@@ -1,4 +1,4 @@
-import { Base, MinionType, MinionManager, MinionEntity } from "./types";
+import { Base, MinionType, MinionManager, MinionEntity, SpawnGroup } from "./types";
 import { htmlAttributeValue, vw, vh } from "../lib-meth/types";
 
 import Minion from "./minion.js";
@@ -29,6 +29,18 @@ class MinionSpawner implements MinionManager {
         });
         return minionsCopy;
     }
+
+    startLevel (level: readonly SpawnGroup[] | SpawnGroup[]) {
+        for (const spawnGroup of level)
+            for (let i = 0; i < spawnGroup.amount; i++)
+                setTimeout(() => {this.spawn(spawnGroup.type);},
+                    (spawnGroup.timeStart + (spawnGroup.timeStep * i)));
+    }
+SZ
+    kill (minion: MinionEntity) {
+        minion.die();
+        this.#minions.splice (this.#minions.indexOf(minion), 1);
+    }
     
     spawn (
         type: MinionType,
@@ -48,11 +60,6 @@ class MinionSpawner implements MinionManager {
         );
         this.#minions.push(newMinion);
         return newMinion;
-    }
-
-    kill (minion: MinionEntity) {
-        minion.die();
-        this.#minions.splice (this.#minions.indexOf(minion), 1);
     }
 }
 
