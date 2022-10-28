@@ -4,7 +4,7 @@ import { StatMod } from "./types.js";
 
 class Stats {
     // obj.base[key]: Get base stat
-    constructor (public base: object) {}
+    constructor (public base: object) {Object.preventExtensions(this);}
 
     // obj.current(key): Get current stat
     current (key: string) {

@@ -1,0 +1,9 @@
+{
+    "compilerOptions": {
+        "esModuleInterop" : true,
+    },
+    "references": [
+        { "path": "./dlcd" }
+    ],
+    "files": [],
+}

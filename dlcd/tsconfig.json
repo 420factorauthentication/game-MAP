@@ -1,7 +1,5 @@
 {
-    "compilerOptions": {
-        "target": "ES6",
-        "outDir": "../_out",
-    },
-    "include": ["./src/**/*", "./const/**/*"],
+    "extends": "../tsconfig.proj.json",
+    "include": ["./src/**/*", "./const/**/*",  "../*/**/*"],
+    "exclude": ["../_out/**/*", "../**/*.spec.*"],
 }
