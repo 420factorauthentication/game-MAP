@@ -1,4 +1,4 @@
-import { Base, MinionEntity, MinionManager, MinionType } from "./types";
+import { BaseEntity, MinionEntity, MinionManager, MinionType } from "./types";
 import { State } from "../lib-smac/types";
 import { htmlAttributeValue, ms, vw, vh } from "../lib-meth/types";
 
@@ -10,7 +10,7 @@ import Spriteling from "../node_modules/spriteling/dist/spriteling.js";
 
 /////////////////////////////////////////////////////////////
 // An enemy represented by an HTMLElement                  //
-// Moves left until it reaches a target Base, then attacks //
+// Moves left until it reaches a target BaseEntity, then attacks //
 /////////////////////////////////////////////////////////////
 class Minion implements MinionEntity {
 
@@ -20,7 +20,7 @@ class Minion implements MinionEntity {
     constructor (
         readonly manager: MinionManager,
         readonly type: MinionType,
-        readonly target: Base,
+        readonly target: BaseEntity,
         private _x: number,
         private _y: number,
         initOptions?: {
@@ -143,7 +143,7 @@ class Minion implements MinionEntity {
             name: "minionMove",
             loopTime: (1000 / this.stats.current("movSpd")),
             onLoop: () => {
-                if (--this.x < this.target.x)
+                if (--this.x <= this.target.x)
                     this.ai.set(this.attackState);
             },
         }; return moveState;

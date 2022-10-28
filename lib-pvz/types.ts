@@ -1,12 +1,10 @@
 import { Hz, viewPerSec, ms, vw, vh, htmlAttributeValue } from "../lib-meth/types";
 
 
-export interface Base {
-    hp    : number;
-    x     : vw;
-    y     : vh;
-    width : vw;
-    height: vh;
+export interface BaseEntity {
+    hp: number;
+    x : vw;
+    y : vh;
 }
 
 export interface MinionType {
@@ -19,7 +17,7 @@ export interface MinionType {
 export interface MinionEntity {
     readonly manager: MinionManager;
     readonly type   : MinionType;
-    readonly target : Base;
+    readonly target : BaseEntity;
     x: number;
     y: number;
     get hp    (): number;

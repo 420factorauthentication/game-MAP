@@ -1,4 +1,4 @@
-import { Base, MinionType, MinionManager, MinionEntity, SpawnGroup } from "./types";
+import { BaseEntity, MinionType, MinionManager, MinionEntity, SpawnGroup } from "./types";
 import { htmlAttributeValue, vw, vh } from "../lib-meth/types";
 
 import Minion from "./minion.js";
@@ -11,7 +11,7 @@ import { rand } from "../lib-meth/meth.js";
 ///////////////////////////////////////////////////////////
 class MinionSpawner implements MinionManager {
     constructor (
-        public target: Base,
+        public target: BaseEntity,
         public minX: vw = 50,  //left
         public maxX: vw = 80,  //right
         public minY: vh = 10,  //top
