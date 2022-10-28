@@ -1,5 +1,12 @@
 {
     "extends": "../tsconfig.proj.json",
-    "include": ["./src/**/*", "./const/**/*",  "../*/**/*"],
-    "exclude": ["../_out/**/*", "../**/*.spec.*"],
+    "include": [
+        "./src/**/*",
+        "./const/**/*",
+        "../lib-*/**/*",
+    ],
+    "exclude": [
+        // "../_out/**/*",
+        "../**/*.spec.*",
+    ],
 }
