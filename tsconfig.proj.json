@@ -1,10 +1,10 @@
 {
     "compilerOptions": {
-        "rootDir"         : "./",
-        "outDir"          : "./_out",
-        "target"          : "ES6",
+        "rootDir": "./",
+        "outDir": "./_out",
+        "target": "ES6",
         "moduleResolution": "node",
-        "composite"       : true,
-        "declarationMap"  : true,
-    },
+        "composite": true,
+        "declarationMap": true
+    }
 }

@@ -1,3 +1,5 @@
-export function rand (min: number, max: number) {
+/** @format */
+
+export function rand(min: number, max: number) {
     return min + Math.random() * (max - min);
 }

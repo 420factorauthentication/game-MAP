@@ -1,5 +1,6 @@
-import { HotbarContainer, HotbarItem } from "./types";
+/** @format */
 
+import {HotbarContainer, HotbarItem} from "./types";
 
 ////////////////////////////////////
 // A button in a row of buttons   //
@@ -7,42 +8,42 @@ import { HotbarContainer, HotbarItem } from "./types";
 // or when a hotkey is pressed    //
 ////////////////////////////////////
 class HotbarButton implements HotbarItem {
-
     ////////////
     // CONFIG //
     ////////////
-    constructor (
+    constructor(
         private _hotbar: HotbarContainer,
         public hotkey: string,
         public onPress: Function,
-        elem?: HTMLElement,
-    ){
+        elem?: HTMLElement
+    ) {
         if (elem) this.#elem = elem;
         this.hotbar.add(this);
         addEventListener("keydown", this);
     }
 
-
     ////////////////
     // COMPONENTS //
     ////////////////
-    get hotbar() {return this._hotbar;}
+    get hotbar() {
+        return this._hotbar;
+    }
 
     #elem: HTMLElement = HotbarButton.elemInit;
-    get elem() {return this.#elem;}
-
+    get elem() {
+        return this.#elem;
+    }
 
     ///////////////
     // CONSTANTS //
     ///////////////
-    readonly eventTypes: readonly (keyof WindowEventMap) [] = ["keydown"];
-
+    readonly eventTypes: readonly (keyof WindowEventMap)[] = ["keydown"];
 
     //////////
     // INIT //
     //////////
     static get elemInit() {
-        const elem = <HTMLElement> document.createElement("a");
+        const elem = <HTMLElement>document.createElement("a");
         elem.style.display = "block";
         elem.style.boxSizing = "border-box";
         elem.style.background = "content-box radial-gradient(slategray, gray)";
@@ -50,11 +51,10 @@ class HotbarButton implements HotbarItem {
         return elem;
     }
 
-
     ////////////
     // EVENTS //
     ////////////
-    handleEvent (e: KeyboardEvent) {
+    handleEvent(e: KeyboardEvent) {
         if (e.key == this.hotkey) this.onPress();
     }
 }
