@@ -9,4 +9,5 @@ module.exports = {
     // testRegex: "(/__tests__/.*|(\\.|/)(test|spec))\\.[jt]sx?$",
     testRegex: "((\\.|/)spec)\\.tsx?$",
     moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json", "node"],
+    testPathIgnorePatterns: ["/node_modules/"],
 };

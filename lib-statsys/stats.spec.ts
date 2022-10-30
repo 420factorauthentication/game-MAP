@@ -48,12 +48,12 @@ describe("Stats.base", () => {
         expect(() => {
             const obj = {a: 1};
             const stats = new Stats(obj);
-            Object.defineProperty(stats, "b", {value: 2});
+            Object.defineProperty(stats.base, "b", {value: 2});
         }).not.toThrow();
         expect(() => {
             const obj = Object.preventExtensions({a: 1});
             const stats = new Stats(obj);
-            Object.defineProperty(stats, "b", {value: 2});
+            Object.defineProperty(stats.base, "b", {value: 2});
         }).toThrow();
     });
 });
@@ -75,7 +75,7 @@ describe("Stats.current()", () => {
         stats.change("a", 69);
         const v2 = stats.current("a");
         stats.change("a", 1337);
-        const v3 = stats.current("");
+        const v3 = stats.current("a");
         expect(v1).toEqual(420);
         expect(v2).toEqual(420 + 69);
         expect(v3).toEqual(420 + 69 + 1337);
