@@ -4,29 +4,33 @@ import {ms} from "../lib-meth/types.js";
 import {StatMod} from "./types.js";
 
 class Stats {
-    // obj.base[key]: Get base stat number
+    // Base stat number
     constructor(public base: object) {
         Object.preventExtensions(this);
     }
 
-    // obj.current(key): Get current stat number
+    // Current stat number
     current(key: string) {
         let value = this.base[key];
-        if (value === undefined || value === null) return value;
-        if (this.changes[key] !== undefined) value += this.changes[key];
+        if (typeof value !== "number") return value;
+        if (this.diffs[key] !== undefined) value += this.diffs[key];
         return value;
     }
 
-    // Permanent adjustment to current stat number
-    // Returns difference between base and current
+    // Adjust Current permanently
+    // Returns Diff (Current - Base)
     change(key: string, amount: number) {
-        if (this.changes[key] === undefined) this.changes[key] = 0;
-        return (this.changes[key] += amount);
+        if (typeof this.base[key] !== "number")
+            throw new Error("Cant change non-number stat");
+        if (typeof this.diffs[key] !== "number") this.diffs[key] = 0;
+        return (this.diffs[key] += amount);
     }
 
-    // Temporary or permanent adjustment to current stat number
-    // Returns difference between base and adjusted current num
+    // Adjust Current temporarily or permanently
+    // Returns Diff (Current - Base) after adjustment
     addMod(key: string, amount: number, time: ms) {
+        if (typeof this.base[key] !== "number")
+            throw new Error("Cant mod non-number stat");
         const newMod: StatMod = {key, amount, time};
         this.#mods.push(newMod);
         if (time <= 0) return this.change(key, amount);
@@ -37,23 +41,27 @@ class Stats {
         return this.change(key, amount);
     }
 
-    // Removes an existing stat adjustment, reverting its value
-    // Returns difference between base and readjusted current
-    removeMod(mod: StatMod) {
-        const index = this.#mods.indexOf(mod);
-        if (index === -1) return;
-        this.#mods.splice(this.#mods.indexOf(mod), 1);
+    // End temporary/permanent adjustment to Current
+    // Returns Diff (Current - Base) after adjustment end
+    removeMod(index: number);
+    removeMod(mod: StatMod);
+    removeMod(v: number | StatMod) {
+        const index = typeof v === "number" ? v : this.#mods.indexOf(v);
+        const mod = typeof v === "number" ? this.mods[index] : v;
+        if (index < 0) return;
+        if (mod === undefined || mod === null) return;
+        this.#mods.splice(index, 1);
         return this.change(mod.key, -mod.amount);
     }
 
-    // All temporary and permanent stat adjustments
+    // Base + Diff = Current
+    private diffs = {};
+
+    // All temporary/permanent adjustments to Current
     #mods: StatMod[] = [];
     get mods(): readonly StatMod[] {
         return this.#mods;
     }
-
-    // Tracks the difference between base and current
-    private changes = {};
 }
 
 export default Stats;

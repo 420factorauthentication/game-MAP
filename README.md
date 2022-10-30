@@ -10,6 +10,12 @@
 
 ## Project Settings
 
+### VSCode Extensions
+
+-   [Prettier Formatter for Visual Studio Code](vscode:extension/esbenp.prettier-vscode)
+
+<br>
+
 ### package.json
 
 -   `npm install` also pre-installs TypeScript and Prettier globally
