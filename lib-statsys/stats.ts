@@ -46,9 +46,7 @@ class Stats {
         else
             modEndPromise = new Promise<boolean>((resolve) => {
                 setTimeout(resolve, time);
-            }).then(() => {
-                return this.removeMod(uuid);
-            });
+            }).then(() => this.removeMod(uuid));
 
         return [uuid, modEndPromise];
     }
