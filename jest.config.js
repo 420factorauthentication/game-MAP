@@ -10,4 +10,6 @@ module.exports = {
     testRegex: "((\\.|/)spec)\\.tsx?$",
     moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json", "node"],
     testPathIgnorePatterns: ["/node_modules/"],
+    detectLeaks: true,
+    detectOpenHandles: true,
 };

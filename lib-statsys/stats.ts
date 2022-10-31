@@ -3,6 +3,8 @@
 import {ms} from "../lib-meth/types.js";
 import {StatMod} from "./types.js";
 
+import {v4 as uuidv4} from "uuid";
+
 class Stats {
     // Base stat number
     constructor(public base: object) {
@@ -13,54 +15,73 @@ class Stats {
     current(key: string) {
         let value = this.base[key];
         if (typeof value !== "number") return value;
-        if (this.diffs[key] !== undefined) value += this.diffs[key];
+        if (this.diffs[key]) value += this.diffs[key];
         return value;
     }
 
-    // Adjust Current permanently
-    // Returns Diff (Current - Base)
+    // Adjust stat permanently
     change(key: string, amount: number) {
         if (typeof this.base[key] !== "number")
             throw new Error("Cant change non-number stat");
-        if (typeof this.diffs[key] !== "number") this.diffs[key] = 0;
-        return (this.diffs[key] += amount);
+        if (!this.diffs[key]) this.diffs[key] = 0;
+        this.diffs[key] += amount;
     }
 
-    // Adjust Current temporarily or permanently
-    // Returns Diff (Current - Base) after adjustment
-    addMod(key: string, amount: number, time: ms) {
+    // Adjust stat temporarily or permanently
+    // Returns Tuple [uuid, modEndPromise]
+    //  After mod.time, modEndPromise resolves to
+    //   true if mod expired naturally or mod.time = 0 (permanent)
+    //   false if mod was manually removed before expiration
+    addMod(key: string, amount: number, time: ms): [string, Promise<boolean>] {
         if (typeof this.base[key] !== "number")
             throw new Error("Cant mod non-number stat");
-        const newMod: StatMod = {key, amount, time};
+
+        const uuid: string = uuidv4();
+        const newMod: StatMod = Object.freeze({uuid, key, amount, time});
+        this.change(key, amount);
         this.#mods.push(newMod);
-        if (time <= 0) return this.change(key, amount);
-        setTimeout(() => {
-            this.#mods.splice(this.#mods.indexOf(newMod), 1);
-            this.change(key, -amount);
-        }, time);
-        return this.change(key, amount);
+
+        let modEndPromise: Promise<boolean>;
+        if (time <= 0) modEndPromise = new Promise<boolean>(() => true);
+        else
+            modEndPromise = new Promise<boolean>((resolve) => {
+                setTimeout(resolve, time);
+            }).then(() => {
+                return this.removeMod(uuid);
+            });
+
+        return [uuid, modEndPromise];
     }
 
-    // End temporary/permanent adjustment to Current
-    // Returns Diff (Current - Base) after adjustment end
-    removeMod(index: number);
-    removeMod(mod: StatMod);
-    removeMod(v: number | StatMod) {
-        const index = typeof v === "number" ? v : this.#mods.indexOf(v);
-        const mod = typeof v === "number" ? this.mods[index] : v;
-        if (index < 0) return;
-        if (mod === undefined || mod === null) return;
-        this.#mods.splice(index, 1);
-        return this.change(mod.key, -mod.amount);
+    // End temporary/permanent stat adjustment
+    // Returns true if mod was found and removed, false if not found
+    removeMod(uuid: string) {
+        if (!this.containsMod(uuid)) return false;
+        const mod = this.getMod(uuid);
+        this.#mods.splice(this.getModIndex(uuid), 1);
+        this.change(mod.key, -mod.amount);
+        return true;
     }
 
-    // Base + Diff = Current
+    // Tracks adjustment totals
     private diffs = {};
 
-    // All temporary/permanent adjustments to Current
+    // All temporary/permanent stat adjustments
     #mods: StatMod[] = [];
     get mods(): readonly StatMod[] {
-        return this.#mods;
+        return Object.freeze(Object.assign({}, this.#mods));
+    }
+
+    containsMod(uuid: string) {
+        return this.#mods.some((mod) => mod.uuid === uuid);
+    }
+
+    getModIndex(uuid: string) {
+        return this.#mods.findIndex((mod) => mod.uuid === uuid);
+    }
+
+    getMod(uuid: string) {
+        return this.#mods.find((mod) => mod.uuid === uuid);
     }
 }
 

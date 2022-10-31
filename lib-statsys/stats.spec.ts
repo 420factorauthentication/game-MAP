@@ -4,7 +4,16 @@ import Stats from "./stats";
 
 jest.setTimeout(1000);
 
-describe("A Stats instance", () => {
+/////////////////////////////////////////////////////////////////////////////
+// To fix tests with timeouts/intervals within promises, or vice versa:    //
+//   insert "await flushPromises();" after each jest.advanceTimers()       //
+// SOURCE:                                                                 //
+//   https://gist.github.com/apieceofbart/e6dea8d884d29cf88cdb54ef14ddbcc4 //
+/////////////////////////////////////////////////////////////////////////////
+const flushPromises = () =>
+    new Promise(jest.requireActual("timers").setImmediate);
+
+describe("A STATS INSTANCE", () => {
     it("is not extensible", () => {
         const stats = new Stats({a: 1});
         expect(() => {
@@ -13,7 +22,7 @@ describe("A Stats instance", () => {
     });
 });
 
-describe("Stats.base", () => {
+describe("STATS.BASE", () => {
     it("is writable", () => {
         const stats = new Stats({a: 1});
         expect(() => {
@@ -58,7 +67,7 @@ describe("Stats.base", () => {
     });
 });
 
-describe("Stats.current()", () => {
+describe("STATS.CURRENT()", () => {
     it("returns Base initially", () => {
         const stats = new Stats({a: 1});
         expect(stats.current("a")).toBe(stats.base["a"]);
@@ -71,31 +80,51 @@ describe("Stats.current()", () => {
 
     it("returns updated value on change()", () => {
         const stats = new Stats({a: 420});
-        const v1 = stats.current("a");
+        expect(stats.current("a")).toEqual(420);
         stats.change("a", 69);
-        const v2 = stats.current("a");
+        expect(stats.current("a")).toEqual(420 + 69);
         stats.change("a", 1337);
-        const v3 = stats.current("a");
-        expect(v1).toEqual(420);
-        expect(v2).toEqual(420 + 69);
-        expect(v3).toEqual(420 + 69 + 1337);
+        expect(stats.current("a")).toEqual(420 + 69 + 1337);
     });
 
     it("returns updated value on Mod Start", () => {
+        jest.useFakeTimers();
         const stats = new Stats({a: 420});
-        const v1 = stats.current("a");
-        stats.addMod("a", 69, 1000);
-        const v2 = stats.current("a");
-        stats.addMod("a", 1337, 1000);
-        const v3 = stats.current("a");
-        expect(v1).toEqual(420);
-        expect(v2).toEqual(420 + 69);
-        expect(v3).toEqual(420 + 69 + 1337);
+        expect(stats.current("a")).toEqual(420);
+        stats.addMod("a", 69, 0);
+        expect(stats.current("a")).toEqual(420 + 69);
+        stats.addMod("a", 1337, 2222);
+        expect(stats.current("a")).toEqual(420 + 69 + 1337);
+        jest.runAllTimers();
     });
 
-    it.todo("returns updated value on Mod End");
+    it("returns updated value on Mod End", () => {
+        jest.useFakeTimers();
+        const stats = new Stats({a: 420});
+        const promise = stats.addMod("a", 69, 2222)[1].then((data) => {
+            expect(data).toStrictEqual(true);
+            expect(stats.current("a")).toEqual(420);
+        });
+        jest.runAllTimers();
+        return promise;
+    });
 
-    it.todo("returns updated value on removeMod()");
+    it("returns updated value on Mod Remove", async () => {
+        jest.useFakeTimers();
+        const stats = new Stats({a: 420});
+        const uuid0 = stats.addMod("a", 21, 555)[0];
+        const uuid1 = stats.addMod("a", 69, 2222)[0];
+        const uuid2 = stats.addMod("a", 1337, 2222)[0];
+        jest.advanceTimersByTime(444);
+        await flushPromises();
+        expect(stats.current("a")).toBe(420 + 21 + 69 + 1337);
+        stats.removeMod(uuid1);
+        expect(stats.current("a")).toBe(420 + 21 + 1337);
+        jest.advanceTimersByTime(444);
+        await flushPromises();
+        expect(stats.current("a")).toBe(420 + 1337);
+        jest.runAllTimers();
+    });
 
     it("returns updated value on base mutation", () => {
         const stats = new Stats({a: 1});
@@ -113,30 +142,46 @@ describe("Stats.current()", () => {
     });
 });
 
-describe("Stats.change()", () => {
-    it.todo("doesnt mutate base");
-
-    it.todo("mutates diffs");
-});
-
-describe("Stats.addMod()", () => {
-    it.todo("doesnt mutate base");
-
-    it.todo("mutates mods");
-});
-
-describe("Stats.removeMod()", () => {
-    it.todo("doesnt mutate base");
-
-    it.todo("mutates mods");
-});
-
-describe("Stats.mods", () => {
+describe("STATS.MODS", () => {
     it("is readonly", () => {
         const stats = new Stats({a: 1});
-        stats.addMod("a", 1, 0);
         expect(() => {
-            stats[0] = null;
+            stats.mods["foo"] = 2;
         }).toThrow();
     });
+
+    it("is properly updated on Mod Start", () => {
+        jest.useFakeTimers();
+        const stats = new Stats({a: 1});
+        expect(stats.mods[0]).toBeUndefined();
+        stats.addMod("a", 1, 2222);
+        expect(stats.mods[0]).toBeDefined();
+        jest.runAllTimers();
+    });
+
+    it("is properly updated on Mod End", () => {
+        jest.useFakeTimers();
+        const stats = new Stats({a: 1});
+        const promise = stats.addMod("a", 1, 2222)[1].then((data) => {
+            expect(data).toStrictEqual(true);
+            expect(stats.mods[0]).toBeUndefined();
+        });
+        jest.runAllTimers();
+        return promise;
+    });
+
+    it("is properly updated on Mod Remove", async () => {
+        jest.useFakeTimers();
+        const stats = new Stats({a: 420});
+        const uuid0 = stats.addMod("a", 69, 2222)[0];
+        const uuid1 = stats.addMod("a", 1337, 2222)[0];
+        jest.advanceTimersByTime(1111);
+        await flushPromises();
+        stats.removeMod(uuid0);
+        expect(stats.mods[0]).toBeDefined();
+        expect(stats.mods[1]).toBeUndefined();
+        jest.runAllTimers();
+    });
 });
+
+describe("MODS", () => {});
