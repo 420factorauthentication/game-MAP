@@ -2,6 +2,8 @@
 
 import {ms} from "../lib-meth/types";
 
+////////////////////////////////////////////////////////////////////////////////
+
 export interface StatMod {
     readonly uuid: string;
     readonly key: string;

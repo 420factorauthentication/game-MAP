@@ -4,14 +4,15 @@ import Stats from "./stats";
 
 jest.setTimeout(1000);
 
+const flushPromises = () =>
+    new Promise(jest.requireActual("timers").setImmediate);
+
 /////////////////////////////////////////////////////////////////////////////
 // To fix tests with timeouts/intervals within promises, or vice versa:    //
 //   insert "await flushPromises();" after each jest.advanceTimers()       //
 // SOURCE:                                                                 //
 //   https://gist.github.com/apieceofbart/e6dea8d884d29cf88cdb54ef14ddbcc4 //
 /////////////////////////////////////////////////////////////////////////////
-const flushPromises = () =>
-    new Promise(jest.requireActual("timers").setImmediate);
 
 describe("A STATS INSTANCE", () => {
     it("is not extensible", () => {
@@ -132,7 +133,7 @@ describe("STATS.CURRENT()", () => {
         expect(stats.current("a")).toBe(2);
     });
 
-    it("accepts params [...keyof base]", () => {
+    it("accepts args [...keyof base]", () => {
         const base = {};
         for (let i = 0; i < 10000; i++) {
             base["abcd" + i] = i;

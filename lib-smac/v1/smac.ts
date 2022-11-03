@@ -1,7 +1,7 @@
 /** @format */
 
 import {State, StateLink} from "./types";
-import {ms, percent, timeoutID, intervalID} from "../lib-meth/types";
+import {ms, percent} from "../../lib-meth/types";
 
 class StateMachine {
     ////////////
@@ -25,21 +25,21 @@ class StateMachine {
     /////////
     // API //
     /////////
-    set(state: State, ...params) {
+    set(state: State, ...args) {
         this.cleanupTransition();
-        this.startLinks(state, ...params);
+        this.startLinks(state, ...args);
         const time = this.getTimeToTransitionTo(state);
         if (time) {
-            this.startTransition(time, state, ...params);
-            this.startLinkUpdates(time, state, ...params);
+            this.startTransition(time, state, ...args);
+            this.startLinkUpdates(time, state, ...args);
         } else {
-            this.finishTransition(state, ...params);
+            this.finishTransition(state, ...args);
             this.#currState = state;
         }
     }
 
-    override(state: State, ...params) {
-        this.finishTransition(state, ...params);
+    override(state: State, ...args) {
+        this.finishTransition(state, ...args);
         this.cleanupTransition();
         this.#currState = state;
     }
@@ -66,67 +66,58 @@ class StateMachine {
         );
     }
 
-    private startLinks(state: State, ...params) {
+    private startLinks(state: State, ...args) {
         for (const link of this.stateLinks) {
             if (this.testLink(link, state)) {
-                if (link.onStart) link.onStart(...params);
-                if (link.onUpdate) link.onUpdate(0, ...params);
+                if (link.onStart) link.onStart(...args);
+                if (link.onUpdate) link.onUpdate(0, ...args);
             }
         }
     }
 
-    private startLinkUpdates(time: ms, state: State, ...params) {
+    private startLinkUpdates(time: ms, state: State, ...args) {
         for (const link of this.stateLinks) {
             if (!this.testLink(link, state)) return;
             if (!link.onUpdate) return;
             this.updateIDs.push(
-                window.setInterval(
+                setInterval(
                     this.updateTransition,
                     link.updateTime,
                     link.updateTime,
                     time,
                     link.onUpdate,
-                    ...params
+                    ...args
                 )
             );
         }
     }
 
-    private startTransition(time: ms, state: State, ...params) {
-        this.transitionID = window.setTimeout(
-            this.override,
-            time,
-            state,
-            ...params
-        );
+    private startTransition(time: ms, state: State, ...args) {
+        this.transitionID = setTimeout(this.override, time, state, ...args);
     }
 
     private updateTransition(
         deltaTime: number,
         endTime: number,
-        onUpdate: (totalProgress: percent, ...params) => void,
-        ...params
+        onUpdate: (totalProgress: percent, ...args) => void,
+        ...args
     ) {
         this.#currProgress += deltaTime / endTime;
-        onUpdate(this.#currProgress, ...params);
+        onUpdate(this.#currProgress, ...args);
     }
 
-    private finishTransition(state: State, ...params) {
-        if (this.currState?.onExit) this.currState.onExit(...params);
-        if (state?.onEnter) state.onEnter(...params);
+    private finishTransition(state: State, ...args) {
+        if (this.currState?.onExit) this.currState.onExit(...args);
+        if (state?.onEnter) state.onEnter(...args);
 
         if (this.loopID) clearInterval(this.loopID);
         if (state?.onLoop)
-            this.loopID = window.setInterval(
-                state.onLoop,
-                state.loopTime,
-                ...params
-            );
+            this.loopID = setInterval(state.onLoop, state.loopTime, ...args);
         else this.loopID = undefined;
 
         for (const link of this.stateLinks)
             if (link.onFinish && this.testLink(link, state))
-                link.onFinish(...params);
+                link.onFinish(...args);
     }
 
     private cleanupTransition() {
@@ -141,13 +132,13 @@ class StateMachine {
     /////////////
 
     // If defined, current state has a looping function
-    private loopID: intervalID | undefined;
+    private loopID: NodeJS.Timeout | undefined;
 
     // If defined, state transition in progress
-    private transitionID: timeoutID | undefined;
+    private transitionID: NodeJS.Timeout | undefined;
 
     // If defined, ongoing transition has looping functions
-    private updateIDs: intervalID[] = [];
+    private updateIDs: NodeJS.Timeout[] = [];
 }
 
 export default StateMachine;

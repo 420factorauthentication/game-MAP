@@ -5,13 +5,15 @@ import {StatMod} from "./types.js";
 
 import {v4 as uuidv4} from "uuid";
 
+////////////////////////////////////////////////////////////////////////////////
+
 class Stats {
-    // Base stat number
+    // Stats.base[key]: Get base stat number
     constructor(public base: object) {
         Object.preventExtensions(this);
     }
 
-    // Current stat number
+    // Stats.current(key): Get current stat number
     current(key: string) {
         let value = this.base[key];
         if (typeof value !== "number") return value;
@@ -19,7 +21,7 @@ class Stats {
         return value;
     }
 
-    // Adjust stat permanently
+    // Unlogged, permanent stat adjustment
     change(key: string, amount: number) {
         if (typeof this.base[key] !== "number")
             throw new Error("Cant change non-number stat");
@@ -27,11 +29,12 @@ class Stats {
         this.diffs[key] += amount;
     }
 
-    // Adjust stat temporarily or permanently
-    // Returns Tuple [uuid, modEndPromise]
-    //  After mod.time, modEndPromise resolves to
-    //   true if mod expired naturally or mod.time = 0 (permanent)
+    // Log an object: Temporary or permanent stat adjustment
+    // Returns Tuple [uuid, PROMISE]
+    // After time, PROMISE resolves to
+    //   true if mod expired naturally or time=0
     //   false if mod was manually removed before expiration
+    //     (still waits full time before resolving to false)
     addMod(key: string, amount: number, time: ms): [string, Promise<boolean>] {
         if (typeof this.base[key] !== "number")
             throw new Error("Cant mod non-number stat");
@@ -51,8 +54,9 @@ class Stats {
         return [uuid, modEndPromise];
     }
 
-    // End temporary/permanent stat adjustment
-    // Returns true if mod was found and removed, false if not found
+    // Delete logged object, Revert stat adjustment
+    // Returns true if mod found and removed
+    // Returns false if mod not found
     removeMod(uuid: string) {
         if (!this.containsMod(uuid)) return false;
         const mod = this.getMod(uuid);
@@ -61,15 +65,16 @@ class Stats {
         return true;
     }
 
-    // Tracks adjustment totals
+    // Tracks unlogged and logged adjustment totals
     private diffs = {};
 
-    // All temporary/permanent stat adjustments
+    // All logged stat adjustment objects
     #mods: StatMod[] = [];
     get mods(): readonly StatMod[] {
         return Object.freeze(Object.assign({}, this.#mods));
     }
 
+    // HELPER FUNCTIONS
     containsMod(uuid: string) {
         return this.#mods.some((mod) => mod.uuid === uuid);
     }

@@ -1,2 +1,2 @@
 # State Machine Library
-Handles transitioning between states and executing periodic code.
+Executes asynchronous code through a state machine paradigm.

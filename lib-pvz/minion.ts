@@ -1,8 +1,8 @@
 import {BaseEntity, MinionEntity, MinionManager, MinionType} from "./types";
-import {State} from "../lib-smac/types";
+import {State} from "../lib-smac/v1/types";
 import {htmlAttributeValue, ms, vw, vh} from "../lib-meth/types";
 
-import StateMachine from "../lib-smac/smac.js";
+import StateMachine from "../lib-smac/v1/smac.js";
 import Stats from "../lib-statsys/stats.js";
 
 import Spriteling from "../node_modules/spriteling/dist/spriteling.js";
