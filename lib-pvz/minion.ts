@@ -1,8 +1,8 @@
 import {BaseEntity, MinionEntity, MinionManager, MinionType} from "./types";
-import {State} from "../lib-smac/v1/types";
+import {State} from "../lib-smac/types";
 import {htmlAttributeValue, ms, vw, vh} from "../lib-meth/types";
 
-import StateMachine from "../lib-smac/v1/smac.js";
+import StateMachine from "../lib-smac/smac.js";
 import Stats from "../lib-statsys/stats.js";
 
 import Spriteling from "../node_modules/spriteling/dist/spriteling.js";
@@ -103,7 +103,7 @@ class Minion implements MinionEntity {
 
     protected moveState: State = this.moveStateInit;
     protected attackState: State = this.attackStateInit;
-    protected static dieState: State = {name: "minionDie"};
+    protected static dieState: State = {uuid: "minionDie"};
 
     //////////
     // INIT //
@@ -143,8 +143,8 @@ class Minion implements MinionEntity {
 
     private get moveStateInit() {
         const moveState: State = {
-            name: "minionMove",
-            loopTime: 1000 / this.stats.current("movSpd"),
+            uuid: "minionMove",
+            loopInterval: 1000 / this.stats.current("movSpd"),
             onLoop: () => {
                 if (--this.x <= this.target.x) this.ai.set(this.attackState);
             },
@@ -154,8 +154,8 @@ class Minion implements MinionEntity {
 
     private get attackStateInit() {
         const attackState: State = {
-            name: "minionAttack",
-            loopTime: 1000 / this.stats.current("atkSpd"),
+            uuid: "minionAttack",
+            loopInterval: 1000 / this.stats.current("atkSpd"),
             onLoop: () => {
                 this.target.hp -= this.stats.current("atkDmg");
             },
@@ -181,13 +181,13 @@ class Minion implements MinionEntity {
 
     private onMovChange() {
         this.moveState = this.moveStateInit;
-        if (this.ai.currState?.name == "minionMove")
+        if (this.ai.state?.uuid == "minionMove")
             this.ai.set(this.moveState);
     }
 
     private onAtkChange() {
         this.attackState = this.attackStateInit;
-        if (this.ai.currState?.name == "minionAttack")
+        if (this.ai.state?.uuid == "minionAttack")
             this.ai.set(this.attackState);
     }
 
