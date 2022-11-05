@@ -2,6 +2,8 @@
 
 import {ms, percent} from "../lib-meth/types";
 
+////////////////////////////////////////////////////////////////////////////////
+
 export interface State {
     readonly uuid: string;
     onExit?: (...args) => void;
@@ -14,7 +16,8 @@ export interface Transition extends State {
     readonly origin?: State; //reverted to if transition stops
     readonly destination: State;
     readonly transitionTime: ms;
-    onLoop?: (transitionProgress: percent, ...args) => void;
+    //POSSIBLE FUTURE FEATURE ADDITION:
+    // onLoop?: (transitionProgress: percent, ...args) => void;
     //transitionProgress = elapsedTime / transitionTime
 }
 

@@ -9,6 +9,8 @@ import {
     htmlAttributeValue,
 } from "../lib-meth/types";
 
+////////////////////////////////////////////////////////////////////////////////
+
 export interface BaseEntity {
     hp: number;
     x: vw;

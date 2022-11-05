@@ -7,6 +7,7 @@ import {HotbarContainer, HotbarItem} from "./types";
 // Calls a function when clicked, //
 // or when a hotkey is pressed    //
 ////////////////////////////////////
+
 class HotbarButton implements HotbarItem {
     ////////////
     // CONFIG //

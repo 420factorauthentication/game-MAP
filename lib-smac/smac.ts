@@ -1,10 +1,9 @@
 /** @format */
 
-import {State, Transition, isTransition} from "./types";
-import {ms, percent} from "../lib-meth/types";
+import {State, isTransition} from "./types";
 
 ////////////////////////////////////////////////////////////////////////////////
-// setState returns a Promise that resolves to:
+// set() returns a Promise that resolves to:
 //   ANOTHER PROMISE if destination is another transition
 //   TRUE if transitionTime finishes naturally, or the state is not a transition
 //   FALSE if transition is manually stopped or state changes before it finishes
@@ -13,10 +12,16 @@ import {ms, percent} from "../lib-meth/types";
 
 class StateMachine {
     set(newState: State | undefined, ...args): Promise<boolean> {
-        this.state.onExit(...args);
-        newState.onEnter(...args);
-        clearInterval(this.#gc);
-        this.#gc = setInterval(newState.onLoop, newState.loopInterval, ...args);
+        if (this.state.onExit) this.state.onExit(...args);
+        if (newState.onEnter) newState.onEnter(...args);
+
+        clearInterval(this.#loopID);
+        if (newState.onLoop)
+            this.#loopID = setInterval(
+                newState.onLoop,
+                newState.loopInterval,
+                ...args
+            );
 
         this.#state = newState;
         if (!isTransition(newState)) return new Promise<boolean>(() => true);
@@ -39,7 +44,9 @@ class StateMachine {
         return this.#state;
     }
 
-    #gc: NodeJS.Timeout; //STATE.ONLOOP SETINTERVAL GARBAGECOLLECTION
+    #loopID: NodeJS.Timeout; //STATE.ONLOOP SETINTERVAL GARBAGECOLLECTION
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
 export default StateMachine;

@@ -11,6 +11,7 @@ import Spriteling from "../node_modules/spriteling/dist/spriteling.js";
 // An enemy represented by an HTMLElement                  //
 // Moves left until it reaches a target Base, then attacks //
 /////////////////////////////////////////////////////////////
+
 class Minion implements MinionEntity {
     ////////////
     // CONFIG //
@@ -167,9 +168,8 @@ class Minion implements MinionEntity {
     // HELPER FUNCTIONS //
     //////////////////////
 
-    // Use spawner.kill() instead of this function
-    //  since this function doesnt remove handle from spawner.minions
-    // This is for spawner to access private properties in spawner.kill()
+    // Use spawner.kill() instead of minion.die() when possible
+    // since minion.die() doesnt remove handle from spawner.minions
     die() {
         this.ai.set(Minion.dieState);
         this.elem?.parentNode?.removeChild(this.elem);
@@ -199,5 +199,7 @@ class Minion implements MinionEntity {
         this.elem.style.top = "" + top + "vh";
     }
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
 export default Minion;

@@ -7,6 +7,7 @@ import {
     MinionEntity,
     SpawnGroup,
 } from "./types";
+
 import {htmlAttributeValue, vw, vh} from "../lib-meth/types";
 
 import Minion from "./minion.js";
@@ -16,6 +17,7 @@ import {rand} from "../lib-meth/meth.js";
 // Defines a spawn location and target Base for Minions  //
 // Acts as a manager with handles to all spawned Minions //
 ///////////////////////////////////////////////////////////
+
 class MinionSpawner implements MinionManager {
     constructor(
         public target: BaseEntity,
@@ -72,5 +74,7 @@ class MinionSpawner implements MinionManager {
         return newMinion;
     }
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
 export default MinionSpawner;

@@ -5,6 +5,7 @@ import {HotbarContainer, HotbarItem} from "./types";
 //////////////////////
 // A row of buttons //
 //////////////////////
+
 class Hotbar implements HotbarContainer {
     ////////////
     // CONFIG //

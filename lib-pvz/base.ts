@@ -3,6 +3,8 @@
 import {vw, vh} from "../lib-meth/types";
 import {BaseEntity} from "./types";
 
+////////////////////////////////////////////////////////////////////////////////
+
 class Base implements BaseEntity {
     constructor(
         private _hp: number,
@@ -41,5 +43,7 @@ class Base implements BaseEntity {
         return elem;
     }
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
 export default Base;

@@ -184,5 +184,3 @@ describe("STATS.MODS", () => {
         jest.runAllTimers();
     });
 });
-
-describe("MODS", () => {});

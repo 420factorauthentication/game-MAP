@@ -1,4 +1,6 @@
 /** @format */
 
-export const ProgBarOrient = {horiz: 0, vert: 1} as const;
-export type _ProgBarOrient = typeof ProgBarOrient[keyof typeof ProgBarOrient];
+////////////////////////////////////////////////////////////////////////////////
+
+export const Flow = {leftToRight: 0, btmToTop: 1} as const;
+export type ProgBarFlow = typeof Flow[keyof typeof Flow];
