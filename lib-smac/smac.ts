@@ -1,6 +1,7 @@
 /** @format */
 
-import {State, isTransition} from "./types";
+import {State} from "./types";
+import {isTransition} from "./types.js";
 
 ////////////////////////////////////////////////////////////////////////////////
 // set() returns a Promise that resolves to:
@@ -12,7 +13,7 @@ import {State, isTransition} from "./types";
 
 class StateMachine {
     set(newState: State | undefined, ...args): Promise<boolean> {
-        if (this.state.onExit) this.state.onExit(...args);
+        if (this.state?.onExit) this.state.onExit(...args);
         if (newState.onEnter) newState.onEnter(...args);
 
         clearInterval(this.#loopID);
@@ -29,7 +30,7 @@ class StateMachine {
         return new Promise<boolean>((resolve) => {
             setTimeout(resolve, newState.transitionTime);
         }).then(() => {
-            if (this.state.uuid != newState.uuid) return false;
+            if (this.state?.uuid != newState.uuid) return false;
             return this.set(newState.destination, ...args);
         });
     }

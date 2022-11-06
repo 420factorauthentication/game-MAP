@@ -1,6 +1,14 @@
 {
+    "compilerOptions": {
+        "allowJs": true
+    },
     "extends": "../tsconfig.proj.json",
-    "include": ["./src/**/*", "./const/**/*", "../lib-*/**/*"],
+    "include": [
+        "./src/**/*",
+        "./const/**/*",
+        "../lib-*/**/*",
+        "../node_modules/uuid/dist/esm-browser"
+    ],
     "exclude": [
         // "../_out/**/*",
         "../**/*.spec.*"

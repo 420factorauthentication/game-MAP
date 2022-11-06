@@ -22,5 +22,6 @@ export interface Transition extends State {
 }
 
 export function isTransition(object): object is Transition {
+    if (!object) return false;
     return "transitionTime" in object;
 }

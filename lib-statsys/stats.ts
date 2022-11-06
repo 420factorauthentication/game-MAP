@@ -3,7 +3,7 @@
 import {ms} from "../lib-meth/types.js";
 import {StatMod} from "./types.js";
 
-import {v4 as uuidv4} from "uuid";
+import uuidv4 from "../node_modules/uuid/dist/esm-browser/v4.js";
 
 ////////////////////////////////////////////////////////////////////////////////
 

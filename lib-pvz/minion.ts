@@ -49,32 +49,24 @@ class Minion implements MinionEntity {
     get atkDmg() {return this.stats.current("atkDmg");}
 
     modHp(amount: number, time: ms) {
-        this.stats.addMod("hp", amount, time);
-        this.onHpChange();
-        setTimeout(() => {
+        this.stats.addMod("hp", amount, time)[1].then(() => {
             this.onHpChange();
-        }, time + 1);
+        }); this.onHpChange();
     }
     modMovSpd(amount: number, time: ms) {
-        this.stats.addMod("movSpd", amount, time);
-        this.onMovChange();
-        setTimeout(() => {
+        this.stats.addMod("movSpd", amount, time)[1].then(() => {
             this.onMovChange();
-        }, time + 1);
+        }); this.onMovChange();
     }
     modAtkSpd(amount: number, time: ms) {
-        this.stats.addMod("atkSpd", amount, time);
-        this.onAtkChange();
-        setTimeout(() => {
+        this.stats.addMod("atkSpd", amount, time)[1].then(() => {
             this.onAtkChange();
-        }, time + 1);
+        }); this.onAtkChange();
     }
     modAtkDmg(amount: number, time: ms) {
-        this.stats.addMod("atkDmg", amount, time);
-        this.onAtkChange();
-        setTimeout(() => {
+        this.stats.addMod("atkDmg", amount, time)[1].then(() => {
             this.onAtkChange();
-        }, time + 1);
+        }); this.onAtkChange();
     }
 
     changeHp(amount: number) {

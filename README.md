@@ -8,7 +8,7 @@
 
 <br>
 
-## Project Settings
+## Workflow Config Settings
 
 ### VSCode Extensions
 
@@ -18,6 +18,8 @@
 
 ### package.json
 
+-   `npm run build` builds all game projects into `_out` folder
+-   `npm run compile` skips some build steps. Use if rebuilding minor changes.
 -   `npm install` also pre-installs TypeScript and Prettier globally
 -   `npm test` runs all Jest tests
 
@@ -31,7 +33,6 @@
 
 ### tsconfig.json
 
--   `tsc -b` in root dir builds all HTML5 game project folders (no prefix)
 -   Import ES6 modules from library folders (_`lib-`_ prefix)
 -   Build artifacts appear in _`_out`_ folder
 
