@@ -10,25 +10,27 @@ import {Flow} from "./types.js";
 class ProgBar {
     constructor(
         readonly elem: HTMLElement,
-        private _flow: ProgBarFlow = Flow.leftToRight,
-        private _value: number = 0,
+        private _value: number = 100,
         private _min: number = 0,
         private _max: number = 100,
+        private _flow: ProgBarFlow = Flow.leftToRight,
     ) {
+        elem.style.boxSizing = "border-box";
         elem.style.backgroundClip = "content-box";
+        this.calcPadding();
     }
 
     get percent() {return (this._value - this._min) / (this._max - this._min);}
 
-    get flow()  {return this._flow;}
     get value() {return this._value;}
     get min()   {return this._min;}
     get max()   {return this._max;}
+    get flow()  {return this._flow;}
 
-    set flow  (v) {this._flow = v;  this.calcPadding();}
     set value (v) {this._value = v; this.calcPadding();}
     set min   (v) {this._min = v;   this.calcPadding();}
     set max   (v) {this._max = v;   this.calcPadding();}
+    set flow  (v) {this._flow = v;  this.calcPadding();}
 
     set width (v: string) {
         this.elem.style.width = v;
@@ -43,18 +45,18 @@ class ProgBar {
         switch (this.flow) {
             default:
             case (Flow.leftToRight):
-                const widthUnit = this.elem.style.width.match(/\D+/)[0];
-                const widthVal = Number(this.elem.style.width.match(/\d+/)[0]);
-                const padRightVal = widthVal * (1 - this.percent);
-                const padRight = '' + padRightVal + widthUnit;
-                this.elem.style.padding = `0 ${padRight} 0 0`;
+                const rightPadding = `calc(
+                    ${this.elem.style.width} *
+                    ${Math.min(Math.max(1 - this.percent, 0), 1)}
+                )`;
+                this.elem.style.padding = `0 ${rightPadding} 0 0`;
                 break;
             case (Flow.btmToTop):
-                const heightUnit = this.elem.style.height.match(/\D+/)[0];
-                const heightVal = Number(this.elem.style.height.match(/\d+/)[0]);
-                const padTopVal = heightVal * (1 - this.percent);
-                const padTop = '' + padTopVal + heightUnit;
-                this.elem.style.padding = `${padTop} 0 0`
+                const topPadding = `calc(
+                    ${this.elem.style.height} *
+                    ${Math.min(Math.max(1 - this.percent, 0), 1)}
+                )`;
+                this.elem.style.padding = `${topPadding} 0 0`;
                 break;
         }
     }

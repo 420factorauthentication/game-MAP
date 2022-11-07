@@ -4,6 +4,7 @@ import {htmlAttributeValue, ms, vw, vh} from "../lib-meth/types";
 
 import StateMachine from "../lib-smac/smac.js";
 import Stats from "../lib-statsys/stats.js";
+import ProgBar from "../lib-progbar/progbar.js";
 
 import Spriteling from "../node_modules/spriteling/dist/spriteling.js";
 
@@ -89,13 +90,14 @@ class Minion implements MinionEntity {
     ////////////////
     // COMPONENTS //
     ////////////////
-    protected elem: HTMLElement = Minion.elemInit;
-    protected ai: StateMachine = new StateMachine();
-    protected stats: Stats = new Stats(this.type);
-    // protected anim: Spriteling  = this.spritelingInit;
+    protected elem:  HTMLElement  = Minion.elemInit;
+    protected hpBar: ProgBar      = new ProgBar(this.hpBarElemInit);
+    protected ai:    StateMachine = new StateMachine();
+    protected stats: Stats        = new Stats(this.type);
+    // protected anim:  Spriteling = this.spritelingInit;
 
-    protected moveState: State = this.moveStateInit;
-    protected attackState: State = this.attackStateInit;
+    protected moveState:       State = this.moveStateInit;
+    protected attackState:     State = this.attackStateInit;
     protected static dieState: State = {uuid: "minionDie"};
 
     //////////
@@ -122,11 +124,22 @@ class Minion implements MinionEntity {
 
     private static get elemInit() {
         const elem = <HTMLElement>document.createElement("a");
+        document.body.appendChild(elem);
         elem.style.position = "absolute";
         elem.style.width = "64px";
         elem.style.height = "64px";
         elem.style.background = "content-box radial-gradient(crimson, skyblue)";
-        document.body.appendChild(elem);
+        return elem;
+    }
+
+    private get hpBarElemInit() {
+        const elem = <HTMLElement>document.createElement("a");
+        this.elem.appendChild(elem);
+        elem.style.position = "absolute";
+        elem.style.width = this.elem.style.width;
+        elem.style.height = `calc(${this.elem.style.height} / 4)`;
+        elem.style.top = `calc(-${this.elem.style.height} / 3)`;
+        elem.style.background = "darkred";
         return elem;
     }
 

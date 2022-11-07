@@ -63,6 +63,7 @@ class Hotbar implements HotbarContainer {
     //////////
     private static get elemInit() {
         const elem = <HTMLElement>document.createElement("div");
+        document.body.appendChild(elem);
         elem.style.position = "absolute";
         elem.style.left = "25vw";
         elem.style.top = "80vh";
@@ -71,7 +72,6 @@ class Hotbar implements HotbarContainer {
         elem.style.background = "gray";
         elem.style.display = "flex";
         elem.style.flexDirection = "row";
-        document.body.appendChild(elem);
         return elem;
     }
 

@@ -32,6 +32,7 @@ class Base implements BaseEntity {
 
     private get elemInit() {
         const elem = <HTMLElement>document.createElement("a");
+        document.body.appendChild(elem);
         elem.style.position = "absolute";
         elem.style.transform = "translate(-100%, -50%)";
         elem.style.left = "" + this.x + "vw";
@@ -39,7 +40,6 @@ class Base implements BaseEntity {
         elem.style.width = "5vw";
         elem.style.height = "90vh";
         elem.style.background = "content-box radial-gradient(yellow, gold)";
-        document.body.appendChild(elem);
         return elem;
     }
 }
