@@ -29,10 +29,19 @@ class Minion implements MinionEntity {
             htmlClass?: htmlAttributeValue;
         }
     ) {
+        this.elem = initOptions?.elem ? initOptions.elem : Minion.elemInit;
+        this.parent = initOptions?.parent ? initOptions.parent : document.body;
+        if (initOptions?.htmlClass) this.htmlClass = initOptions.htmlClass;
+
+        this.ai = new StateMachine(this.moveState);
+        this.hpBar = new ProgBar(
+            this.hpBarElemInit,
+            this.stats.current("hp"),
+            0, this.stats.base["hp"]
+        );
+        
         this.setElemX(_x);
         this.setElemY(_y);
-        this.parseInitOptions(initOptions);
-        this.ai.set(this.moveState);
     }
 
     /////////
@@ -90,11 +99,11 @@ class Minion implements MinionEntity {
     ////////////////
     // COMPONENTS //
     ////////////////
-    protected elem:  HTMLElement  = Minion.elemInit;
-    protected hpBar: ProgBar      = new ProgBar(this.hpBarElemInit);
-    protected ai:    StateMachine = new StateMachine();
-    protected stats: Stats        = new Stats(this.type);
-    // protected anim:  Spriteling = this.spritelingInit;
+    protected elem:  HTMLElement;
+    protected anim:  Spriteling;
+    protected hpBar: ProgBar;
+    protected ai:    StateMachine;
+    protected stats: Stats = new Stats(this.type);
 
     protected moveState:       State = this.moveStateInit;
     protected attackState:     State = this.attackStateInit;
@@ -103,25 +112,6 @@ class Minion implements MinionEntity {
     //////////
     // INIT //
     //////////
-    private parseInitOptions(initOptions?: {
-        elem?: HTMLElement;
-        parent?: Node;
-        htmlClass?: htmlAttributeValue;
-    }) {
-        if (!initOptions) return;
-        if (initOptions.elem) this.elem = initOptions.elem;
-        if (initOptions.parent) this.parent = initOptions.parent;
-        if (initOptions.htmlClass) this.htmlClass = initOptions.htmlClass;
-    }
-
-    private set parent(parentElem: Node) {
-        parentElem.appendChild(this.elem);
-    }
-
-    private set htmlClass(htmlClass: htmlAttributeValue) {
-        this.elem.className += " " + htmlClass;
-    }
-
     private static get elemInit() {
         const elem = <HTMLElement>document.createElement("a");
         document.body.appendChild(elem);
@@ -181,6 +171,7 @@ class Minion implements MinionEntity {
     }
 
     private onHpChange() {
+        this.hpBar.value = this.stats.current("hp");
         if (this.hp <= 0) this.manager.kill(this);
     }
 
@@ -202,6 +193,14 @@ class Minion implements MinionEntity {
 
     private setElemY(top: vh) {
         this.elem.style.top = "" + top + "vh";
+    }
+
+    private set parent(parentElem: Node) {
+        parentElem.appendChild(this.elem);
+    }
+
+    private set htmlClass(htmlClass: htmlAttributeValue) {
+        this.elem.className += " " + htmlClass;
     }
 }
 

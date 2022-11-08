@@ -18,7 +18,7 @@ class HotbarButton implements HotbarItem {
         public onPress: Function,
         elem?: HTMLElement
     ) {
-        if (elem) this.#elem = elem;
+        this.#elem = elem ? elem : HotbarButton.elemInit;
         this.hotbar.add(this);
         addEventListener("keydown", this);
     }
@@ -30,7 +30,7 @@ class HotbarButton implements HotbarItem {
         return this._hotbar;
     }
 
-    #elem: HTMLElement = HotbarButton.elemInit;
+    #elem: HTMLElement;
     get elem() {
         return this.#elem;
     }

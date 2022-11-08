@@ -10,8 +10,8 @@ class Hotbar implements HotbarContainer {
     ////////////
     // CONFIG //
     ////////////
-    constructor(public _maxItems: number, elem?: HTMLElement) {
-        if (elem) this.#elem = elem;
+    constructor(private _maxItems: number, elem?: HTMLElement) {
+        this.#elem = elem ? elem : Hotbar.elemInit;
     }
 
     /////////
@@ -53,7 +53,7 @@ class Hotbar implements HotbarContainer {
         return this.#items;
     }
 
-    #elem: HTMLElement = Hotbar.elemInit;
+    #elem: HTMLElement;
     get elem() {
         return this.#elem;
     }

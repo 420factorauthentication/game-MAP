@@ -12,6 +12,15 @@ import {isTransition} from "./types.js";
 ////////////////////////////////////////////////////////////////////////////////
 
 class StateMachine {
+    constructor(state?: State) {
+        this.set(state);
+    }
+
+    #state: State;
+    get state() {
+        return this.#state;
+    }
+
     set(newState: State | undefined, ...args): Promise<boolean> {
         if (this.state?.onExit) this.state.onExit(...args);
         if (newState.onEnter) newState.onEnter(...args);
@@ -38,11 +47,6 @@ class StateMachine {
     stopTransition(...args) {
         if (!isTransition(this.state)) return;
         return this.set(this.state.origin, ...args);
-    }
-
-    #state: State;
-    get state() {
-        return this.#state;
     }
 
     #loopID: NodeJS.Timeout; //STATE.ONLOOP SETINTERVAL GARBAGECOLLECTION
