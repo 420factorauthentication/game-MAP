@@ -85,7 +85,7 @@ class Stats {
      * Returns Tuple [Uuid, Promise]. \
      * After StatMod Time, Promise resolves to:
      *
-     * TRUE if StatMod expired naturally or StatMod Time is 0 (permanent). \
+     * TRUE if StatMod ended naturally or StatMod Time is 0 (permanent). \
      * FALSE if StatMod was manually removed before the full StatMod Time elapsed.
      *
      * Even if FALSE is returned, it still waits the full StatMod Time to resolve.
@@ -134,9 +134,12 @@ class Stats {
     /**
      * Remove a StatMod prematurely and revert it's number adjustment.
      *
+     * Returns false if StatMod not found. \
+     * Returns true if StatMod is found and successfully removed.
+     *
      * @param {string} uuid - The globally unique id of the StatMod to remove.
      */
-    removeMod(uuid: string) {
+    removeMod(uuid: string): boolean {
         if (!this.containsMod(uuid)) return false;
 
         // Remove written down StatMod object
