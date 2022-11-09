@@ -6,7 +6,7 @@ import StateMachine from "../lib-smac/smac.js";
 import Stats from "../lib-statsys/stats.js";
 import ProgBar from "../lib-progbar/progbar.js";
 
-import Spriteling from "../node_modules/spriteling/dist/spriteling.js";
+import Spriteling from "../../node_modules/spriteling/dist/spriteling.js";
 
 /////////////////////////////////////////////////////////////
 // An enemy represented by an HTMLElement                  //

@@ -18,15 +18,11 @@
         "preinstall:darwin:linux": "sudo npm install -g typescript && sudo npm install -g prettier",
 
         "purge": "run-script-os",
-        "purge:default:win32": "del ./_out",
-        "purge:darwin:linux": "rm -Rf ./_out",
+        "purge:default:win32": "del ./_out && del ./_api",
+        "purge:darwin:linux": "rm -Rf ./_out && rm -Rf ./_api",
 
         "compile": "tsc -b",
 
-        "mod-spriteling": "run-script-os",
-        "mod-spriteling:default:win32": "robocopy ./node_modules/spriteling/dist ./_out/node_modules/spriteling/dist /E && del ./_out/node_modules/spriteling/dist/__tests__ && del ./_out/node_modules/spriteling/dist/spriteling.min.js",
-        "mod-spriteling:darwin:linux": "mkdir -p ./_out/node_modules/spriteling && cp -Rf ./node_modules/spriteling/dist ./_out/node_modules/spriteling/dist && rm -Rf ./_out/node_modules/spriteling/dist/__tests__ && rm -f ./_out/node_modules/spriteling/dist/spriteling.min.js",
-
-        "build": "npm run purge && npm run compile && npm run mod-spriteling"
+        "build": "npm run purge && npm run compile"
     }
 }

@@ -2,7 +2,7 @@
 
 import {StatMod} from "./types.js";
 
-import uuidv4 from "../node_modules/uuid/dist/esm-browser/v4.js";
+import uuidv4 from "../../node_modules/uuid/dist/esm-browser/v4.js";
 
 ////////////////////////////////////////////////////////////////////////////////
 

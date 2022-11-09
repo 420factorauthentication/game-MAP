@@ -1,3 +1,7 @@
+# Artifacts
+_api/
+_out/
+
 # Visual Studio cache directory
 .vs/
 
@@ -27,9 +31,6 @@ ExportedObj/
 .Trashes
 ehthumbs.db
 Thumbs.db
-
-# Compiled TypeScript to JavaScript
-_out/
 
 # Package Managers
 node_modules/
