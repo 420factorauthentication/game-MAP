@@ -1,6 +1,5 @@
 /** @format */
 
-import {ms} from "../lib-meth/types.js";
 import {StatMod} from "./types.js";
 
 import uuidv4 from "../node_modules/uuid/dist/esm-browser/v4.js";
@@ -8,73 +7,167 @@ import uuidv4 from "../node_modules/uuid/dist/esm-browser/v4.js";
 ////////////////////////////////////////////////////////////////////////////////
 
 class Stats {
-    // Stats.base[key]: Get base stat number
+    /**
+     * Create a new Stats instance.
+     *
+     * @param {object} base - Can be any object.
+     * All of it's accessible properties serve as starting numbers.
+     */
     constructor(public base: object) {
         Object.preventExtensions(this);
     }
 
-    // Stats.current(key): Get current stat number
-    current(key: string) {
+    /**
+     * Get the current number of a Base property:
+     * Base Number + StatMods + Changes.
+     *
+     * If Base property isn't a number, returns the Base property.
+     *
+     * @param {string} key - The key of the Base property.
+     */
+    current(key: string): number | any {
+        if (typeof this.base[key] !== "number") return this.base[key];
+
+        // Start with base number
         let value = this.base[key];
-        if (typeof value !== "number") return value;
-        if (this.diffs[key]) value += this.diffs[key];
+
+        // Add Changes and StatMods
+        if (this.#diffs[key]) value += this.#diffs[key];
+
+        // Return total
         return value;
     }
 
-    // Unlogged, permanent stat adjustment
+    /**
+     * Adjust a number permanently, without tracking it through a StatMod.
+     * Useful when you want to permanently change numbers with no extra overhead.
+     *
+     * @param {string} key - The key of the Base property being adjusted.
+     * The Base property is not mutated; this adjustment is tracked separately.
+     * @param {number} amount - The number adjustment.
+     */
     change(key: string, amount: number) {
         if (typeof this.base[key] !== "number")
             throw new Error("Cant change non-number stat");
-        if (!this.diffs[key]) this.diffs[key] = 0;
-        this.diffs[key] += amount;
+
+        // Init undefined array props
+        if (!this.#diffs[key]) this.#diffs[key] = 0;
+        if (!this.#changes[key]) this.#changes[key] = 0;
+
+        // Write down number adjustment
+        this.#diffs[key] += amount;
+        this.#changes[key] += amount;
+
+        // Clean up unused array props
+        if (this.#diffs[key] == 0) this.#diffs[key] = undefined;
+        if (this.#changes[key] == 0) this.#changes[key] = undefined;
     }
 
-    // Log an object: Temporary or permanent stat adjustment
-    // Returns Tuple [uuid, PROMISE]
-    // After time, PROMISE resolves to
-    //   true if mod expired naturally or time=0
-    //   false if mod was manually removed before expiration
-    //     (still waits full time before resolving to false)
-    addMod(key: string, amount: number, time: ms): [string, Promise<boolean>] {
+    /**
+     * Remove all Changes and revert their number adjustments.
+     */
+    removeAllChanges() {
+        for (const key in this.#changes) this.#diffs[key] -= this.#changes[key];
+        for (const key in this.#changes) this.#changes[key] = undefined;
+    }
+
+    /**
+     * Get a readonly list of all Changes.
+     */
+    get changes(): Readonly<{}> {
+        return Object.freeze(Object.assign({}, this.#changes));
+    }
+    #changes = {};
+
+    /**
+     * Add a timed (or sometimes permanent) effect that adjusts a number.
+     *
+     * Returns Tuple [Uuid, Promise]. \
+     * After StatMod Time, Promise resolves to:
+     *
+     * TRUE if StatMod expired naturally or StatMod Time is 0 (permanent). \
+     * FALSE if StatMod was manually removed before the full StatMod Time elapsed.
+     *
+     * Even if FALSE is returned, it still waits the full StatMod Time to resolve.
+     *
+     * @param {string} key - The key of the Base property being adjusted.
+     * The Base property is not mutated; this adjustment is tracked separately.
+     * @param {amount} amount - The number adjustment.
+     * @param {number} time - How long the StatMod lasts, in ms.
+     */
+    addMod(
+        key: string,
+        amount: number,
+        time: number
+    ): [string, Promise<boolean>] {
         if (typeof this.base[key] !== "number")
             throw new Error("Cant mod non-number stat");
 
+        // Write down new StatMod object
         const uuid: string = uuidv4();
         const newMod: StatMod = Object.freeze({uuid, key, amount, time});
-        this.change(key, amount);
         this.#mods.push(newMod);
 
+        // Init undefined array props
+        if (!this.#diffs[key]) this.#diffs[key] = 0;
+
+        // Write down number adjustment
+        this.#diffs[key] += amount;
+
+        // Cleanup unused array props
+        if (this.#diffs[key] == 0) this.#diffs[key] = undefined;
+
+        // If StatMod Time is 0 (permanent), return insta-resolving promise
         let modEndPromise: Promise<boolean>;
         if (time <= 0) modEndPromise = new Promise<boolean>(() => true);
-        else
+
+        // Otherwise, return a promise that resolves after StatMod Time
+        if (time > 0)
             modEndPromise = new Promise<boolean>((resolve) => {
                 setTimeout(resolve, time);
             }).then(() => this.removeMod(uuid));
 
+        // Return Tuple
         return [uuid, modEndPromise];
     }
 
-    // Delete logged object, Revert stat adjustment
-    // Returns true if mod found and removed
-    // Returns false if mod not found
+    /**
+     * Remove a StatMod prematurely and revert it's number adjustment.
+     *
+     * @param {string} uuid - The globally unique id of the StatMod to remove.
+     */
     removeMod(uuid: string) {
         if (!this.containsMod(uuid)) return false;
-        const mod = this.getMod(uuid);
+
+        // Remove written down StatMod object
         this.#mods.splice(this.getModIndex(uuid), 1);
+
+        // Remove written down number adjustment
+        const mod = this.getMod(uuid);
         this.change(mod.key, -mod.amount);
+
+        // StatMod was found and successfully removed
         return true;
     }
 
-    // Tracks unlogged and logged adjustment totals
-    private diffs = {};
+    /**
+     * Remove all StatMods prematurely and revert their number adjustments.
+     */
+    removeAllMods() {
+        for (const key in this.#mods) this.removeMod(this.mods[key].uuid);
+    }
 
-    // All logged stat adjustment objects
-    #mods: StatMod[] = [];
+    /**
+     * Get a readonly list of all StatMods.
+     */
     get mods(): readonly StatMod[] {
         return Object.freeze(Object.assign({}, this.#mods));
     }
+    #mods: StatMod[] = [];
 
-    // HELPER FUNCTIONS
+    //////////////////////
+    // HELPER FUNCTIONS //
+    //////////////////////
     containsMod(uuid: string) {
         return this.#mods.some((mod) => mod.uuid === uuid);
     }
@@ -86,6 +179,11 @@ class Stats {
     getMod(uuid: string) {
         return this.#mods.find((mod) => mod.uuid === uuid);
     }
+
+    /**
+     * A private cache of Changes + StatMods to calculate current numbers faster.
+     */
+    #diffs = {};
 }
 
 ////////////////////////////////////////////////////////////////////////////////
