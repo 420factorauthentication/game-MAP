@@ -2,23 +2,22 @@
 
 import {MinionManager} from "../../lib-pvz/types";
 
-///////////////////////////////////////
-// Template for designing new Spells //
-///////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+/** Template for designing new Spells. */
 export type Spell = Readonly<{
-    // Generates a Spell function at runtime,
-    // using the MinionManager to find targets.
-    // This func is assigned to HotbarButton.onPress
+    /**
+     * Generates a Spell function at runtime, used for HotbarButton.onPress.
+     * @param manager Used to find targets for the Spell function.
+     */
     func(manager: MinionManager): () => void;
 
-    // Generates a new HTMLElement at runtime,
-    // with the desired style for a HotbarButton
+    /** Generates a new HTMLElement at runtime, used for HotbarButton.elem. */
     get elem(): HTMLElement;
 }>;
 
-/////////////
-// DEFAULT //
-/////////////
+/** Spell defaults. */
 export const Default: Spell = {
     func() {
         return () => {};
@@ -37,13 +36,14 @@ export const Default: Spell = {
     },
 };
 
-////////////////////////////////////////////
-// SWORD SPELL                            //
-//   Deal 3 damage to front minion.       //
-// FLAVOR TEXT                            //
-//   It'll give you major and minor cuts. //
-//   You'll need to patch yourself up.    //
-////////////////////////////////////////////
+/**
+ * SWORD SPELL:
+ * Deal 3 damage to front minion.
+ *
+ * FLAVOR TEXT:
+ * It'll give you major and minor cuts.
+ * You'll need to patch yourself up.
+ */
 export const Sword: Spell = {
     func(manager) {
         return () => {

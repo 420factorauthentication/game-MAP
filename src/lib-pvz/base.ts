@@ -1,19 +1,40 @@
-import {vw, vh} from "../lib-meth/types";
 import {BaseEntity} from "./types";
-import {Flow} from "../lib-progbar/types.js";
 
+import {Flow} from "../lib-progbar/const.js";
 import ProgBar from "../lib-progbar/progbar.js";
 
 ////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
+/**
+ * An entity with HP that can be attacked by Minions.
+ * Minions spawn on the right and move left.
+ * When they reach the same x, they will automatically attack the Base.
+ */
 class Base implements BaseEntity {
+    /**
+     * @param x Is in viewport width units (vw).
+     * @param y Is in viewport height units (vh).
+     * @param elem Can be a css selector or existing DOM element or null,
+     * in which case a new anchor element will be created.
+     */
     constructor(
         private _hp: number,
-        readonly x: vw,
-        readonly y: vh,
-        readonly elem?: HTMLElement
+        readonly x: number,
+        readonly y: number,
+        elem?: HTMLElement | string
     ) {
-        this.elem = elem ? elem : this.elemInit;
+        // Lookup element by selector
+        if (elem)
+            this._elem =
+                typeof elem === "string"
+                    ? (document.querySelector(elem) as HTMLElement)
+                    : elem;
+
+        // No element found. Let's create one instead.
+        if (!this.elem) this._elem = this.elemInit;
+        
+        // Init components
         this.hpBar = new ProgBar(
             this.hpBarElemInit,
             this.hp, 0, this.hp,
@@ -21,8 +42,9 @@ class Base implements BaseEntity {
         );
     }
 
-    protected hpBar: ProgBar;
-
+    /////////
+    // API //
+    /////////
     get hp() {return this._hp;}
     set hp(v) {
         this._hp = v;
@@ -34,6 +56,17 @@ class Base implements BaseEntity {
         console.log("GAME OVER")
     }
 
+    ////////////////
+    // COMPONENTS //
+    ////////////////
+    get elem() {return this._elem;}
+    protected _elem: HTMLElement;
+
+    protected hpBar: ProgBar;
+
+    //////////
+    // INIT //
+    //////////
     private get elemInit() {
         const elem = <HTMLElement>document.createElement("a");
         document.body.appendChild(elem);
@@ -59,6 +92,7 @@ class Base implements BaseEntity {
     }
 }
 
+////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
 export default Base;

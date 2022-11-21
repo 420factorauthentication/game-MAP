@@ -2,7 +2,11 @@
 
 import {MinionType} from "../../lib-pvz/types";
 
-export const Axeman: Readonly<MinionType> = {
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+/** A primitive tribal warrior. */
+export const Warrior: Readonly<MinionType> = {
     hp: 2,
     movSpd: 2,
     atkSpd: 1,

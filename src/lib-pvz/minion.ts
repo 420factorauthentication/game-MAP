@@ -1,38 +1,58 @@
 import {BaseEntity, MinionEntity, MinionManager, MinionType} from "./types";
 import {State} from "../lib-smac/types";
-import {htmlAttributeValue, ms, vw, vh} from "../lib-meth/types";
 
 import StateMachine from "../lib-smac/smac.js";
 import Stats from "../lib-statsys/stats.js";
 import ProgBar from "../lib-progbar/progbar.js";
 
 import Spriteling from "../../node_modules/spriteling/dist/spriteling.js";
+import uuidv4 from "../../node_modules/uuid/dist/esm-browser/v4.js";
 
-/////////////////////////////////////////////////////////////
-// An enemy represented by an HTMLElement                  //
-// Moves left until it reaches a target Base, then attacks //
-/////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
+/**
+* A spawned enemy entity, represented by an HTMLElement.
+ * Spawns on the right and moves left until it reaches a target Base,
+ * then automatically attacks it.
+ *
+ * Each Minion has it's own current stats that can change in real time. \
+ * Stats start out as the base number from MinionType. \
+ * modStat() adjusts a stat for a set time. \
+ * changeStat() adjusts a stat permanently.
+ */
 class Minion implements MinionEntity {
-    ////////////
-    // CONFIG //
-    ////////////
+    /**
+     * @param manager Contains records of all existing minions for cleanup.
+     * @param type Is used to define starting stats.
+     * @param target Is used to control Attack AI.
+     * @param _x Is in viewport width units (vw).
+     * @param _y Is in viewport height units (vh).
+     * @param elem Can be a css selector or existing DOM element or null,
+     * in which case a new anchor element will be created.
+     */
     constructor(
         readonly manager: MinionManager,
         readonly type: MinionType,
         readonly target: BaseEntity,
         private _x: number,
         private _y: number,
-        initOptions?: {
-            elem?: HTMLElement;
-            parent?: Node;
-            htmlClass?: htmlAttributeValue;
-        }
+        elem?: HTMLElement | string
     ) {
-        this.elem = initOptions?.elem ? initOptions.elem : Minion.elemInit;
-        this.parent = initOptions?.parent ? initOptions.parent : document.body;
-        if (initOptions?.htmlClass) this.htmlClass = initOptions.htmlClass;
+        // Lookup element by selector
+        if (elem)
+            this._elem =
+                typeof elem === "string"
+                    ? (document.querySelector(elem) as HTMLElement)
+                    : elem;
 
+        // No element found. Let's create one instead.
+        if (!this.elem) this._elem = Minion.elemInit;
+
+        // Generate a new uuid
+        this.uuid = uuidv4();
+
+        // Init components
         this.ai = new StateMachine(this.moveState);
         this.hpBar = new ProgBar(
             this.hpBarElemInit,
@@ -40,13 +60,38 @@ class Minion implements MinionEntity {
             0, this.stats.base["hp"]
         );
         
+        // Init position
         this.setElemX(_x);
         this.setElemY(_y);
+
+        // Add Minion class
+        this.elem.className += " minion";
     }
 
     /////////
     // API //
     /////////
+
+    /** A globally unique id, different from all existing Minions. */
+    readonly uuid: string;
+
+    /** Kill this minion and cleanup all garbage. */
+    die() {
+        // If elem was already deleted, this minion is already dead
+        if (!this.hasOwnProperty('_elem')) return;
+
+        // Stop all AI behaviors
+        this.ai.set(Minion.dieState);
+
+        // Cleanup garbage
+        this.elem?.parentNode?.removeChild(this.elem);
+        delete this._elem;
+
+        // Tell the MinionManager to delete it's records of this Minion
+        this.manager.kill(this);
+    }
+
+    // Stats //
     get x() {return this._x;}
     get y() {return this._y;}
 
@@ -58,27 +103,33 @@ class Minion implements MinionEntity {
     get atkSpd() {return this.stats.current("atkSpd");}
     get atkDmg() {return this.stats.current("atkDmg");}
 
-    modHp(amount: number, time: ms) {
+    // Adjust a stat for a set time, in ms. //
+    modHp(amount: number, time: number) {
+        if (time <= 0) return;
         this.stats.addMod("hp", amount, time)[1].then(() => {
             this.onHpChange();
         }); this.onHpChange();
     }
-    modMovSpd(amount: number, time: ms) {
+    modMovSpd(amount: number, time: number) {
+        if (time <= 0) return;
         this.stats.addMod("movSpd", amount, time)[1].then(() => {
             this.onMovChange();
         }); this.onMovChange();
     }
-    modAtkSpd(amount: number, time: ms) {
+    modAtkSpd(amount: number, time: number) {
+        if (time <= 0) return;
         this.stats.addMod("atkSpd", amount, time)[1].then(() => {
             this.onAtkChange();
         }); this.onAtkChange();
     }
-    modAtkDmg(amount: number, time: ms) {
+    modAtkDmg(amount: number, time: number) {
+        if (time <= 0) return;
         this.stats.addMod("atkDmg", amount, time)[1].then(() => {
             this.onAtkChange();
         }); this.onAtkChange();
     }
 
+    // Adjust a stat permanently //
     changeHp(amount: number) {
         this.stats.change("hp", amount);
         this.onHpChange();
@@ -99,7 +150,9 @@ class Minion implements MinionEntity {
     ////////////////
     // COMPONENTS //
     ////////////////
-    protected elem:  HTMLElement;
+    get elem() {return this._elem;}
+    protected _elem: HTMLElement;
+
     protected anim:  Spriteling;
     protected hpBar: ProgBar;
     protected ai:    StateMachine;
@@ -162,14 +215,6 @@ class Minion implements MinionEntity {
     //////////////////////
     // HELPER FUNCTIONS //
     //////////////////////
-
-    // Use spawner.kill() instead of minion.die() when possible
-    // since minion.die() doesnt remove handle from spawner.minions
-    die() {
-        this.ai.set(Minion.dieState);
-        this.elem?.parentNode?.removeChild(this.elem);
-    }
-
     private onHpChange() {
         this.hpBar.value = this.stats.current("hp");
         if (this.hp <= 0) this.manager.kill(this);
@@ -187,23 +232,18 @@ class Minion implements MinionEntity {
             this.ai.set(this.attackState);
     }
 
-    private setElemX(left: vw) {
+    /** Set elem left position, in viewport width (vw) units. */
+    private setElemX(left: number) {
         this.elem.style.left = "" + left + "vw";
     }
 
-    private setElemY(top: vh) {
+    /** Set elem top position, in viewport height (vh) units. */
+    private setElemY(top: number) {
         this.elem.style.top = "" + top + "vh";
-    }
-
-    private set parent(parentElem: Node) {
-        parentElem.appendChild(this.elem);
-    }
-
-    private set htmlClass(htmlClass: htmlAttributeValue) {
-        this.elem.className += " " + htmlClass;
     }
 }
 
+////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
 export default Minion;

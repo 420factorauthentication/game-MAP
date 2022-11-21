@@ -2,21 +2,33 @@
 
 import {HotbarContainer, HotbarItem} from "./types";
 
-//////////////////////
-// A row of buttons //
-//////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
+/** A row of buttons that calls a function when clicked, or when a key is pressed. */
 class Hotbar implements HotbarContainer {
-    ////////////
-    // CONFIG //
-    ////////////
-    constructor(private _maxItems: number, elem?: HTMLElement) {
-        this.#elem = elem ? elem : Hotbar.elemInit;
+    /**
+     * @param _maxItems Prevents user from adding more buttons than this limit.
+     * @param elem Can be a css selector or existing DOM element or null,
+     * in which case a new div element will be created.
+     */
+    constructor(private _maxItems: number, elem?: HTMLElement | string) {
+        // Lookup element by selector
+        if (elem)
+            this._elem =
+                typeof elem === "string"
+                    ? (document.querySelector(elem) as HTMLElement)
+                    : elem;
+
+        // No element found. Let's create one instead.
+        if (!this.elem) this._elem = Hotbar.elemInit;
     }
 
     /////////
     // API //
     /////////
+
+    /** Prevents user from adding more buttons than this limit. */
     get maxItems() {
         return this._maxItems;
     }
@@ -27,36 +39,41 @@ class Hotbar implements HotbarContainer {
         this.updateAllSizes();
     }
 
+    /** Add a button to this Hotbar, and update graphics. */
     add(item: HotbarItem) {
         if (this.items.length >= this.maxItems) throw new Error("Max items");
-        this.#items.push(item);
+        this._items.push(item);
         this.elem.appendChild(item.elem);
         this.updateSize(item);
         return item;
     }
 
-    remove(index: number);
-    remove(item: HotbarItem);
+    /** Remove a button from this Hotbar, and update graphics. */
+    remove(index: number): void;
+    remove(item: HotbarItem): void;
     remove(v: number | HotbarItem) {
         let index = typeof v === "number" ? v : this.items.indexOf(v);
         let item = typeof v === "number" ? this.items[v] : v;
         Hotbar.removeEventsOf(item);
         this.elem.removeChild(item.elem);
-        this.#items.splice(index, 1);
+        this._items.splice(index, 1);
     }
 
     ////////////////
     // COMPONENTS //
     ////////////////
-    #items: HotbarItem[] = [];
-    get items(): readonly HotbarItem[] {
-        return this.#items;
-    }
 
-    #elem: HTMLElement;
-    get elem() {
-        return this.#elem;
+    /** All buttons in this Hotbar. */
+    get items(): readonly HotbarItem[] {
+        return this._items;
     }
+    protected _items: HotbarItem[] = [];
+
+    /** The Hotbar element. Button elements will be children to this. */
+    get elem() {
+        return this._elem;
+    }
+    protected _elem: HTMLElement;
 
     //////////
     // INIT //
@@ -92,5 +109,8 @@ class Hotbar implements HotbarContainer {
             removeEventListener(eventType, item);
     }
 }
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
 export default Hotbar;

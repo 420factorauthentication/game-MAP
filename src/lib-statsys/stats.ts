@@ -5,12 +5,12 @@ import {StatMod} from "./types.js";
 import uuidv4 from "../../node_modules/uuid/dist/esm-browser/v4.js";
 
 ////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
+/** A system for tracking asynchronous stat number changes. */
 class Stats {
     /**
-     * Create a new Stats instance.
-     *
-     * @param {object} base - Can be any object.
+     * @param base Can be any object.
      * All of it's accessible properties serve as starting numbers.
      */
     constructor(public base: object) {
@@ -18,12 +18,10 @@ class Stats {
     }
 
     /**
-     * Get the current number of a Base property:
-     * Base Number + StatMods + Changes.
-     *
+     * Get the current number of a Base property: Base Number + StatMods + Changes.
      * If Base property isn't a number, returns the Base property.
      *
-     * @param {string} key - The key of the Base property.
+     * @param key The key of the Base property.
      */
     current(key: string): number | any {
         if (typeof this.base[key] !== "number") return this.base[key];
@@ -42,9 +40,9 @@ class Stats {
      * Adjust a number permanently, without tracking it through a StatMod.
      * Useful when you want to permanently change numbers with no extra overhead.
      *
-     * @param {string} key - The key of the Base property being adjusted.
+     * @param key The key of the Base property being adjusted.
      * The Base property is not mutated; this adjustment is tracked separately.
-     * @param {number} amount - The number adjustment.
+     * @param amount The number adjustment.
      */
     change(key: string, amount: number) {
         if (typeof this.base[key] !== "number")
@@ -90,10 +88,10 @@ class Stats {
      *
      * Even if FALSE is returned, it still waits the full StatMod Time to resolve.
      *
-     * @param {string} key - The key of the Base property being adjusted.
+     * @param key The key of the Base property being adjusted.
      * The Base property is not mutated; this adjustment is tracked separately.
-     * @param {amount} amount - The number adjustment.
-     * @param {number} time - How long the StatMod lasts, in ms.
+     * @param amount The number adjustment.
+     * @param time How long the StatMod lasts, in ms.
      */
     addMod(
         key: string,
@@ -103,18 +101,14 @@ class Stats {
         if (typeof this.base[key] !== "number")
             throw new Error("Cant mod non-number stat");
 
-        // Write down new StatMod object
+        // Generate a new uuid and StatMod object
         const uuid: string = uuidv4();
         const newMod: StatMod = Object.freeze({uuid, key, amount, time});
         this.#mods.push(newMod);
 
-        // Init undefined array props
+        // Calculate number adjustment
         if (!this.#diffs[key]) this.#diffs[key] = 0;
-
-        // Write down number adjustment
         this.#diffs[key] += amount;
-
-        // Cleanup unused array props
         if (this.#diffs[key] == 0) this.#diffs[key] = undefined;
 
         // If StatMod Time is 0 (permanent), return insta-resolving promise
@@ -137,7 +131,7 @@ class Stats {
      * Returns false if StatMod not found. \
      * Returns true if StatMod is found and successfully removed.
      *
-     * @param {string} uuid - The globally unique id of the StatMod to remove.
+     * @param uuid The globally unique id of the StatMod to remove.
      */
     removeMod(uuid: string): boolean {
         if (!this.containsMod(uuid)) return false;
@@ -189,6 +183,7 @@ class Stats {
     #diffs = {};
 }
 
+////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
 export default Stats;

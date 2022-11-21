@@ -1,30 +1,47 @@
 /** @format */
 
 import {State} from "./types";
-import {isTransition} from "./types.js";
+
+import {isTransition} from "./const.js";
 
 ////////////////////////////////////////////////////////////////////////////////
-// set() returns a Promise that resolves to:
-//   ANOTHER PROMISE if destination is another transition
-//   TRUE if transitionTime finishes naturally, or the state is not a transition
-//   FALSE if transition is manually stopped or state changes before it finishes
-//     (still waits full transitionTime before returning false)
 ////////////////////////////////////////////////////////////////////////////////
 
+/** A state machine model for asynchronous function execution. */
 class StateMachine {
+    /**
+     * @param state Initial State. Can be undefined.
+     */
     constructor(state?: State) {
         this.set(state);
     }
 
-    #state: State;
+    /**
+     * Get current State.
+     */
     get state() {
         return this.#state;
     }
+    #state: State;
 
+    /**
+     * Set to a new State.
+     *
+     * Returns a Promise that resolves to:
+     *  ANOTHER PROMISE if destination is another transition
+     *  TRUE if transitionTime finishes naturally, or the state is not a transition
+     *  FALSE if transition is manually stopped or state changes before it finishes
+     *    (still waits full transitionTime before returning false)
+     *
+     * @param newState The new State to set to.
+     * @param args Will be passed to State funcs (onExit, onEnter, onLoop).
+     */
     set(newState: State | undefined, ...args): Promise<boolean> {
+        // Run onExit and onEnter
         if (this.state?.onExit) this.state.onExit(...args);
         if (newState.onEnter) newState.onEnter(...args);
 
+        // Cleanup old onLoop and setup new onLoop
         clearInterval(this.#loopID);
         if (newState.onLoop)
             this.#loopID = setInterval(
@@ -33,9 +50,13 @@ class StateMachine {
                 ...args
             );
 
+        // Assign new State to StateMachine
         this.#state = newState;
+
+        // If not transition, return insta-resolving Promise
         if (!isTransition(newState)) return new Promise<boolean>(() => true);
 
+        // If transition, create a Promise to asynchronously move to new State
         return new Promise<boolean>((resolve) => {
             setTimeout(resolve, newState.transitionTime);
         }).then(() => {
@@ -44,14 +65,24 @@ class StateMachine {
         });
     }
 
+    /**
+     * If current State is a transition, stops it.
+     * Sets StateMachine to the transition's origin State, even if undefined.
+     *
+     * @param args Will be passed to State funcs (onExit, onEnter, onLoop).
+     */
     stopTransition(...args) {
         if (!isTransition(this.state)) return;
         return this.set(this.state.origin, ...args);
     }
 
-    #loopID: NodeJS.Timeout; //STATE.ONLOOP SETINTERVAL GARBAGECOLLECTION
+    /**
+     * Used for onLoop garbage collection.
+     */
+    #loopID: NodeJS.Timeout;
 }
 
+////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
 export default StateMachine;
