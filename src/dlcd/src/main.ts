@@ -5,8 +5,6 @@ import * as Spells from "../const/spells.js";
 
 import MinionSpawner from "../../lib-pvz/spawner.js";
 import Base from "../../lib-pvz/base.js";
-import Hotbar from "../../lib-hotbar/hotbar.js";
-import HotbarButton from "../../lib-hotbar/button.js";
 import Rollbar from "../../lib-hotbar/rollbar.js";
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -18,6 +16,9 @@ const gameDiv = document.getElementById("game");
 // Init Minion System //
 const base = new Base(20, 10, 50);
 const spawner = new MinionSpawner(base);
+
+// Spawn Minions //
+spawner.startLevel(Levels.one);
 
 // Init Spell Rollbar System //
 const rollbar = new Rollbar(4, [
@@ -64,6 +65,3 @@ const rollbar = new Rollbar(4, [
 ]);
 rollbar.removeAllOnPress = true;
 rollbar.start(1000);
-
-// Spawn Minions //
-spawner.startLevel(Levels.one);

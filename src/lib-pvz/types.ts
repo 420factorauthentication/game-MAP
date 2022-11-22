@@ -95,9 +95,11 @@ export interface MinionManager {
     /** Get minions list, sorted from lowest x to highest x. */
     minionsSortX: readonly MinionEntity[];
     /** Spawn a group of Minions. Each Minion will have a new HTMLElement. */
-    startLevel(level: SpawnGroup[]);
+    startLevel(spawns: SpawnGroup): Promise<boolean>;
+    /** Stop the current level before it finishes spawning all Minions. */
+    stopCurrentLevel();
     /** Kill an existing Minion. */
-    kill(minion: MinionEntity): void;
+    kill(minion: MinionEntity);
     /**
      * Spawn a Minion.
      * Elem can be a css selector or existing DOM element or null,
@@ -120,4 +122,13 @@ export interface SpawnGroup {
     timeStart: number;
     /** How long inbetween each minion spawn, in ms. */
     timeStep: number;
+}
+
+/**
+ * Used to track what a MinionManager is currently spawning,
+ * and to stop a spawning in progress.
+ */
+export interface SpawnLevel extends SpawnGroup {
+    /** A globally unique id, different from all existing SpawnLevels. */
+    readonly uuid: string;
 }

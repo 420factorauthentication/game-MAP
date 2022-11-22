@@ -6,10 +6,12 @@ import {
     MinionManager,
     MinionEntity,
     SpawnGroup,
+    SpawnLevel,
 } from "./types";
 
 import Minion from "./minion.js";
 import {rand} from "../lib-math2/math2.js";
+import uuidv4 from "../../node_modules/uuid/dist/esm-browser/v4.js";
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -48,13 +50,62 @@ class MinionSpawner implements MinionManager {
         return minionsCopy;
     }
 
-    /** Spawn a group of Minions. Each Minion will have a new HTMLElement. */
-    startLevel(level: SpawnGroup[]) {
-        for (const spawnGroup of level)
-            for (let i = 0; i < spawnGroup.amount; i++)
-                setTimeout(() => {
-                    this.spawn(spawnGroup.type);
-                }, spawnGroup.timeStart + spawnGroup.timeStep * i);
+    /** Get info about what this MinionSpawner is currently spawning. */
+    get currentLevel(): Readonly<SpawnLevel> {
+        return this.#currentLevel;
+    }
+    #currentLevel: SpawnLevel;
+
+    /**
+     * Spawn a group of Minions.
+     * Each Minion will have a new HTMLElement.
+     *
+     * Returns a Promise that resolves to:
+     *  ANOTHER PROMISE while there's more Minions to spawn.
+     *  TRUE if all Minions were successfully spawned.
+     *  FALSE if stopCurrentLevel() is called before all Minions are spawned.
+     *    (still waits full timeStep before returning false)
+     */
+    startLevel(spawns: SpawnGroup): Promise<boolean> {
+        // If no Minions to spawn, return an insta-resolving Promise
+        if (spawns.amount <= 0) return new Promise<boolean>(() => true);
+
+        // Update current level info
+        const newUUID = uuidv4();
+        this.#currentLevel = Object.assign({uuid: newUUID}, spawns);
+
+        // Wait timeStart to spawn first Minion
+        // Wait timeStep inbetween spawning each Minion
+        let i = 0;
+        const spawnEndPromise = new Promise((resolve) => {
+            setTimeout(resolve, spawns.timeStart);
+        }).then(() => {
+            return this.loop(0, spawns, newUUID);
+        });
+
+        // Return a promise that can be used to await spawning status updates
+        return spawnEndPromise;
+    }
+
+    /** Uses promises to wait timeStep inbetween spawning each Minion */
+    private loop(i: number, spawns: SpawnGroup, newUUID: string) {
+        return new Promise((resolve) => {
+            setTimeout(resolve, spawns.timeStep);
+        }).then(() => {
+            // If current level's uuid no longer matches, level was stopped
+            if (this.currentLevel.uuid != newUUID) return false;
+            // Otherwise, spawn a Minion
+            this.spawn(spawns.type);
+            // If all Minions were successfully spawned, return true
+            if (++i >= spawns.amount) return true;
+            // Otherwise, keep looping
+            return this.loop(i, spawns, newUUID);
+        });
+    }
+
+    /** Stop the current level before it finishes spawning all Minions. */
+    stopCurrentLevel() {
+        this.#currentLevel = undefined;
     }
 
     /** Kill an existing Minion. */
