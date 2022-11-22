@@ -41,6 +41,9 @@ class HotbarButton implements HotbarItem {
     // API //
     /////////
 
+    /** If true, removes all HotbarButtons from parent Hotbar after this is pressed. */
+    removeAllOnPress: boolean = false;
+
     /**
      * This button should be listening to all events in this array.
      * When any of these events are triggered, calls handleEvent().
@@ -49,7 +52,9 @@ class HotbarButton implements HotbarItem {
 
     /** This is called when any event in this.eventTypes are triggered. */
     handleEvent(e: KeyboardEvent) {
-        if (e.key == this.hotkey) this.onPress();
+        if (e.key != this.hotkey) return;
+        this.onPress();
+        if (this.removeAllOnPress === true) this.hotbar.removeAll();
     }
 
     /** Destroy DOM Element and cleanup all garbage. */

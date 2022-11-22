@@ -62,6 +62,7 @@ const rollbar = new Rollbar(4, [
         innerHTML: "Placeholder Spell 7",
     },
 ]);
+rollbar.removeAllOnPress = true;
 rollbar.start(1000);
 
 // Spawn Minions //

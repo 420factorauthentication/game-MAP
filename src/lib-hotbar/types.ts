@@ -11,6 +11,7 @@ export interface HotbarContainer {
     add(item: HotbarItem);
     remove(index: number);
     remove(item: HotbarItem);
+    removeAll();
 }
 
 /**

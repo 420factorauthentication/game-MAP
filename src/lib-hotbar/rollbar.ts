@@ -23,7 +23,7 @@ class Rollbar extends Hotbar {
             onPress: Function;
             styleCssText?: string;
             innerHTML?: string;
-        }[],
+        }[] = [],
         elem?: HTMLElement | string
     ) {
         super(maxItems, elem);
@@ -32,6 +32,12 @@ class Rollbar extends Hotbar {
     /////////
     // API //
     /////////
+
+    /**
+     * If true, sets all HotbarButtons generated from rolls
+     * to remove all HotbarButtons from parent Hotbar after pressed.
+     */
+    removeAllOnPress: boolean = false;
 
     /** When new buttons are rolled, these hotkeys are assigned in order. */
     hotkeys: string[] = [
@@ -113,6 +119,7 @@ class Rollbar extends Hotbar {
 
             // If not, a new DOM Element with the default style will be created.
             const button = new HotbarButton(this, hotkey, data.onPress, elem);
+            button.removeAllOnPress = this.removeAllOnPress;
 
             // If a custom Inner HTML is specified, apply it
             if (data.innerHTML) button.elem.innerHTML = data.innerHTML;
