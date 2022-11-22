@@ -114,9 +114,6 @@ class Rollbar extends Hotbar {
             // If not, a new DOM Element with the default style will be created.
             const button = new HotbarButton(this, hotkey, data.onPress, elem);
 
-            this.add(button);
-            this.add(button);
-
             // If a custom Inner HTML is specified, apply it
             if (data.innerHTML) button.elem.innerHTML = data.innerHTML;
         }
