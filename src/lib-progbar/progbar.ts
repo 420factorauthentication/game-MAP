@@ -94,6 +94,12 @@ class ProgBar {
         if ((this.flow = Flow.btmToTop)) this.calcPadding();
     }
 
+    /** Destroy DOM Element and cleanup all garbage. */
+    destroy() {
+        this.elem?.remove();
+        delete this._elem;
+    }
+
     /** Redraw bar graphics. */
     private calcPadding() {
         switch (this.flow) {

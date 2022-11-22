@@ -8,8 +8,7 @@ import {HotbarContainer, HotbarItem} from "./types";
 /** A button that calls a function when clicked, or when a key is pressed. */
 class HotbarButton implements HotbarItem {
     /**
-     *
-     * @param _hotbar The parent Hotbar of this button.
+     * @param _hotbar The parent Hotbar. Automatically calls _hotbar.add(this).
      * @param hotkey When this key is pressed, onPress() is called.
      * @param onPress When hotkey is pressed, this is called.
      * @param elem Can be a css selector or existing DOM element or null,
@@ -51,6 +50,12 @@ class HotbarButton implements HotbarItem {
     /** This is called when any event in this.eventTypes are triggered. */
     handleEvent(e: KeyboardEvent) {
         if (e.key == this.hotkey) this.onPress();
+    }
+
+    /** Destroy DOM Element and cleanup all garbage. */
+    destroy() {
+        this.elem?.remove();
+        delete this._elem;
     }
 
     ////////////////

@@ -21,4 +21,6 @@ export interface HotbarItem {
     get elem(): HTMLElement;
     readonly eventTypes: readonly (keyof WindowEventMap)[];
     handleEvent(e: Event);
+    /** Destroy DOM Element and cleanup all garbage. */
+    destroy();
 }

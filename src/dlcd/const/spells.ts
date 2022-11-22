@@ -13,9 +13,15 @@ export type Spell = Readonly<{
      */
     func(manager: MinionManager): () => void;
 
-    /** Generates a new HTMLElement at runtime, used for HotbarButton.elem. */
-    get elem(): HTMLElement;
+    /** The style applied to the new DOM Element generated for the HotbarButton. */
+    styleCssText: string;
+
+    /** The inner HTML applied to the new DOM Element generated for the HotbarButton. */
+    innerHTML: string;
 }>;
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
 /** Spell defaults. */
 export const Default: Spell = {
@@ -23,18 +29,20 @@ export const Default: Spell = {
         return () => {};
     },
 
-    get elem() {
-        const newElem = <HTMLElement>document.createElement("a");
-        newElem.style.display = "block";
-        newElem.style.boxSizing = "border-box";
-        // newElem.style.background = "content-box radial-gradient(slategray, gray)";
-        newElem.style.border = "2px solid black";
-        newElem.style.fontSize = "16px";
-        newElem.style.textAlign = "center";
-        newElem.style.lineHeight = "15vh"; //center vertically (one line only)
-        return newElem;
-    },
+    styleCssText:
+        "display: block; " +
+        "box-sizing: border-box; " +
+        // "background: content-box radial-gradient(slategray, gray); " +
+        "border: 2px soliid black; " +
+        "font-size: 16px; " +
+        "text-align: center; " +
+        "line-height: 15vh; ", // center vertically (one line only)
+
+    innerHTML: "New Spell",
 };
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
 /**
  * SWORD SPELL:
@@ -51,10 +59,7 @@ export const Sword: Spell = {
         };
     },
 
-    get elem() {
-        const newElem = Default.elem;
-        newElem.style.background = "rgba(169, 69, 42, 169)";
-        newElem.innerHTML = "Sword of Semver";
-        return newElem;
-    },
+    styleCssText: Default.styleCssText + "background: rgba(169, 69, 42, 169)",
+
+    innerHTML: "Sword of Semver",
 };

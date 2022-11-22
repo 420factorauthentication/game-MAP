@@ -83,8 +83,9 @@ class Minion implements MinionEntity {
         // Stop all AI behaviors
         this.ai.set(Minion.dieState);
 
-        // Cleanup garbage
-        this.elem?.parentNode?.removeChild(this.elem);
+        // Destroy DOM Elements and cleanup garbage
+        this.hpBar.destroy();
+        this.elem?.remove();
         delete this._elem;
 
         // Tell the MinionManager to delete it's records of this Minion

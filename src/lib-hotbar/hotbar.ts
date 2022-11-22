@@ -41,10 +41,19 @@ class Hotbar implements HotbarContainer {
 
     /** Add a button to this Hotbar, and update graphics. */
     add(item: HotbarItem) {
+        // If this Hotbar has a child whose elem matches the added item,
+        // the added item is already added to this Hotbar, so do nothing.
+        if (this.items.some((e) => e.elem === item.elem)) return;
+
+        // If user attempts to add more than max, throw an Error
         if (this.items.length >= this.maxItems) throw new Error("Max items");
+
+        // Init
         this._items.push(item);
         this.elem.appendChild(item.elem);
         this.updateSize(item);
+
+        // Return the added item
         return item;
     }
 
@@ -54,9 +63,30 @@ class Hotbar implements HotbarContainer {
     remove(v: number | HotbarItem) {
         let index = typeof v === "number" ? v : this.items.indexOf(v);
         let item = typeof v === "number" ? this.items[v] : v;
-        Hotbar.removeEventsOf(item);
-        this.elem.removeChild(item.elem);
+
+        // If item not found, do nothing
+        if (!item) return;
+        if (!this.items.some((e) => e.elem === item.elem)) return;
+
+        // Cleanup garbage
+        Hotbar.cleanupEventsOf(item);
+        item.destroy();
         this._items.splice(index, 1);
+    }
+
+    /** Remove all buttons from this Hotbar. */
+    removeAll() {
+        for (const item of this._items) {
+            Hotbar.cleanupEventsOf(item);
+            item.destroy();
+        }
+        this._items = [];
+    }
+
+    /** Destroy DOM Element and cleanup all garbage. */
+    destroy() {
+        this.elem?.remove();
+        delete this._elem;
     }
 
     ////////////////
@@ -104,7 +134,7 @@ class Hotbar implements HotbarContainer {
         for (const item of this.items) this.updateSize(item);
     }
 
-    private static removeEventsOf(item: HotbarItem) {
+    private static cleanupEventsOf(item: HotbarItem) {
         for (const eventType of item.eventTypes)
             removeEventListener(eventType, item);
     }
