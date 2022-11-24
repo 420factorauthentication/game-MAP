@@ -1,11 +1,12 @@
 /** @format */
 
-import * as Levels from "../const/levels.js";
-import * as Spells from "../const/spells.js";
+import * as Levels from "../../const/levels.js";
+import * as Spells from "../../const/spells.js";
 
-import MinionSpawner from "../../lib-pvz/spawner.js";
-import Base from "../../lib-pvz/base.js";
-import Rollbar from "../../lib-hotbar/rollbar.js";
+import MinionSpawner from "../../../lib-pvz/spawner.js";
+import Base from "../../../lib-pvz/base.js";
+import Rollbar from "../../../lib-hotbar/rollbar.js";
+import HotbarButton from "../../../lib-hotbar/button.js";
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -80,7 +81,10 @@ const GameScene: {
                 innerHTML: "Placeholder Spell 7",
             },
         ]);
-        GameScene.spellbar.removeAllOnPress = true;
+        new HotbarButton(GameScene.spellbar, "q", true);
+        new HotbarButton(GameScene.spellbar, "w", true);
+        new HotbarButton(GameScene.spellbar, "e", true);
+        new HotbarButton(GameScene.spellbar, "r", true);
         GameScene.spellbar.start(1000);
     },
 

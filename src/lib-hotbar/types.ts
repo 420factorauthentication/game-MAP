@@ -3,25 +3,43 @@
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-/** A Hotbar that graphically displays a group of buttons. */
+/** A row of buttons that call functions when clicked, or when a key is pressed. */
 export interface HotbarContainer {
-    get elem(): HTMLElement;
+    /** All buttons in this Hotbar. */
     get items(): readonly HotbarItem[];
+    /** The Hotbar element. Button elements will be children to this. */
+    get elem(): HTMLElement;
+    /** Prevents user from adding more buttons than this limit. */
     maxItems: number;
+    /** Add a button to this Hotbar, and update graphics. */
     add(item: HotbarItem): void;
+    /** Remove a button from this Hotbar, and update graphics. */
     remove(index: number): void;
     remove(item: HotbarItem): void;
-    removeAll();
+    /** Remove all buttons from this Hotbar. */
+    removeAll(): void;
+    /** Enable all buttons in this Hotbar. */
+    enableAll(): void;
+    /** Disable all buttons in this Hotbar. */
+    disableAll(): void;
 }
 
-/**
- * A button in a Hotbar that listens to all events in eventTypes
- * and calls handleEvent() when any of those events are triggered.
- */
+/** A button that calls a function when clicked, or when a key is pressed. */
 export interface HotbarItem {
+    /** When this key is pressed, onPress() is called. */
+    hotkey: string;
+    /** If true, disables all buttons in parent Hotbar after button press/click. */
+    disableAllOnPress: boolean;
+    /** When hotkey is pressed, or button is clicked, this is called. */
+    onPress: Function;
+    /** The parent Hotbar. Automatically adds to it's list. */
+    get hotbar(): HotbarContainer;
+    /** The button element. Is a child of this.hotbar.elem. */
     get elem(): HTMLElement;
-    readonly eventTypes: readonly (keyof WindowEventMap)[];
-    handleEvent(e: Event): void;
+    /** If false, this button is hidden and stops doing anything on click/press. */
+    isEnabled: boolean;
     /** Destroy DOM Element and cleanup all garbage. */
     destroy(): void;
+    /** EVENT HANDLER */
+    handleEvent(e: KeyboardEvent): void;
 }

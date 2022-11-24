@@ -8,16 +8,19 @@ import {HotbarContainer, HotbarItem} from "./types";
 /** A button that calls a function when clicked, or when a key is pressed. */
 class HotbarButton implements HotbarItem {
     /**
-     * @param _hotbar The parent Hotbar. Automatically calls _hotbar.add(this).
+     * @param _hotbar The parent Hotbar. Automatically adds to it's list.
      * @param hotkey When this key is pressed, onPress() is called.
-     * @param onPress When hotkey is pressed, this is called.
+     * @param disableAllOnPress
+     * If true, disables all buttons in parent Hotbar after button press/click.
+     * @param onPress When hotkey is pressed, or button is clicked, this is called.
      * @param elem Can be a css selector or existing DOM element or null,
      * in which case a new div element will be created.
      */
     constructor(
         private _hotbar: HotbarContainer,
         public hotkey: string,
-        public onPress: Function,
+        public disableAllOnPress: boolean = false,
+        public onPress: Function = () => {},
         elem?: HTMLElement | string
     ) {
         // Lookup element by selector
@@ -35,27 +38,29 @@ class HotbarButton implements HotbarItem {
 
         // Setup event listeners
         addEventListener("keydown", this);
+
+        // TODO: IMPLEMENT CLICKING ON BUTTON
     }
 
     /////////
     // API //
     /////////
 
-    /** If true, removes all HotbarButtons from parent Hotbar after this is pressed. */
-    removeAllOnPress: boolean = false;
-
-    /**
-     * This button should be listening to all events in this array.
-     * When any of these events are triggered, calls handleEvent().
-     */
-    readonly eventTypes: readonly (keyof WindowEventMap)[] = ["keydown"];
-
-    /** This is called when any event in this.eventTypes are triggered. */
-    handleEvent(e: KeyboardEvent) {
-        if (e.key != this.hotkey) return;
-        this.onPress();
-        if (this.removeAllOnPress === true) this.hotbar.removeAll();
+    /** If false, this button is hidden and stops doing anything on click/press. */
+    get isEnabled() {
+        return this.#isEnabled;
     }
+    set isEnabled(v) {
+        this.#isEnabled = v;
+        if (v) {
+            this.elem.style.opacity = "1";
+            this.elem.style.pointerEvents = "auto";
+        } else {
+            this.elem.style.opacity = "0";
+            this.elem.style.pointerEvents = "none";
+        }
+    }
+    #isEnabled: boolean = true;
 
     /** Destroy DOM Element and cleanup all garbage. */
     destroy() {
@@ -88,6 +93,16 @@ class HotbarButton implements HotbarItem {
         elem.style.background = "content-box radial-gradient(slategray, gray)";
         elem.style.border = "2px solid black";
         return elem;
+    }
+
+    //////////////////////
+    // HELPER FUNCTIONS //
+    //////////////////////
+    handleEvent(e: KeyboardEvent) {
+        if (!this.isEnabled) return;
+        if (e.key != this.hotkey) return;
+        this.onPress();
+        if (this.disableAllOnPress === true) this.hotbar.disableAll();
     }
 }
 

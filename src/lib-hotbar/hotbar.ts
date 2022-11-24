@@ -5,7 +5,7 @@ import {HotbarContainer, HotbarItem} from "./types";
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-/** A row of buttons that calls a function when clicked, or when a key is pressed. */
+/** A row of buttons that call functions when clicked, or when a key is pressed. */
 class Hotbar implements HotbarContainer {
     /**
      * @param _maxItems Prevents user from adding more buttons than this limit.
@@ -69,7 +69,7 @@ class Hotbar implements HotbarContainer {
         if (!this.items.some((e) => e.elem === item.elem)) return;
 
         // Cleanup garbage
-        Hotbar.cleanupEventsOf(item);
+        removeEventListener("keydown", item);
         item.destroy();
         this._items.splice(index, 1);
     }
@@ -77,10 +77,20 @@ class Hotbar implements HotbarContainer {
     /** Remove all buttons from this Hotbar. */
     removeAll() {
         for (const item of this._items) {
-            Hotbar.cleanupEventsOf(item);
+            removeEventListener("keydown", item);
             item.destroy();
         }
         this._items = [];
+    }
+
+    /** Enable all buttons in this Hotbar. */
+    enableAll() {
+        for (const item of this._items) item.isEnabled = true;
+    }
+
+    /** Disable all buttons in this Hotbar. */
+    disableAll() {
+        for (const item of this._items) item.isEnabled = false;
     }
 
     /** Destroy DOM Element and cleanup all garbage. */
@@ -125,18 +135,16 @@ class Hotbar implements HotbarContainer {
     //////////////////////
     // HELPER FUNCTIONS //
     //////////////////////
-    private updateSize(item: HotbarItem) {
+
+    /** Recalculate DOM Element size, to fit based on maxItems. */
+    protected updateSize(item: HotbarItem) {
         item.elem.style.width = "" + 100 / this.maxItems + "%";
         item.elem.style.height = "100%";
     }
 
-    private updateAllSizes() {
+    /** Recalculate DOM Element size of all buttons in this Hotbar. */
+    protected updateAllSizes() {
         for (const item of this.items) this.updateSize(item);
-    }
-
-    private static cleanupEventsOf(item: HotbarItem) {
-        for (const eventType of item.eventTypes)
-            removeEventListener(eventType, item);
     }
 }
 
