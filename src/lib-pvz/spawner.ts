@@ -33,7 +33,7 @@ class MinionSpawner implements MinionManager {
         public maxY: number = 50
     ) {}
 
-    /** Get a list of all existing Minions spawned by this. */
+    /** Get a list of all existing Minions spawned by this MinionManager. */
     get minions(): readonly MinionEntity[] {
         return this.#minions;
     }
@@ -88,12 +88,16 @@ class MinionSpawner implements MinionManager {
     }
 
     /** Uses promises to wait timeStep inbetween spawning each Minion */
-    private loop(i: number, spawns: SpawnGroup, newUUID: string) {
+    private loop(
+        i: number,
+        spawns: SpawnGroup,
+        newUUID: string
+    ): Promise<boolean> {
         return new Promise((resolve) => {
             setTimeout(resolve, spawns.timeStep);
         }).then(() => {
             // If current level's uuid no longer matches, level was stopped
-            if (this.currentLevel.uuid != newUUID) return false;
+            if (this.currentLevel?.uuid != newUUID) return false;
             // Otherwise, spawn a Minion
             this.spawn(spawns.type);
             // If all Minions were successfully spawned, return true
@@ -108,25 +112,15 @@ class MinionSpawner implements MinionManager {
         this.#currentLevel = undefined;
     }
 
-    /** Kill an existing Minion. */
-    kill(minion: MinionEntity) {
-        // If this MinionSpawner doesnt have a Minion with a matching uuid, return
-        if (!this.minions.some((e) => e.uuid === minion.uuid)) return;
-
-        // Delete the records of killed Minion
-        this.#minions.splice(this.#minions.indexOf(minion), 1);
-
-        // Tell the minion to cleanup it's garbage
-        minion.die();
-    }
-
     /**
      * Spawn a Minion.
      * Elem can be a css selector or existing DOM element or null,
      * in which case a new anchor element will be created.
+     *
+     * Returns the new Minion.
      */
-    spawn(type: MinionType, elem?: HTMLElement | string) {
-        const newMinion = new Minion(
+    spawn(type: MinionType, elem?: HTMLElement | string): MinionEntity {
+        return new Minion(
             this,
             type,
             this.target,
@@ -134,8 +128,34 @@ class MinionSpawner implements MinionManager {
             rand(this.minY, this.maxY),
             elem
         );
-        this.#minions.push(newMinion);
-        return newMinion;
+    }
+
+    /** Kill all Minions tracked by this MinionManager. */
+    killAll() {
+        while (this.minions.length > 0) this.minions[0].die();
+    }
+
+    /** Destroy DOM Elements and cleanup all Minions tracked by this MinionManager. */
+    destroyAll() {
+        while (this.minions.length > 0) this.minions[0].destroy();
+    }
+
+    /** Add an existing Minion to this MinionManager's list of Minions. */
+    trackMinion(minion: MinionEntity) {
+        // If this MinionSpawner already has a Minion with a matching uuid, return
+        if (this.minions.some((e) => e.uuid === minion.uuid)) return;
+
+        // Add the existing Minion to the list
+        this.#minions.push(minion);
+    }
+
+    /** Remove an existing Minion from this MinionManager's list of Minions. */
+    stopTrackingMinion(minion: MinionEntity) {
+        // If this MinionSpawner doesnt have a Minion with a matching uuid, return
+        if (!this.minions.some((e) => e.uuid === minion.uuid)) return;
+
+        // Remove the existing Minion from the list
+        this.#minions.splice(this.#minions.indexOf(minion), 1);
     }
 }
 

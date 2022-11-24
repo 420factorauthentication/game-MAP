@@ -56,6 +56,12 @@ class Base implements BaseEntity {
         console.log("GAME OVER")
     }
 
+    /** Remove DOM Element and cleanup all garbage. */
+    destroy() {
+        this.elem?.remove();
+        delete this._elem;
+    }
+
     ////////////////
     // COMPONENTS //
     ////////////////

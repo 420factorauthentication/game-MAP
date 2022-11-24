@@ -39,11 +39,11 @@ class StateMachine {
     set(newState: State | undefined, ...args): Promise<boolean> {
         // Run onExit and onEnter
         if (this.state?.onExit) this.state.onExit(...args);
-        if (newState.onEnter) newState.onEnter(...args);
+        if (newState?.onEnter) newState.onEnter(...args);
 
         // Cleanup old onLoop and setup new onLoop
         clearInterval(this.#loopID);
-        if (newState.onLoop)
+        if (newState?.onLoop && newState?.loopInterval)
             this.#loopID = setInterval(
                 newState.onLoop,
                 newState.loopInterval,

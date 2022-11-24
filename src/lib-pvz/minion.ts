@@ -66,6 +66,9 @@ class Minion implements MinionEntity {
 
         // Add Minion class
         this.elem.className += " minion";
+
+        // Tell the MinionManager to add this Minion to it's list
+        this.manager.trackMinion(this);
     }
 
     /////////
@@ -75,13 +78,18 @@ class Minion implements MinionEntity {
     /** A globally unique id, different from all existing Minions. */
     readonly uuid: string;
 
-    /** Kill this minion and cleanup all garbage. */
+    /** Kill this minion, then destroy DOM Element and cleanup all garbage. */
     die() {
-        // If elem was already deleted, this minion is already dead
-        if (!this.hasOwnProperty('_elem')) return;
+        // TODO: PLAY DEATH ANIMATION HERE
 
+        // Destroy DOM Element and cleanup all garbage
+        this.destroy();
+    }
+
+    /** Destroy DOM Element and cleanup all garbage. */
+    destroy() {
         // Stop all AI behaviors
-        this.ai.set(Minion.dieState);
+        this.ai.set(undefined);
 
         // Destroy DOM Elements and cleanup garbage
         this.hpBar.destroy();
@@ -89,7 +97,7 @@ class Minion implements MinionEntity {
         delete this._elem;
 
         // Tell the MinionManager to delete it's records of this Minion
-        this.manager.kill(this);
+        this.manager.stopTrackingMinion(this);
     }
 
     // Stats //
@@ -159,9 +167,8 @@ class Minion implements MinionEntity {
     protected ai:    StateMachine;
     protected stats: Stats = new Stats(this.type);
 
-    protected moveState:       State = this.moveStateInit;
-    protected attackState:     State = this.attackStateInit;
-    protected static dieState: State = {uuid: "minionDie"};
+    protected moveState:   State = this.moveStateInit;
+    protected attackState: State = this.attackStateInit;
 
     //////////
     // INIT //
@@ -218,7 +225,7 @@ class Minion implements MinionEntity {
     //////////////////////
     private onHpChange() {
         this.hpBar.value = this.stats.current("hp");
-        if (this.hp <= 0) this.manager.kill(this);
+        if (this.hp <= 0) this.die();
     }
 
     private onMovChange() {

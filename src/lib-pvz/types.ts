@@ -47,8 +47,11 @@ export interface MinionEntity {
     /** A globally unique id, different from all existing MinionEntities. */
     readonly uuid: string;
 
-    /** Kill this minion and cleanup all garbage. */
+    /** Kill this minion, then destroy DOM Element and cleanup all garbage. */
     die: () => void;
+
+    /** Destroy DOM Element and cleanup all garbage. */
+    destroy: () => void;
 
     // Contains records of all existing minions for cleanup.
     readonly manager: MinionManager;
@@ -90,22 +93,28 @@ export interface MinionEntity {
  * A singleton that handles spawning, killing, and fetching existing MinionEntities.
  */
 export interface MinionManager {
-    /** Get a list of all existing Minions spawned by this. */
+    /** Get a list of all existing Minions tracked by this MinionManager. */
     minions: readonly MinionEntity[];
     /** Get minions list, sorted from lowest x to highest x. */
     minionsSortX: readonly MinionEntity[];
     /** Spawn a group of Minions. Each Minion will have a new HTMLElement. */
-    startLevel(spawns: SpawnGroup): Promise<boolean>;
+    startLevel: (spawns: SpawnGroup) => Promise<boolean>;
     /** Stop the current level before it finishes spawning all Minions. */
-    stopCurrentLevel();
-    /** Kill an existing Minion. */
-    kill(minion: MinionEntity);
+    stopCurrentLevel: () => void;
     /**
      * Spawn a Minion.
      * Elem can be a css selector or existing DOM element or null,
      * in which case a new anchor element will be created.
      */
-    spawn(type: MinionType, elem?: HTMLElement | string);
+    spawn: (type: MinionType, elem?: HTMLElement | string) => MinionEntity;
+    /** Kill all Minions tracked by this MinionManager. */
+    killAll: () => void;
+    /** Destroy DOM Elements and cleanup all Minions tracked by this MinionManager. */
+    destroyAll: () => void;
+    /** Add an existing Minion to this MinionManager's list of Minions. */
+    trackMinion: (minion: MinionEntity) => void;
+    /** Remove an existing Minion from this MinionManager's list of Minions. */
+    stopTrackingMinion: (minion: MinionEntity) => void;
 }
 
 /**

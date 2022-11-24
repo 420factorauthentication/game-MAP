@@ -8,9 +8,9 @@ export interface HotbarContainer {
     get elem(): HTMLElement;
     get items(): readonly HotbarItem[];
     maxItems: number;
-    add(item: HotbarItem);
-    remove(index: number);
-    remove(item: HotbarItem);
+    add(item: HotbarItem): void;
+    remove(index: number): void;
+    remove(item: HotbarItem): void;
     removeAll();
 }
 
@@ -21,7 +21,7 @@ export interface HotbarContainer {
 export interface HotbarItem {
     get elem(): HTMLElement;
     readonly eventTypes: readonly (keyof WindowEventMap)[];
-    handleEvent(e: Event);
+    handleEvent(e: Event): void;
     /** Destroy DOM Element and cleanup all garbage. */
-    destroy();
+    destroy(): void;
 }
