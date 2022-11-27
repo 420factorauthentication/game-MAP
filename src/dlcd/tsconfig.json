@@ -3,14 +3,6 @@
         "allowJs": true
     },
     "extends": "../../tsconfig.proj.json",
-    "include": [
-        "./src/**/*",
-        "src/const/**/*",
-        "../lib-*/**/*"
-        // "../../node_modules/uuid/dist/esm-browser"
-    ],
-    "exclude": [
-        // "../_out/**/*",
-        "../**/*.spec.*"
-    ]
+    "include": ["./src/**/*", "../lib-*/**/*"],
+    "exclude": ["../**/*.spec.*"]
 }
