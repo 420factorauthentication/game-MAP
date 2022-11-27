@@ -8,7 +8,16 @@
 
 <br>
 
-## Workflow Config Settings
+## Personal Notes: Binary Assets
+
+Binary assets are kept in cloud storage separate from the repo.
+When pulling the repo, download the
+[assets folder](https://drive.google.com/drive/folders/1nbAjKdv-4MV9Md6lP3ThGYlSwMLeyWch?usp=sharing)
+and merge it's contents into the repo root.
+
+<br>
+
+## Personal Notes: Workflow Config Settings
 
 ### VSCode Extensions
 
@@ -40,7 +49,8 @@
 
 ### .vscode/settings.json
 
--   Prettier formats on save
+-   Prettier formats on save, using the VSCode Extension
+    [Prettier Formatter for Visual Studio Code](vscode:extension/esbenp.prettier-vscode)
 
 <br>
 
