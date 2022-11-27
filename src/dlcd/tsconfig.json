@@ -5,7 +5,7 @@
     "extends": "../../tsconfig.proj.json",
     "include": [
         "./src/**/*",
-        "./const/**/*",
+        "src/const/**/*",
         "../lib-*/**/*"
         // "../../node_modules/uuid/dist/esm-browser"
     ],

@@ -1,7 +1,7 @@
 /** @format */
 
-import * as Levels from "../../const/levels.js";
-import * as Spells from "../../const/spells.js";
+import * as Levels from "../const/levels.js";
+import * as Spells from "../const/spells.js";
 
 import MinionSpawner from "../../../lib-pvz/spawner.js";
 import Base from "../../../lib-pvz/base.js";

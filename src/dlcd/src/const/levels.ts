@@ -1,8 +1,8 @@
 /** @format */
 
-import {SpawnGroup} from "../../lib-pvz/types";
+import {SpawnGroup} from "../../../lib-pvz/types";
 
-import * as MinionTypes from "../const/minions.js";
+import * as MinionTypes from "./minions.js";
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
