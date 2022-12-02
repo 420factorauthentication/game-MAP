@@ -53,7 +53,7 @@ const TitleScene: {
         // Art bottom-left with margins
         TitleScene.art.style.position = "absolute";
         TitleScene.art.style.left = "5vw";
-        TitleScene.art.style.bottom = "5vh";
+        TitleScene.art.style.bottom = "5vw";
         TitleScene.art.style.width = "calc(90vw * 780 / 1440)";
         TitleScene.art.style.height = "calc(90vh * 620 / 900)";
         TitleScene.art.style.zIndex = "2";
