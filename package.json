@@ -17,7 +17,7 @@
         "preinstall:default:win32": "npm install -g typescript && npm install -g prettier",
         "preinstall:darwin:linux": "sudo npm install -g typescript && sudo npm install -g prettier",
         "purge": "run-script-os",
-        "purge:default:win32": "del ./_out && del ./_api",
+        "purge:default:win32": "del /q .\\_out && del /q .\\_api",
         "purge:darwin:linux": "rm -Rf ./_out && rm -Rf ./_api",
         "compile": "tsc -b",
         "build": "npm run purge && npm run compile"
