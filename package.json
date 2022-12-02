@@ -19,7 +19,7 @@
         "purge": "run-script-os",
         "purge:default:win32": "del /q .\\_out && del /q .\\_api",
         "purge:darwin:linux": "rm -Rf ./_out && rm -Rf ./_api",
-        "compile": "tsc -b",
+        "compile": "tsc --build",
         "build": "npm run purge && npm run compile"
     }
 }
