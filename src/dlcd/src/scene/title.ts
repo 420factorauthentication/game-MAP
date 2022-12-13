@@ -50,12 +50,12 @@ const TitleScene: {
         TitleScene.art = <HTMLElement>document.createElement("div");
         document.body.appendChild(TitleScene.art);
 
-        // Art bottom-left with margins
+        // Art bottom-left
         TitleScene.art.style.position = "absolute";
-        TitleScene.art.style.left = "5vw";
-        TitleScene.art.style.bottom = "5vw";
-        TitleScene.art.style.width = "calc(90vw * 780 / 1440)";
-        TitleScene.art.style.height = "calc(90vh * 620 / 900)";
+        TitleScene.art.style.left = "0";
+        TitleScene.art.style.bottom = "0";
+        TitleScene.art.style.width = "calc(100vw * 780 / 1440)";
+        TitleScene.art.style.height = "calc(100vh * 620 / 900)";
         TitleScene.art.style.zIndex = "2";
 
         // Art svg
@@ -63,10 +63,13 @@ const TitleScene: {
         TitleScene.art.style.backgroundSize = "100% 100%";
         TitleScene.art.style.backgroundRepeat = "no-repeat";
 
+        // Art margins and blurred edges
+        TitleScene.art.style.boxShadow =
+            "inset 3vw 4vh 16px #515151, inset 0 -4vh 16px #515151";
+
         // BG create
         TitleScene.bg = <HTMLElement>document.createElement("div");
         document.body.appendChild(TitleScene.bg);
-        TitleScene.bg.style.backgroundColor = "#515151";
 
         // BG centered
         TitleScene.bg.style.position = "absolute";
@@ -75,6 +78,9 @@ const TitleScene: {
         TitleScene.bg.style.width = "100vw";
         TitleScene.bg.style.height = "100vh";
         TitleScene.bg.style.zIndex = "1";
+
+        // BG style
+        TitleScene.bg.style.backgroundColor = "#515151";
     },
 
     /** Destroy this Scene's DOM Elements and cleanup all garbage. */
