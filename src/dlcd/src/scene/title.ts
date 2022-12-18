@@ -55,7 +55,7 @@ const TitleScene: {
         TitleScene.title.style.top = "5vh";
         TitleScene.title.style.zIndex = "3";
 
-        // Style - css art
+        // Style - art assets
         TitleScene.title.style.backgroundImage =
             "url(./assets/art/mm-title.svg)";
         TitleScene.title.style.backgroundSize = "100% 100%";
@@ -71,19 +71,23 @@ const TitleScene: {
         TitleScene.menuArt.style.width = "calc(100vw * 780 / 1440)";
         TitleScene.menuArt.style.height = "calc(100vh * 620 / 900)";
 
-        // Position - bottom-left with margins and blurred edges
+        // Position - bottom-left
         TitleScene.menuArt.style.position = "absolute";
         TitleScene.menuArt.style.left = "0";
         TitleScene.menuArt.style.bottom = "0";
         TitleScene.menuArt.style.zIndex = "2";
-        TitleScene.menuArt.style.boxShadow =
-            "inset 3vw 4vh 16px black, inset 0 -4vh 16px black";
 
-        // Style - css art
+        // Style - art assets
         TitleScene.menuArt.style.backgroundImage =
-            "url(./assets/art/mm-art0.svg)";
+            "url(./assets/art/mm-art-planets.svg)";
         TitleScene.menuArt.style.backgroundSize = "100% 100%";
         TitleScene.menuArt.style.backgroundRepeat = "no-repeat";
+
+        // Style - blurred edges
+        // TODO: Refactor using a mask instead of boxshadow,
+        //       since boxshadow messes with z layering
+        TitleScene.menuArt.style.boxShadow =
+            "inset 3vw 4vh 16px black, inset 0 -4vh 16px black";
 
         /////////////
         // MENU BG //
@@ -101,8 +105,11 @@ const TitleScene: {
         TitleScene.menuBG.style.top = "0";
         TitleScene.menuBG.style.zIndex = "1";
 
-        // Style - css solid color
-        TitleScene.menuBG.style.backgroundColor = "black";
+        // Style - art assets
+        TitleScene.menuBG.style.backgroundImage =
+            "url(./assets/art/mm-bg-space.svg)";
+        TitleScene.menuBG.style.backgroundSize = "100% 100%";
+        TitleScene.menuBG.style.backgroundRepeat = "no-repeat";
 
         /////////////////////
         // CONTINUE BUTTON //
@@ -115,7 +122,7 @@ const TitleScene: {
         TitleScene.btnContinue.style.left = "calc(100vw * 808 / 1440)";
         TitleScene.btnContinue.style.top = "calc(100vh * 308 / 900)";
 
-        // Style - css art
+        // Style - art assets
         TitleScene.btnContinue.style.backgroundImage =
             "url(./assets/art/mm-btn-continue.svg)";
 
@@ -130,7 +137,7 @@ const TitleScene: {
         TitleScene.btnNewGame.style.left = "calc(100vw * 898 / 1440)";
         TitleScene.btnNewGame.style.top = "calc(100vh * 426 / 900)";
 
-        // Style - css art
+        // Style - art assets
         TitleScene.btnNewGame.style.backgroundImage =
             "url(./assets/art/mm-btn-newgame.svg)";
 
@@ -145,7 +152,7 @@ const TitleScene: {
         TitleScene.btnLoad.style.left = "calc(100vw * 988 / 1440)";
         TitleScene.btnLoad.style.top = "calc(100vh * 544 / 900)";
 
-        // Style - css art
+        // Style - art assets
         TitleScene.btnLoad.style.backgroundImage =
             "url(./assets/art/mm-btn-load.svg)";
 
@@ -160,7 +167,7 @@ const TitleScene: {
         TitleScene.btnOptions.style.left = "calc(100vw * 1078 / 1440)";
         TitleScene.btnOptions.style.top = "calc(100vh * 661 / 900)";
 
-        // Style - css art
+        // Style - art assets
         TitleScene.btnOptions.style.backgroundImage =
             "url(./assets/art/mm-btn-options.svg)";
 
@@ -175,7 +182,7 @@ const TitleScene: {
         TitleScene.btnExit.style.left = "calc(100vw * 1168 / 1440)";
         TitleScene.btnExit.style.top = "calc(100vh * 780 / 900)";
 
-        // Style - css art
+        // Style - art assets
         TitleScene.btnExit.style.backgroundImage =
             "url(./assets/art/mm-btn-exit.svg)";
 
@@ -195,7 +202,7 @@ const TitleScene: {
             button.style.height = "calc(100vh * 92 / 900)";
             // Position
             button.style.zIndex = "4";
-            // Style - css art
+            // Style
             button.style.backgroundSize = "100% 100%";
             button.style.backgroundRepeat = "no-repeat";
         }
@@ -217,6 +224,14 @@ const TitleScene: {
 
         TitleScene.btnContinue.remove();
         delete TitleScene.btnContinue;
+        TitleScene.btnNewGame.remove();
+        delete TitleScene.btnNewGame;
+        TitleScene.btnLoad.remove();
+        delete TitleScene.btnLoad;
+        TitleScene.btnOptions.remove();
+        delete TitleScene.btnOptions;
+        TitleScene.btnExit.remove();
+        delete TitleScene.btnExit;
     },
 };
 

@@ -8,7 +8,7 @@ import {HotbarContainer, HotbarItem} from "./types";
 /** A button that calls a function when clicked, or when a key is pressed. */
 class HotbarButton implements HotbarItem {
     /**
-     * @param _hotbar The parent Hotbar. Automatically adds to it's list.
+     * @param _hotbar The parent Hotbar. Automatically adds to it's array.
      * @param hotkey When this key is pressed, onPress() is called.
      * @param disableAllOnPress
      * If true, disables all buttons in parent Hotbar after button press/click.

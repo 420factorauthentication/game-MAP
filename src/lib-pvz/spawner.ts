@@ -10,7 +10,7 @@ import {
 } from "./types";
 
 import Minion from "./minion.js";
-import {rand} from "../lib-math2/math2.js";
+import {rand} from "../lib-utils/utils.js";
 import uuidv4 from "../../node_modules/uuid/dist/esm-browser/v4.js";
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -33,13 +33,13 @@ class MinionSpawner implements MinionManager {
         public maxY: number = 50
     ) {}
 
-    /** Get a list of all existing Minions spawned by this MinionManager. */
+    /** Get an array of all existing Minions tracked by this MinionManager. */
     get minions(): readonly MinionEntity[] {
         return this.#minions;
     }
     #minions: MinionEntity[] = [];
 
-    /** Get minions list, sorted from lowest x to highest x. */
+    /** Get minions array, sorted from lowest x to highest x. */
     get minionsSortX(): readonly MinionEntity[] {
         const minionsCopy = [...this.minions];
         minionsCopy.sort((a, b) => {
@@ -140,21 +140,21 @@ class MinionSpawner implements MinionManager {
         while (this.minions.length > 0) this.minions[0].destroy();
     }
 
-    /** Add an existing Minion to this MinionManager's list of Minions. */
+    /** Add an existing Minion to this MinionManager's array of Minions. */
     trackMinion(minion: MinionEntity) {
         // If this MinionSpawner already has a Minion with a matching uuid, return
         if (this.minions.some((e) => e.uuid === minion.uuid)) return;
 
-        // Add the existing Minion to the list
+        // Add the existing Minion to the array
         this.#minions.push(minion);
     }
 
-    /** Remove an existing Minion from this MinionManager's list of Minions. */
+    /** Remove an existing Minion from this MinionManager's array of Minions. */
     stopTrackingMinion(minion: MinionEntity) {
         // If this MinionSpawner doesnt have a Minion with a matching uuid, return
         if (!this.minions.some((e) => e.uuid === minion.uuid)) return;
 
-        // Remove the existing Minion from the list
+        // Remove the existing Minion from the array
         this.#minions.splice(this.#minions.indexOf(minion), 1);
     }
 }

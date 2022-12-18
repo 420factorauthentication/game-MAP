@@ -67,7 +67,7 @@ class Minion implements MinionEntity {
         // Add Minion class
         this.elem.className += " minion";
 
-        // Tell the MinionManager to add this Minion to it's list
+        // Tell the MinionManager to add this Minion to it's array
         this.manager.trackMinion(this);
     }
 

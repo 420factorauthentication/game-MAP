@@ -32,7 +32,7 @@ export interface HotbarItem {
     disableAllOnPress: boolean;
     /** When hotkey is pressed, or button is clicked, this is called. */
     onPress: Function;
-    /** The parent Hotbar. Automatically adds to it's list. */
+    /** The parent Hotbar. Automatically adds to it's array. */
     get hotbar(): HotbarContainer;
     /** The button element. Is a child of this.hotbar.elem. */
     get elem(): HTMLElement;

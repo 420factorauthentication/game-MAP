@@ -93,9 +93,9 @@ export interface MinionEntity {
  * A singleton that handles spawning, killing, and fetching existing MinionEntities.
  */
 export interface MinionManager {
-    /** Get a list of all existing Minions tracked by this MinionManager. */
+    /** Get an array of all existing Minions tracked by this MinionManager. */
     minions: readonly MinionEntity[];
-    /** Get minions list, sorted from lowest x to highest x. */
+    /** Get minions array, sorted from lowest x to highest x. */
     minionsSortX: readonly MinionEntity[];
     /** Spawn a group of Minions. Each Minion will have a new HTMLElement. */
     startLevel: (spawns: SpawnGroup) => Promise<boolean>;
@@ -111,9 +111,9 @@ export interface MinionManager {
     killAll: () => void;
     /** Destroy DOM Elements and cleanup all Minions tracked by this MinionManager. */
     destroyAll: () => void;
-    /** Add an existing Minion to this MinionManager's list of Minions. */
+    /** Add an existing Minion to this MinionManager's array of Minions. */
     trackMinion: (minion: MinionEntity) => void;
-    /** Remove an existing Minion from this MinionManager's list of Minions. */
+    /** Remove an existing Minion from this MinionManager's array of Minions. */
     stopTrackingMinion: (minion: MinionEntity) => void;
 }
 
