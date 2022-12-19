@@ -1,5 +1,3 @@
-/** @format */
-
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -84,10 +82,26 @@ const TitleScene: {
         TitleScene.menuArt.style.backgroundRepeat = "no-repeat";
 
         // Style - blurred edges
-        // TODO: Refactor using a mask instead of boxshadow,
-        //       since boxshadow messes with z layering
-        TitleScene.menuArt.style.boxShadow =
-            "inset 3vw 4vh 16px black, inset 0 -4vh 16px black";
+        TitleScene.menuArt.style.maskComposite = "intersect";
+        TitleScene.menuArt.style.maskImage =
+            "linear-gradient("
+                + "to right"
+                + ", transparent 2%"
+                + ", rgba(0 0 0 / 1) 20%"
+                + ", rgba(0 0 0 / 1) 80%"
+                + ", transparent 98%"
+            + "), " +
+            "linear-gradient("
+                + "to bottom"
+                + ", transparent 2%"
+                + ", rgba(0 0 0 / 1) 20%"
+                + ", rgba(0 0 0 / 1) 80%"
+                + ", transparent 98%"
+            + ")";
+
+        // Style - blurred edges
+        // TitleScene.menuArt.style.boxShadow =
+        //     "inset 3vw 4vh 16px black, inset 0 -4vh 16px black";
 
         /////////////
         // MENU BG //
