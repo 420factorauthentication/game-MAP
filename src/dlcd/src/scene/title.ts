@@ -1,16 +1,16 @@
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
+/** @format */
 
-const TitleScene: {
+import {Scene} from "./types";
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+export interface _TitleScene extends Scene {
     /** SVG title text. */
     title?: HTMLElement;
-
     /** SVG art. */
     menuArt?: HTMLElement;
-
-    /** Currently solid color bg. TODO: Animated space bg */
+    /** SVG animated space bg. */
     menuBG?: HTMLElement;
-
     /** Continue button. */
     btnContinue?: HTMLElement;
     /** New Game button. */
@@ -21,230 +21,89 @@ const TitleScene: {
     btnOptions?: HTMLElement;
     /** Exit to Desktop button. */
     btnExit?: HTMLElement;
+}
 
-    /** Is this Scene currently displaying it's DOM Elements? */
-    isActive?: boolean;
+////////////////////////////////////////////////////////////////////////////////
 
-    /** Creates this Scene's DOM Elements. */
-    activate(): void;
-
-    /** Destroy this Scene's DOM Elements and cleanup all garbage. */
-    deactivate(): void;
-} = {
-    /** Creates this Scene's DOM Elements. */
+export const TitleScene: _TitleScene = {
     activate() {
-        // Do nothing if active
+        // Don't allow multiple instances of the same Scene to be active at once
         if (TitleScene.isActive) return;
         TitleScene.isActive = true;
 
-        ///////////
-        // TITLE //
-        ///////////
+        // Create HTMLElements
         TitleScene.title = <HTMLElement>document.createElement("div");
-        document.body.appendChild(TitleScene.title);
-
-        // Size
-        TitleScene.title.style.width = "90vw";
-        TitleScene.title.style.height = "calc(90vh * 280 / 900)";
-
-        // Position - top-middle with margins
-        TitleScene.title.style.position = "absolute";
-        TitleScene.title.style.left = "5vw";
-        TitleScene.title.style.top = "5vh";
-        TitleScene.title.style.zIndex = "3";
-
-        // Style - art assets
-        TitleScene.title.style.backgroundImage =
-            "url(./assets/art/mm-title.svg)";
-        TitleScene.title.style.backgroundSize = "100% 100%";
-        TitleScene.title.style.backgroundRepeat = "no-repeat";
-
-        //////////////
-        // MENU ART //
-        //////////////
         TitleScene.menuArt = <HTMLElement>document.createElement("div");
-        document.body.appendChild(TitleScene.menuArt);
-
-        // Size
-        TitleScene.menuArt.style.width = "calc(100vw * 780 / 1440)";
-        TitleScene.menuArt.style.height = "calc(100vh * 620 / 900)";
-
-        // Position - bottom-left
-        TitleScene.menuArt.style.position = "absolute";
-        TitleScene.menuArt.style.left = "0";
-        TitleScene.menuArt.style.bottom = "0";
-        TitleScene.menuArt.style.zIndex = "2";
-
-        // Style - art assets
-        TitleScene.menuArt.style.backgroundImage =
-            "url(./assets/art/mm-art-planets.svg)";
-        TitleScene.menuArt.style.backgroundSize = "100% 100%";
-        TitleScene.menuArt.style.backgroundRepeat = "no-repeat";
-
-        // Style - blurred edges
-        TitleScene.menuArt.style.maskComposite = "intersect";
-        TitleScene.menuArt.style.maskImage =
-            "linear-gradient("
-                + "to right"
-                + ", transparent 2%"
-                + ", rgba(0 0 0 / 1) 20%"
-                + ", rgba(0 0 0 / 1) 80%"
-                + ", transparent 98%"
-            + "), " +
-            "linear-gradient("
-                + "to bottom"
-                + ", transparent 2%"
-                + ", rgba(0 0 0 / 1) 20%"
-                + ", rgba(0 0 0 / 1) 80%"
-                + ", transparent 98%"
-            + ")";
-
-        // Style - blurred edges
-        // TitleScene.menuArt.style.boxShadow =
-        //     "inset 3vw 4vh 16px black, inset 0 -4vh 16px black";
-
-        /////////////
-        // MENU BG //
-        /////////////
         TitleScene.menuBG = <HTMLElement>document.createElement("div");
+        TitleScene.btnContinue = <HTMLElement>document.createElement("button");
+        TitleScene.btnNewGame = <HTMLElement>document.createElement("button");
+        TitleScene.btnLoad = <HTMLElement>document.createElement("button");
+        TitleScene.btnOptions = <HTMLElement>document.createElement("button");
+        TitleScene.btnExit = <HTMLElement>document.createElement("button");
+
+        document.body.appendChild(TitleScene.title);
+        document.body.appendChild(TitleScene.menuArt);
         document.body.appendChild(TitleScene.menuBG);
-
-        // Size
-        TitleScene.menuBG.style.width = "100vw";
-        TitleScene.menuBG.style.height = "100vh";
-
-        // Position - centered
-        TitleScene.menuBG.style.position = "absolute";
-        TitleScene.menuBG.style.left = "0";
-        TitleScene.menuBG.style.top = "0";
-        TitleScene.menuBG.style.zIndex = "1";
-
-        // Style - art assets
-        TitleScene.menuBG.style.backgroundImage =
-            "url(./assets/art/mm-bg-space.svg)";
-        TitleScene.menuBG.style.backgroundSize = "100% 100%";
-        TitleScene.menuBG.style.backgroundRepeat = "no-repeat";
-
-        /////////////////////
-        // CONTINUE BUTTON //
-        /////////////////////
-        TitleScene.btnContinue = <HTMLElement>document.createElement("a");
         document.body.appendChild(TitleScene.btnContinue);
-
-        // Position
-        TitleScene.btnContinue.style.position = "absolute";
-        TitleScene.btnContinue.style.left = "calc(100vw * 808 / 1440)";
-        TitleScene.btnContinue.style.top = "calc(100vh * 308 / 900)";
-
-        // Style - art assets
-        TitleScene.btnContinue.style.backgroundImage =
-            "url(./assets/art/mm-btn-continue.svg)";
-
-        /////////////////////
-        // NEW GAME BUTTON //
-        /////////////////////
-        TitleScene.btnNewGame = <HTMLElement>document.createElement("a");
         document.body.appendChild(TitleScene.btnNewGame);
-
-        // Position
-        TitleScene.btnNewGame.style.position = "absolute";
-        TitleScene.btnNewGame.style.left = "calc(100vw * 898 / 1440)";
-        TitleScene.btnNewGame.style.top = "calc(100vh * 426 / 900)";
-
-        // Style - art assets
-        TitleScene.btnNewGame.style.backgroundImage =
-            "url(./assets/art/mm-btn-newgame.svg)";
-
-        //////////////////////
-        // LOAD GAME BUTTON //
-        //////////////////////
-        TitleScene.btnLoad = <HTMLElement>document.createElement("a");
         document.body.appendChild(TitleScene.btnLoad);
-
-        // Position
-        TitleScene.btnLoad.style.position = "absolute";
-        TitleScene.btnLoad.style.left = "calc(100vw * 988 / 1440)";
-        TitleScene.btnLoad.style.top = "calc(100vh * 544 / 900)";
-
-        // Style - art assets
-        TitleScene.btnLoad.style.backgroundImage =
-            "url(./assets/art/mm-btn-load.svg)";
-
-        ////////////////////
-        // OPTIONS BUTTON //
-        ////////////////////
-        TitleScene.btnOptions = <HTMLElement>document.createElement("a");
         document.body.appendChild(TitleScene.btnOptions);
-
-        // Position
-        TitleScene.btnOptions.style.position = "absolute";
-        TitleScene.btnOptions.style.left = "calc(100vw * 1078 / 1440)";
-        TitleScene.btnOptions.style.top = "calc(100vh * 661 / 900)";
-
-        // Style - art assets
-        TitleScene.btnOptions.style.backgroundImage =
-            "url(./assets/art/mm-btn-options.svg)";
-
-        ////////////////////////////
-        // EXIT TO DESKTOP BUTTON //
-        ////////////////////////////
-        TitleScene.btnExit = <HTMLElement>document.createElement("a");
         document.body.appendChild(TitleScene.btnExit);
 
-        // Position
-        TitleScene.btnExit.style.position = "absolute";
-        TitleScene.btnExit.style.left = "calc(100vw * 1168 / 1440)";
-        TitleScene.btnExit.style.top = "calc(100vh * 780 / 900)";
+        TitleScene.title.id = "title";
+        TitleScene.menuArt.id = "menuArt";
+        TitleScene.menuBG.id = "menuBG";
+        TitleScene.btnContinue.id = "btnContinue";
+        TitleScene.btnNewGame.id = "btnNewGame";
+        TitleScene.btnLoad.id = "btnLoad";
+        TitleScene.btnOptions.id = "btnOptions";
+        TitleScene.btnExit.id = "btnExit";
 
-        // Style - art assets
-        TitleScene.btnExit.style.backgroundImage =
-            "url(./assets/art/mm-btn-exit.svg)";
+        TitleScene.btnContinue.className = "button";
+        TitleScene.btnNewGame.className = "button";
+        TitleScene.btnLoad.className = "button";
+        TitleScene.btnOptions.className = "button";
+        TitleScene.btnExit.className = "button";
 
-        /////////////////
-        // ALL BUTTONS //
-        /////////////////
-        let buttons: HTMLElement[] = [
-            TitleScene.btnContinue,
-            TitleScene.btnNewGame,
-            TitleScene.btnLoad,
-            TitleScene.btnOptions,
-            TitleScene.btnExit,
-        ];
-        for (const button of buttons) {
-            // Size
-            button.style.width = "calc(100vw * 244 / 1440)";
-            button.style.height = "calc(100vh * 92 / 900)";
-            // Position
-            button.style.zIndex = "4";
-            // Style
-            button.style.backgroundSize = "100% 100%";
-            button.style.backgroundRepeat = "no-repeat";
+        // Query stylesheet link element
+        let link: HTMLLinkElement = document.querySelector("#sceneStyle");
+        if (!link) {
+            link = document.createElement("link");
+            document.head.appendChild(link);
+            link.id = "sceneStyle";
         }
+
+        // Overwrite link with this Scene's stylesheet
+        link.type = "text/css";
+        link.rel = "stylesheet";
+        link.href = "./src/scene/title.css";
     },
 
-    /** Destroy this Scene's DOM Elements and cleanup all garbage. */
+    ////////////////////////////////////////////////////////////////////////////
+
     deactivate() {
+        // Do nothing if already inactive
         if (!TitleScene.isActive) return;
         TitleScene.isActive = false;
 
+        // Destroy this Scene's DOM Elements
         TitleScene.title.remove();
-        delete TitleScene.title;
-
         TitleScene.menuArt.remove();
-        delete TitleScene.menuArt;
-
         TitleScene.menuBG.remove();
-        delete TitleScene.menuBG;
-
         TitleScene.btnContinue.remove();
-        delete TitleScene.btnContinue;
         TitleScene.btnNewGame.remove();
-        delete TitleScene.btnNewGame;
         TitleScene.btnLoad.remove();
-        delete TitleScene.btnLoad;
         TitleScene.btnOptions.remove();
-        delete TitleScene.btnOptions;
         TitleScene.btnExit.remove();
+
+        // Delete handles to trigger garbage collection
+        delete TitleScene.title;
+        delete TitleScene.menuArt;
+        delete TitleScene.menuBG;
+        delete TitleScene.btnContinue;
+        delete TitleScene.btnNewGame;
+        delete TitleScene.btnLoad;
+        delete TitleScene.btnOptions;
         delete TitleScene.btnExit;
     },
 };

@@ -130,12 +130,20 @@ class MinionSpawner implements MinionManager {
         );
     }
 
-    /** Kill all Minions tracked by this MinionManager. */
+    /**
+     * Kill all Minions tracked by this MinionManager.
+     * Triggers things like death animations before destruction.
+     * Automatically cleans up garbage.
+     */
     killAll() {
         while (this.minions.length > 0) this.minions[0].die();
     }
 
-    /** Destroy DOM Elements and cleanup all Minions tracked by this MinionManager. */
+    /**
+     * Instantly destroy all Minions tracked by this MinionManager.
+     * Doesn't trigger things like death animations.
+     * Automatically cleans up garbage.
+     */
     destroyAll() {
         while (this.minions.length > 0) this.minions[0].destroy();
     }

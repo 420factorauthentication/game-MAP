@@ -1,44 +1,41 @@
 /** @format */
 
+import {Scene} from "./types";
+
 import * as Levels from "../const/levels.js";
 import * as Spells from "../const/spells.js";
 
-import MinionSpawner from "../../../lib-pvz/spawner.js";
 import Base from "../../../lib-pvz/base.js";
+import MinionSpawner from "../../../lib-pvz/spawner.js";
 import Rollbar from "../../../lib-hotbar/rollbar.js";
 import HotbarButton from "../../../lib-hotbar/button.js";
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-const GameScene: {
+export interface _GameScene extends Scene {
     /** Minions will spawn and attack this. If it dies, game over. */
     base?: Base;
-
     /** A singleton that handles spawning and killing Minions. */
     spawner?: MinionSpawner;
-
     /** Every second, randomly picks 4 spells. The player can cast one. */
     spellbar?: Rollbar;
+}
 
-    /** Is this Scene currently displaying it's DOM Elements? */
-    isActive?: boolean;
+////////////////////////////////////////////////////////////////////////////////
 
-    /** Create this Scene's DOM Elements. */
-    activate(): void;
-
-    /** Destroy this Scene's DOM Elements and cleanup all garbage. */
-    deactivate(): void;
-} = {
-    /** Creates this Scene's DOM Elements. */
+export const GameScene: _GameScene = {
     activate() {
+        // Don't allow multiple instances of the same Scene to be active at once
         if (GameScene.isActive) return;
         GameScene.isActive = true;
 
+        // Init Game
         GameScene.base = new Base(20, 10, 50);
         GameScene.spawner = new MinionSpawner(this.base);
         GameScene.spawner.startLevel(Levels.one);
 
+        // Init Spell UI
         GameScene.spellbar = new Rollbar(4, [
             {
                 onPress: Spells.Sword.func(this.spawner),
@@ -88,18 +85,23 @@ const GameScene: {
         GameScene.spellbar.start(1000);
     },
 
-    /** Destroy this Scene's DOM Elements and cleanup all garbage. */
+    ////////////////////////////////////////////////////////////////////////////
+
     deactivate() {
+        // Do nothing if already inactive
         if (!GameScene.isActive) return;
         GameScene.isActive = false;
 
+        // Cleanup Game
         GameScene.base.destroy();
         GameScene.spawner.stopCurrentLevel();
         GameScene.spawner.destroyAll();
 
+        // Cleanup Spell UI
         GameScene.spellbar.stop();
         GameScene.spellbar.destroy();
 
+        // Delete handles to trigger garbage collection
         delete GameScene.base;
         delete GameScene.spawner;
         delete GameScene.spellbar;

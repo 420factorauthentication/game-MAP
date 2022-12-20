@@ -1,0 +1,107 @@
+#title {
+    /* Size */
+    width: 90vw;
+    height: calc(90vh * 280 / 900);
+    /* Position - Top middle with margins */
+    position: absolute;
+    left: 5vw;
+    top: 5vh;
+    z-index: 3;
+    /* Style - Art assets */
+    background-image: url(../../assets/art/mm-title.svg);
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+}
+
+#menuArt {
+    /* Size */
+    width: calc(100vw * 780 / 1440);
+    height: calc(100vh * 620 / 900);
+    /* Position - Bottom left */
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    z-index: 2;
+    /* Style - Art assets */
+    background-image: url(../../assets/art/mm-art-planets.svg);
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    /* Style - Blurred edges */
+    mask-composite: intersect;
+    mask-image: linear-gradient(
+        to right,
+        transparent 2%,
+        rgba(0 0 0 / 1) 20%,
+        rgba(0 0 0 / 1) 80%,
+        transparent 98%
+    ), linear-gradient(
+        to bottom,
+        transparent 2%,
+        rgba(0 0 0 / 1) 20%,
+        rgba(0 0 0 / 1) 80%,
+        transparent 98%
+    );
+    /* Style: Old blurred edges */
+    /* box-shadow: inset 3vw 4vh 16px black, inset 0 -4vh 16px black; */
+}
+
+#menuBG {
+    /* Size */
+    width: 100vw;
+    height: 100vh;
+    /* Position - Centered */
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 1;
+    /* Style - Art assets */
+    background-image: url(../../assets/art/mm-bg-space.svg);
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+}
+
+.button {
+    /* Size */
+    width: calc(100vw * 244 / 1440);
+    height: calc(100vh * 92 / 900);
+    /* Position */
+    position: absolute;
+    z-index: 4;
+    /* Style */
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    /* Override default forms.css */
+    padding: 0;
+    margin: 0;
+    border: 0;
+    background-color: transparent;
+}
+    #btnContinue {
+        left: calc(100vw * 808 / 1440);
+        top: calc(100vh * 308 / 900);
+        background-image: url(../../assets/art/mm-btn-continue.svg);
+    }
+
+    #btnNewGame {
+        left: calc(100vw * 898 / 1440);
+        top: calc(100vh * 426 / 900);
+        background-image: url(../../assets/art/mm-btn-newgame.svg);
+    }
+
+    #btnLoad {
+        left: calc(100vw * 988 / 1440);
+        top: calc(100vh * 544 / 900);
+        background-image: url(../../assets/art/mm-btn-load.svg);
+    }
+
+    #btnOptions {
+        left: calc(100vw * 1078 / 1440);
+        top: calc(100vh * 661 / 900);
+        background-image: url(../../assets/art/mm-btn-options.svg);
+    }
+
+    #btnExit {
+        left: calc(100vw * 1168 / 1440);
+        top: calc(100vh * 780 / 900);
+        background-image: url(../../assets/art/mm-btn-exit.svg);
+    }
