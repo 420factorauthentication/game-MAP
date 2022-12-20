@@ -59,11 +59,11 @@ export const TitleScene: _TitleScene = {
         TitleScene.btnOptions.id = "btnOptions";
         TitleScene.btnExit.id = "btnExit";
 
-        TitleScene.btnContinue.className = "button";
-        TitleScene.btnNewGame.className = "button";
-        TitleScene.btnLoad.className = "button";
-        TitleScene.btnOptions.className = "button";
-        TitleScene.btnExit.className = "button";
+        TitleScene.btnContinue.className = "mmButton";
+        TitleScene.btnNewGame.className = "mmButton";
+        TitleScene.btnLoad.className = "mmButton";
+        TitleScene.btnOptions.className = "mmButton";
+        TitleScene.btnExit.className = "mmButton";
 
         // Query stylesheet link element
         let link: HTMLLinkElement = document.querySelector("#sceneStyle");

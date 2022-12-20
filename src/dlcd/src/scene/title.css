@@ -1,3 +1,5 @@
+/** @format */
+
 #title {
     /* Size */
     width: 90vw;
@@ -29,18 +31,19 @@
     /* Style - Blurred edges */
     mask-composite: intersect;
     mask-image: linear-gradient(
-        to right,
-        transparent 2%,
-        rgba(0 0 0 / 1) 20%,
-        rgba(0 0 0 / 1) 80%,
-        transparent 98%
-    ), linear-gradient(
-        to bottom,
-        transparent 2%,
-        rgba(0 0 0 / 1) 20%,
-        rgba(0 0 0 / 1) 80%,
-        transparent 98%
-    );
+            to right,
+            transparent 2%,
+            rgba(0 0 0 / 1) 20%,
+            rgba(0 0 0 / 1) 80%,
+            transparent 98%
+        ),
+        linear-gradient(
+            to bottom,
+            transparent 2%,
+            rgba(0 0 0 / 1) 20%,
+            rgba(0 0 0 / 1) 80%,
+            transparent 98%
+        );
     /* Style: Old blurred edges */
     /* box-shadow: inset 3vw 4vh 16px black, inset 0 -4vh 16px black; */
 }
@@ -60,7 +63,7 @@
     background-repeat: no-repeat;
 }
 
-.button {
+.mmButton {
     /* Size */
     width: calc(100vw * 244 / 1440);
     height: calc(100vh * 92 / 900);
@@ -75,33 +78,58 @@
     margin: 0;
     border: 0;
     background-color: transparent;
+    /* On hover: Shift button left */
+    transition-property: transform, background-color, border, border-radius;
+    transition-duration: 0.25s;
 }
-    #btnContinue {
-        left: calc(100vw * 808 / 1440);
-        top: calc(100vh * 308 / 900);
-        background-image: url(../../assets/art/mm-btn-continue.svg);
+
+.mmButton:hover {
+    /* On hover: Shift button left */
+    transform: translate(-20px);
+    /* On hover: Gray halo */
+    background-color: #aaa;
+    border: 4px solid #333;
+    border-radius: 32px;
+    /* On hover: Float up and down */
+    animation: 1s infinite alternate mmButtonFloat;
+}
+
+@keyframes mmButtonFloat {
+    from {
+        translate: 0 0;
     }
 
-    #btnNewGame {
-        left: calc(100vw * 898 / 1440);
-        top: calc(100vh * 426 / 900);
-        background-image: url(../../assets/art/mm-btn-newgame.svg);
+    to {
+        translate: 0 8px;
     }
+}
 
-    #btnLoad {
-        left: calc(100vw * 988 / 1440);
-        top: calc(100vh * 544 / 900);
-        background-image: url(../../assets/art/mm-btn-load.svg);
-    }
+#btnContinue {
+    left: calc(100vw * 808 / 1440);
+    top: calc(100vh * 308 / 900);
+    background-image: url(../../assets/art/mm-btn-continue.svg);
+}
 
-    #btnOptions {
-        left: calc(100vw * 1078 / 1440);
-        top: calc(100vh * 661 / 900);
-        background-image: url(../../assets/art/mm-btn-options.svg);
-    }
+#btnNewGame {
+    left: calc(100vw * 898 / 1440);
+    top: calc(100vh * 426 / 900);
+    background-image: url(../../assets/art/mm-btn-newgame.svg);
+}
 
-    #btnExit {
-        left: calc(100vw * 1168 / 1440);
-        top: calc(100vh * 780 / 900);
-        background-image: url(../../assets/art/mm-btn-exit.svg);
-    }
+#btnLoad {
+    left: calc(100vw * 988 / 1440);
+    top: calc(100vh * 544 / 900);
+    background-image: url(../../assets/art/mm-btn-load.svg);
+}
+
+#btnOptions {
+    left: calc(100vw * 1078 / 1440);
+    top: calc(100vh * 661 / 900);
+    background-image: url(../../assets/art/mm-btn-options.svg);
+}
+
+#btnExit {
+    left: calc(100vw * 1168 / 1440);
+    top: calc(100vh * 780 / 900);
+    background-image: url(../../assets/art/mm-btn-exit.svg);
+}
