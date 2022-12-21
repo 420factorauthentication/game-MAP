@@ -13,6 +13,20 @@
     background-image: url(../../assets/art/mm-title.svg);
     background-size: 100% 100%;
     background-repeat: no-repeat;
+    /* Anim - Fade in after Menu Art */
+    animation: 1.5s 1 cubic-bezier(0.39, 0.575, 0.565, 1) titleFadeIn;
+}
+
+@keyframes titleFadeIn {
+    0% {
+        opacity: 0;
+    }
+    25% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
 }
 
 #menuArt {
@@ -44,8 +58,17 @@
             rgba(0 0 0 / 1) 80%,
             transparent 98%
         );
-    /* Style: Old blurred edges */
-    /* box-shadow: inset 3vw 4vh 16px black, inset 0 -4vh 16px black; */
+    /* Anim - Fade in at start */
+    animation: 1s 1 cubic-bezier(0.39, 0.575, 0.565, 1) menuArtFadeIn;
+}
+
+@keyframes menuArtFadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
 }
 
 #menuBG {
