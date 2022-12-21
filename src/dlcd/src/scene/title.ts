@@ -2,6 +2,8 @@
 
 import {Scene} from "./types";
 
+import GameScene from "./game.js";
+
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 export interface _TitleScene extends Scene {
@@ -64,6 +66,12 @@ export const TitleScene: _TitleScene = {
         TitleScene.btnLoad.className = "mmButton";
         TitleScene.btnOptions.className = "mmButton";
         TitleScene.btnExit.className = "mmButton";
+
+        // Button events
+        TitleScene.btnNewGame.onclick = () => {
+            TitleScene.deactivate();
+            GameScene.activate();
+        };
 
         // Query stylesheet link element
         let link: HTMLLinkElement = document.querySelector("#sceneStyle");

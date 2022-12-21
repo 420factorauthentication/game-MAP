@@ -78,27 +78,34 @@
     margin: 0;
     border: 0;
     background-color: transparent;
-    /* On hover: Shift button left */
+    /* Transitions for hover and active */
     transition-property: transform, background-color, border, border-radius;
     transition-duration: 0.25s;
 }
 
 .mmButton:hover {
-    /* On hover: Shift button left */
+    cursor: pointer;
+    /* Shift button left */
     transform: translate(-20px);
-    /* On hover: Gray halo */
+    /* Gray halo */
     background-color: #aaa;
     border: 4px solid #333;
     border-radius: 32px;
-    /* On hover: Float up and down */
+    /* Float up and down */
     animation: 1s infinite alternate mmButtonFloat;
+}
+
+.mmButton:active {
+    transform: initial;
+    background-color: initial;
+    border: initial;
+    border-radius: initial;
 }
 
 @keyframes mmButtonFloat {
     from {
         translate: 0 0;
     }
-
     to {
         translate: 0 8px;
     }
