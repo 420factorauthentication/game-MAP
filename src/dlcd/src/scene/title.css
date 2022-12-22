@@ -104,8 +104,9 @@
     /* Transition 1 - Shift left on hover. Undo on click. */
     /* Transition 2 - Gray halo on hover. Undo on click. */
     /* Transition 3 - Shrink on click. */
-    transition-property: transform, background-color, border, border-radius;
-    transition-duration: 0.25s;
+    transition-property: scale, transform, background-color, border,
+        border-radius;
+    transition-duration: 0.05s, 0.25s, 0.25s, 0.25s, 0.25s;
     /* Anim 1 - Slide in from right at start */
     /* Anim 2 - Float up and down on hover */
     animation-duration: 1s;
@@ -125,7 +126,8 @@
 
 .mmButton:active {
     /* On click: Undo Transition 1 and Transition 2. Activate Transition 3. */
-    transform: scale(0.9);
+    scale: 0.75 0.9;
+    transform: initial;
     background-color: initial;
     border: initial;
     border-radius: initial;
