@@ -23,6 +23,8 @@ export interface _TitleScene extends Scene {
     btnOptions?: HTMLElement;
     /** Exit to Desktop button. */
     btnExit?: HTMLElement;
+    /** Is the screen currently fading to black? Happens after clicking a button. */
+    isFading?: boolean;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -67,13 +69,16 @@ export const TitleScene: _TitleScene = {
         TitleScene.btnOptions.className = "mmButton";
         TitleScene.btnExit.className = "mmButton";
 
-        // Button events
-        TitleScene.btnNewGame.onclick = () => {
-            TitleScene.deactivate();
-            GameScene.activate();
-        };
+        // Note: Creates/reuses an element with id #sceneFadeOverlay
+        let overlay: HTMLDivElement =
+            document.querySelector("#sceneFadeOverlay");
+        if (!overlay) {
+            overlay = document.createElement("div");
+            document.body.appendChild(overlay);
+            overlay.id = "sceneFadeOverlay";
+        }
 
-        // Query stylesheet link element
+        // Note: Creates/reuses an element with id #sceneStyle
         let link: HTMLLinkElement = document.querySelector("#sceneStyle");
         if (!link) {
             link = document.createElement("link");
@@ -81,10 +86,28 @@ export const TitleScene: _TitleScene = {
             link.id = "sceneStyle";
         }
 
-        // Overwrite link with this Scene's stylesheet
+        // Apply Scene stylesheet
         link.type = "text/css";
         link.rel = "stylesheet";
         link.href = "./src/scene/title.css";
+
+        // New Game Button click: Fade out then start game
+        TitleScene.btnNewGame.onclick = () => {
+            // Do nothing if currently fading
+            if (TitleScene.isFading) return;
+            TitleScene.isFading = true;
+
+            // Disable clicking other elements and fade out screen
+            overlay.style.pointerEvents = "auto";
+            overlay.style.opacity = "1";
+
+            // Switch Scene after fade out
+            setTimeout(() => {
+                TitleScene.deactivate();
+                GameScene.activate();
+                TitleScene.isFading = false;
+            }, 1000);
+        };
     },
 
     ////////////////////////////////////////////////////////////////////////////

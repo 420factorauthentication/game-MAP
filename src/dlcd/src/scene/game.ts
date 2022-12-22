@@ -84,7 +84,7 @@ export const GameScene: _GameScene = {
         new HotbarButton(GameScene.spellbar, "r", true);
         GameScene.spellbar.start(1000);
 
-        // Query stylesheet link element
+        // Note: Creates/reuses an element with id #sceneStyle
         let link: HTMLLinkElement = document.querySelector("#sceneStyle");
         if (!link) {
             link = document.createElement("link");
