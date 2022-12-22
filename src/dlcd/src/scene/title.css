@@ -101,9 +101,16 @@
     margin: 0;
     border: 0;
     background-color: transparent;
-    /* Transitions for hover and active */
+    /* Transition 1 - Shift left on hover. Undo on click. */
+    /* Transition 2 - Gray halo on hover. Undo on click. */
+    /* Transition 3 - Shrink on click. */
     transition-property: transform, background-color, border, border-radius;
     transition-duration: 0.25s;
+    /* Anim 1 - Slide in from right at start */
+    /* Anim 2 - Float up and down on hover */
+    animation-duration: 1s;
+    animation-iteration-count: 1, infinite;
+    animation-direction: normal, alternate;
 }
 
 .mmButton:hover {
@@ -114,12 +121,11 @@
     background-color: #aaa;
     border: 4px solid #333;
     border-radius: 32px;
-    /* Float up and down */
-    animation: 1s infinite alternate mmButtonFloat;
 }
 
 .mmButton:active {
-    transform: initial;
+    /* On click: Undo Transition 1 and Transition 2. Activate Transition 3. */
+    transform: scale(0.9);
     background-color: initial;
     border: initial;
     border-radius: initial;
@@ -135,31 +141,121 @@
 }
 
 #btnContinue {
+    /* Position */
     left: calc(100vw * 808 / 1440);
     top: calc(100vh * 308 / 900);
+    /* Style - Art assets */
     background-image: url(../../assets/art/mm-btn-continue.svg);
+    /* Anim 1 - Slide in from right at start */
+    animation-name: btnContinueSlide;
+}
+
+#btnContinue:hover {
+    /* Anim 2 - Float up and down on hover */
+    animation-name: btnContinueSlide, mmButtonFloat;
+}
+
+@keyframes btnContinueSlide {
+    from {
+        left: 105vw;
+    }
+    to {
+        left: calc(100vw * 808 / 1440);
+    }
 }
 
 #btnNewGame {
+    /* Position */
     left: calc(100vw * 898 / 1440);
     top: calc(100vh * 426 / 900);
+    /* Style - Art assets */
     background-image: url(../../assets/art/mm-btn-newgame.svg);
+    /* Anim 1 - Slide in from right at start */
+    animation-name: btnNewGameSlide;
+}
+
+#btnNewGame:hover {
+    /* Anim 2 - Float up and down on hover */
+    animation-name: btnNewGameSlide, mmButtonFloat;
+}
+
+@keyframes btnNewGameSlide {
+    from {
+        left: 105vw;
+    }
+    to {
+        left: calc(100vw * 898 / 1440);
+    }
 }
 
 #btnLoad {
+    /* Position */
     left: calc(100vw * 988 / 1440);
     top: calc(100vh * 544 / 900);
+    /* Style - Art assets */
     background-image: url(../../assets/art/mm-btn-load.svg);
+    /* Anim 1 - Slide in from right at start */
+    animation-name: btnLoadSlide;
+}
+
+#btnLoad:hover {
+    /* Anim 2 - Float up and down on hover */
+    animation-name: btnLoadSlide, mmButtonFloat;
+}
+
+@keyframes btnLoadSlide {
+    from {
+        left: 105vw;
+    }
+    to {
+        left: calc(100vw * 988 / 1440);
+    }
 }
 
 #btnOptions {
+    /* Position */
     left: calc(100vw * 1078 / 1440);
     top: calc(100vh * 661 / 900);
+    /* Style - Art assets */
     background-image: url(../../assets/art/mm-btn-options.svg);
+    /* Anim 1 - Slide in from right at start */
+    animation-name: btnOptionsSlide;
+}
+
+#btnOptions:hover {
+    /* Anim 2 - Float up and down on hover */
+    animation-name: btnOptionsSlide, mmButtonFloat;
+}
+
+@keyframes btnOptionsSlide {
+    from {
+        left: 105vw;
+    }
+    to {
+        left: calc(100vw * 1078 / 1440);
+    }
 }
 
 #btnExit {
+    /* Position */
     left: calc(100vw * 1168 / 1440);
     top: calc(100vh * 780 / 900);
+    /* Style - Art assets */
     background-image: url(../../assets/art/mm-btn-exit.svg);
+    /* Anim 1 - Slide in from right at start */
+    animation-name: btnExitSlide;
+}
+
+#btnExit:hover {
+    /* Anim 2 - Float up and down on hover */
+    animation-name: btnExitSlide, mmButtonFloat;
+}
+
+@keyframes btnExitSlide {
+    from {
+        left: 105vw;
+    }
+    to {
+        left: calc(100vw * 1168 / 1440);
+    }
 }
