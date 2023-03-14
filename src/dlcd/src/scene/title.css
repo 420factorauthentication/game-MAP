@@ -262,12 +262,12 @@
     }
 }
 
-/* Fade to black after clicking a button */
+/* Fade in from black at start, and fade out to black after clicking a button */
 #sceneFadeOverlay {
     pointer-events: none;
     position: fixed;
     width: 100vw;
-    height: 100vw;
+    height: 100vh;
     top: 0;
     left: 0;
     right: 0;

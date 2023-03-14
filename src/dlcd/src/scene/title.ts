@@ -94,6 +94,14 @@ export const TitleScene: _TitleScene = {
         TitleScene.btnOptions.className = "mmButton";
         TitleScene.btnExit.className = "mmButton";
 
+        // Enable clicking other elements and fade in screen from black
+        TitleScene.isFading = true;
+        overlay.style.pointerEvents = "none";
+        overlay.style.opacity = "0";
+        setTimeout(() => {
+            TitleScene.isFading = false;
+        }, 1000);
+
         // New Game Button click: Fade out then start game
         TitleScene.btnNewGame.onclick = () => {
             // Do nothing if currently fading

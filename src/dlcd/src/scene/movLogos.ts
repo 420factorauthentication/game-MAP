@@ -35,6 +35,32 @@ export const MovLogosScene: _movLogos = {
         // Set asset paths
         MovLogosScene.src0.src = "assets/vid/logo-420factorauth.webm";
         MovLogosScene.img0.src = "assets/img/logo-420factorauth.svg";
+
+        // Note: Creates/reuses an element with id #sceneFadeOverlay
+        let overlay: HTMLDivElement =
+            document.querySelector("#sceneFadeOverlay");
+        if (!overlay) {
+            overlay = document.createElement("div");
+            document.body.appendChild(overlay);
+            overlay.id = "sceneFadeOverlay";
+        }
+
+        // Note: Creates/reuses an element with id #sceneStyle
+        let link: HTMLLinkElement = document.querySelector("#sceneStyle");
+        if (!link) {
+            link = document.createElement("link");
+            document.head.appendChild(link);
+            link.id = "sceneStyle";
+        }
+
+        // Apply Scene stylesheet
+        link.type = "text/css";
+        link.rel = "stylesheet";
+        link.href = "./src/scene/movLogos.css";
+
+        MovLogosScene.vid0.id = "logoVid";
+        MovLogosScene.src0.id = "logoVidSrc";
+        MovLogosScene.img0.id = "logoFallbackImg";
     },
 
     deactivate() {

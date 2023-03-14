@@ -86,6 +86,15 @@ export const GameScene: _GameScene = {
         new HotbarButton(GameScene.spellbar, "r", true);
         GameScene.spellbar.start(1000);
 
+        // Note: Creates/reuses an element with id #sceneFadeOverlay
+        let overlay: HTMLDivElement =
+            document.querySelector("#sceneFadeOverlay");
+        if (!overlay) {
+            overlay = document.createElement("div");
+            document.body.appendChild(overlay);
+            overlay.id = "sceneFadeOverlay";
+        }
+
         // Note: Creates/reuses an element with id #sceneStyle
         let link: HTMLLinkElement = document.querySelector("#sceneStyle");
         if (!link) {
@@ -94,10 +103,14 @@ export const GameScene: _GameScene = {
             link.id = "sceneStyle";
         }
 
-        // Clear previous Scene's stylesheet. This Scene has no stylesheet.
+        // Apply scene stylesheet
         link.type = "text/css";
         link.rel = "stylesheet";
-        link.href = "";
+        link.href = "./src/scene/game.css";
+
+        // Enable clicking other elements and fade in screen from black
+        overlay.style.pointerEvents = "none";
+        overlay.style.opacity = "0";
     },
 
     ////////////////////////////////////////////////////////////////////////////
