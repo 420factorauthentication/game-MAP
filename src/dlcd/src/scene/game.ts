@@ -13,6 +13,7 @@ import HotbarButton from "../../../lib-hotbar/button.js";
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
+/** Handles main gameplay. */
 export interface _GameScene extends Scene {
     /** Minions will spawn and attack this. If it dies, game over. */
     base?: Base;
@@ -24,6 +25,7 @@ export interface _GameScene extends Scene {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+/** Handles main gameplay. */
 export const GameScene: _GameScene = {
     activate() {
         // Don't allow multiple instances of the same Scene to be active at once

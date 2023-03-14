@@ -6,29 +6,32 @@ import GameScene from "./game.js";
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
+
+/** Title screen and main menu. */
 export interface _TitleScene extends Scene {
     /** SVG title text. */
-    title?: HTMLElement;
+    title?: HTMLDivElement;
     /** SVG art. */
-    menuArt?: HTMLElement;
+    menuArt?: HTMLDivElement;
     /** SVG animated space bg. */
-    menuBG?: HTMLElement;
+    menuBG?: HTMLDivElement;
     /** Continue button. */
-    btnContinue?: HTMLElement;
+    btnContinue?: HTMLButtonElement;
     /** New Game button. */
-    btnNewGame?: HTMLElement;
+    btnNewGame?: HTMLButtonElement;
     /** Load Game button. */
-    btnLoad?: HTMLElement;
+    btnLoad?: HTMLButtonElement;
     /** Options button. */
-    btnOptions?: HTMLElement;
+    btnOptions?: HTMLButtonElement;
     /** Exit to Desktop button. */
-    btnExit?: HTMLElement;
+    btnExit?: HTMLButtonElement;
     /** Is the screen currently fading to black? Happens after clicking a button. */
     isFading?: boolean;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
+/** Title screen and main menu. */
 export const TitleScene: _TitleScene = {
     activate() {
         // Don't allow multiple instances of the same Scene to be active at once
@@ -36,14 +39,14 @@ export const TitleScene: _TitleScene = {
         TitleScene.isActive = true;
 
         // Create HTMLElements
-        TitleScene.title = <HTMLElement>document.createElement("div");
-        TitleScene.menuArt = <HTMLElement>document.createElement("div");
-        TitleScene.menuBG = <HTMLElement>document.createElement("div");
-        TitleScene.btnContinue = <HTMLElement>document.createElement("button");
-        TitleScene.btnNewGame = <HTMLElement>document.createElement("button");
-        TitleScene.btnLoad = <HTMLElement>document.createElement("button");
-        TitleScene.btnOptions = <HTMLElement>document.createElement("button");
-        TitleScene.btnExit = <HTMLElement>document.createElement("button");
+        TitleScene.title = document.createElement("div");
+        TitleScene.menuArt = document.createElement("div");
+        TitleScene.menuBG = document.createElement("div");
+        TitleScene.btnContinue = document.createElement("button");
+        TitleScene.btnNewGame = document.createElement("button");
+        TitleScene.btnLoad = document.createElement("button");
+        TitleScene.btnOptions = document.createElement("button");
+        TitleScene.btnExit = document.createElement("button");
 
         document.body.appendChild(TitleScene.title);
         document.body.appendChild(TitleScene.menuArt);
@@ -53,21 +56,6 @@ export const TitleScene: _TitleScene = {
         document.body.appendChild(TitleScene.btnLoad);
         document.body.appendChild(TitleScene.btnOptions);
         document.body.appendChild(TitleScene.btnExit);
-
-        TitleScene.title.id = "title";
-        TitleScene.menuArt.id = "menuArt";
-        TitleScene.menuBG.id = "menuBG";
-        TitleScene.btnContinue.id = "btnContinue";
-        TitleScene.btnNewGame.id = "btnNewGame";
-        TitleScene.btnLoad.id = "btnLoad";
-        TitleScene.btnOptions.id = "btnOptions";
-        TitleScene.btnExit.id = "btnExit";
-
-        TitleScene.btnContinue.className = "mmButton";
-        TitleScene.btnNewGame.className = "mmButton";
-        TitleScene.btnLoad.className = "mmButton";
-        TitleScene.btnOptions.className = "mmButton";
-        TitleScene.btnExit.className = "mmButton";
 
         // Note: Creates/reuses an element with id #sceneFadeOverlay
         let overlay: HTMLDivElement =
@@ -90,6 +78,21 @@ export const TitleScene: _TitleScene = {
         link.type = "text/css";
         link.rel = "stylesheet";
         link.href = "./src/scene/title.css";
+
+        TitleScene.title.id = "title";
+        TitleScene.menuArt.id = "menuArt";
+        TitleScene.menuBG.id = "menuBG";
+        TitleScene.btnContinue.id = "btnContinue";
+        TitleScene.btnNewGame.id = "btnNewGame";
+        TitleScene.btnLoad.id = "btnLoad";
+        TitleScene.btnOptions.id = "btnOptions";
+        TitleScene.btnExit.id = "btnExit";
+
+        TitleScene.btnContinue.className = "mmButton";
+        TitleScene.btnNewGame.className = "mmButton";
+        TitleScene.btnLoad.className = "mmButton";
+        TitleScene.btnOptions.className = "mmButton";
+        TitleScene.btnExit.className = "mmButton";
 
         // New Game Button click: Fade out then start game
         TitleScene.btnNewGame.onclick = () => {
