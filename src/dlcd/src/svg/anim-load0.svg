@@ -97,5 +97,11 @@
             values="0; 1"
             dur="0.5s"
         />
+        <animate
+            attributeName="stroke-dashoffset"
+            values="0; 60"
+            dur="0.5s"
+            repeatCount="indefinite"
+        />
     </use>
 </svg>
