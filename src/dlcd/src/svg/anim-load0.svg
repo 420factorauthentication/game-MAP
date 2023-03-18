@@ -1,0 +1,101 @@
+<!-- <?xml version="1.0" encoding="UTF-8"?> -->
+
+<svg viewBox="0 0 1920 1080" preserveAspectRatio="none"
+    xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    
+    <defs>
+        <rect id="loadBarBase" width="90%" height="10%" x="5%" y="85%" rx="32">
+            <animate
+                attributeName="rx"
+                values="64; 56; 32"
+                keyTime="0; 0.5; 1"
+                dur="0.5s"
+            />
+            <animate
+                attributeName="width"
+                values="98%; 96%; 90%"
+                keyTime="0; 0.5; 1"
+                dur="0.5s"
+            />
+            <animate
+                attributeName="x"
+                values="1%; 2%; 5%"
+                keyTime="0; 0.5; 1"
+                dur="0.5s"
+            />
+            <animate
+                attributeName="height"
+                values="20%; 18%; 10%"
+                keyTime="0; 0.5; 1"
+                dur="0.5s"
+            />
+            <animate
+                attributeName="y"
+                values="90%; 89%; 85%"
+                keyTime="0; 0.5; 1"
+                dur="0.5s"
+            />
+        </rect>
+
+        <clipPath id="loadBarClip">
+            <use href="#loadBarBase" />
+        </clipPath>
+    </defs>
+
+
+    <rect id="bg" width="100%" height="100%" fill="#1f1f1f" />
+
+    <use id="loadBar" href="#loadBarBase" fill="#696969">
+        <animate
+            attributeName="opacity"
+            values="0; 1"
+            dur="0.2s"
+        />
+        <animate
+            attributeName="fill"
+            values="#ffffff; #dddddd; #696969"
+            keyTime="0; 0.5; 1"
+            dur="0.5s"
+        />
+    </use>
+
+    <g id="loadBarStripeFill" clip-path="url(#loadBarClip)">
+        <line x1="-25%" x2="66.5%" y1="90%" y2="90%"
+            stroke="#777" stroke-width="100"
+            stroke-dasharray="12% 8%    10% 6%    8% 6%    10% 8%"
+            transform="skewX(30)">
+
+            <animate
+                attributeName="x1"
+                values="-25%; -80.1%"
+                dur="2s"
+                repeatCount="indefinite"
+            />
+            <animate
+                attributeName="y2"
+                values="110%; 90%"
+                dur="0.5s"
+            />
+        </line>
+
+        <!-- <line x1="2.7%" x2="2.7%" y1="0%" y2="100%" stroke="red" /> -->
+
+        <!-- <line x1="97.3%" x2="97.3%" y1="0%" y2="100%" stroke="red" /> -->
+
+        <animate
+            attributeName="opacity"
+            values="0; 1"
+            dur="0.2s"
+        />
+    </g>
+
+    <use id="loadBarStroke" href="#loadBarBase" fill="none"
+        stroke="#696969" stroke-width="10" stroke-dasharray="40 20">
+        
+        <animate
+            attributeName="opacity"
+            values="0; 1"
+            dur="0.5s"
+        />
+    </use>
+</svg>
