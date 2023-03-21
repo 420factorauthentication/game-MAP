@@ -46,9 +46,9 @@
         </clipPath>
     </defs>
 
+    <rect id="bg" width="100%" height="100%" fill="#1f1f1f" />
 
-        <rect id="bg" width="100%" height="100%" fill="#1f1f1f" />
-
+    <g id="loadBarFade">
         <use id="loadBar" href="#loadBarBase" fill="#696969">
             <animate
                 attributeName="fill"
@@ -118,4 +118,13 @@
                 repeatCount="indefinite"
             />
         </use>
+
+        <animate
+            attributeName="opacity"
+            values="0; 1; 1; 0; 0"
+            keyTimes="0; 0.2; 0.6666; 0.75; 1"
+            dur="3s"
+            fill="freeze"
+        />
+    </g>
 </svg>
