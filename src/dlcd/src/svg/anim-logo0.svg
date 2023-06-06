@@ -1,57 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg viewBox="0 0 1920 1080" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
     <defs>
-        
+
     </defs>
 
     <rect id="bg" width="100%" height="100%" fill="#1d1c1f" />
 
-    <g id="menuFade">
-        <rect id="menu" width="90%" height="70%" x="5%" y="15%" rx="64" fill="#634f75">
-            <animate
-                attributeName="rx"
-                values="0; 64"
-                dur="0.5s"
-            />
-            <animate
-                attributeName="width"
-                values="98%; 90%"
-                dur="0.5s"
-            />
-            <animate
-                attributeName="x"
-                values="1%; 5%"
-                dur="0.5s"
-            />
-            <animate
-                attributeName="height"
-                values="80%; 70%"
-                dur="0.5s"
-            />
-            <animate
-                attributeName="y"
-                values="10%; 15%"
-                dur="0.5s"
-            />
-        </rect>
-
-        <clipPath id="menuLeft">
-            <rect width="35%" height="60%" x="10%" y="20%" rx="64" fill="#867530">
-                <animate
-                    attributeName="rx"
-                    values="0; 64"
-                    dur="0.5s"
-                />
-            </rect>
-        </clipPath>
-            
-        <line x1="22.5%" x2="22.5%" y1="85%" y2="15%"
-            stroke="#696969" stroke-width="69" />
-
-        <animate
-            attributeName="opacity"
-            values="0; 1"
-            dur="0.5s"
-        />
-    </g>
 </svg>
