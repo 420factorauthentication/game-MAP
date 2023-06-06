@@ -8,20 +8,18 @@
 
 <br>
 
-## Personal Notes: Binary Assets
-
-Binary assets are kept in cloud storage separate from the repo.
-When pulling the repo, download the
-[assets folder](https://drive.google.com/drive/folders/1nbAjKdv-4MV9Md6lP3ThGYlSwMLeyWch?usp=sharing)
-and merge it's contents into the repo root.
-
-<br>
-
-## Personal Notes: Workflow Config Settings
+## Workflow Config Settings
 
 ### VSCode Extensions
 
 -   [Prettier Formatter for Visual Studio Code](vscode:extension/esbenp.prettier-vscode)
+
+<br>
+
+### Git LFS
+
+-   The pattern "assets/\*\*" uses Git LFS.
+-   Large assets are kept in any subfolder named "assets"
 
 <br>
 
