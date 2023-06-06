@@ -8,7 +8,7 @@
 
 <br>
 
-## Workflow Config Settings
+## Workflow Config
 
 ### VSCode Extensions
 
@@ -18,7 +18,7 @@
 
 ### Git LFS
 
--   The pattern "assets/\*\*" uses Git LFS.
+-   The pattern "\*\*/assets/\*\*" uses Git LFS.
 -   Large assets are kept in any subfolder named "assets"
 
 <br>
