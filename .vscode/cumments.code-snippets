@@ -1,0 +1,43 @@
+{
+    "Comment Separator": {
+        "prefix": "commentSeparator",
+        "description": "An 80 character line of comment slashes",
+        "body": "////////////////////////////////////////////////////////////////////////////////"
+    },
+    "Block Comment: API": {
+        "prefix": "apiBlockComment",
+        "description": [
+            "A block comment with the text 'API'.",
+            "A templated header for creating module classes."
+        ],
+        "body": ["/////////", "// API //", "/////////"]
+    },
+    "Block Comment: COMPONENTS": {
+        "prefix": "compBlockComment",
+        "description": [
+            "A block comment with the text 'COMPONENTS'.",
+            "A templated header for creating module classes."
+        ],
+        "body": ["////////////////", "// COMPONENTS //", "////////////////"]
+    },
+    "Block Comment: INIT": {
+        "prefix": "initBlockComment",
+        "description": [
+            "A block comment with the text 'INIT'.",
+            "A templated header for creating module classes."
+        ],
+        "body": ["//////////", "// INIT //", "//////////"]
+    },
+    "Block Comment: HELPER FUNCTIONS": {
+        "prefix": "helperBlockComment",
+        "description": [
+            "A block comment with the text 'HELPER FUNCTIONS'.",
+            "A templated header for creating module classes."
+        ],
+        "body": [
+            "//////////////////////",
+            "// HELPER FUNCTIONS //",
+            "//////////////////////"
+        ]
+    }
+}
