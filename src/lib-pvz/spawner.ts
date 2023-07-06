@@ -113,11 +113,9 @@ class MinionSpawner implements MinionManager {
     }
 
     /**
-     * Spawn a Minion.
-     * Elem can be a css selector or existing DOM element or null,
+     * Spawns a Minion. Returns the new Minion.
+     * @param elem Can be a css selector or existing DOM element or null,
      * in which case a new anchor element will be created.
-     *
-     * Returns the new Minion.
      */
     spawn(type: MinionType, elem?: HTMLElement | string): MinionEntity {
         return new Minion(

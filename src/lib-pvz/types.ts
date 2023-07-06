@@ -102,8 +102,8 @@ export interface MinionManager {
     /** Stop the current level before it finishes spawning all Minions. */
     stopCurrentLevel: () => void;
     /**
-     * Spawn a Minion.
-     * Elem can be a css selector or existing DOM element or null,
+     * Spawns a Minion. Returns the new Minion.
+     * @param elem Can be a css selector or existing DOM element or null,
      * in which case a new anchor element will be created.
      */
     spawn: (type: MinionType, elem?: HTMLElement | string) => MinionEntity;
