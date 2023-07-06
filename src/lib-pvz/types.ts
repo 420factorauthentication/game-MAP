@@ -53,13 +53,13 @@ export interface MinionEntity {
     /** Destroy DOM Element and cleanup all garbage. */
     destroy: () => void;
 
-    // Contains records of all existing minions for cleanup.
+    /** Contains records of all existing minions for cleanup. */
     readonly manager: MinionManager;
 
-    // Used to define starting stats.
+    /** Used to define starting stats. */
     readonly type: MinionType;
 
-    // Used to control Attack AI.
+    /** Used to control Attack AI. */
     readonly target: BaseEntity;
 
     /** x position coordinate, in viewport width (vw) units. */
