@@ -27,7 +27,7 @@ class ProgBar {
                     : elem;
 
         // No element found. Error.
-        if (!this.elem) throw new Error("ProgBar elem not found!");
+        if (!this._elem) throw new Error("ProgBar elem not found!");
 
         // Init ProgBar behavior.
         this._elem.style.boxSizing = "border-box";
@@ -84,19 +84,19 @@ class ProgBar {
 
     /** Set width and redraw bar graphics. */
     set width(v: string) {
-        this.elem.style.width = v;
+        this._elem.style.width = v;
         if ((this.flow = Flow.leftToRight)) this.calcPadding();
     }
 
     /** Set height and redraw bar graphics. */
     set height(v: string) {
-        this.elem.style.height = v;
+        this._elem.style.height = v;
         if ((this.flow = Flow.btmToTop)) this.calcPadding();
     }
 
     /** Destroy DOM Element and cleanup all garbage. */
     destroy() {
-        this.elem?.remove();
+        this._elem?.remove();
         delete this._elem;
     }
 
@@ -106,17 +106,17 @@ class ProgBar {
             default:
             case Flow.leftToRight:
                 const rightPadding = `calc(
-                    ${this.elem.style.width} *
+                    ${this._elem.style.width} *
                     ${Math.min(Math.max(1 - this.percent, 0), 1)}
                 )`;
-                this.elem.style.padding = `0 ${rightPadding} 0 0`;
+                this._elem.style.padding = `0 ${rightPadding} 0 0`;
                 break;
             case Flow.btmToTop:
                 const topPadding = `calc(
-                    ${this.elem.style.height} *
+                    ${this._elem.style.height} *
                     ${Math.min(Math.max(1 - this.percent, 0), 1)}
                 )`;
-                this.elem.style.padding = `${topPadding} 0 0`;
+                this._elem.style.padding = `${topPadding} 0 0`;
                 break;
         }
     }

@@ -32,7 +32,7 @@ class Base implements BaseEntity {
                     : elem;
 
         // No element found. Let's create one instead.
-        if (!this.elem) this._elem = this.elemInit;
+        if (!this._elem) this._elem = this.elemInit;
         
         // Init components
         this.hpBar = new ProgBar(
@@ -58,7 +58,7 @@ class Base implements BaseEntity {
 
     /** Remove DOM Element and cleanup all garbage. */
     destroy() {
-        this.elem?.remove();
+        this._elem?.remove();
         delete this._elem;
     }
 
@@ -88,11 +88,11 @@ class Base implements BaseEntity {
 
     private get hpBarElemInit() {
         const elem = <HTMLElement>document.createElement("a");
-        this.elem.appendChild(elem);
+        this._elem.appendChild(elem);
         elem.style.position = "absolute";
-        elem.style.height = this.elem.style.height;
-        elem.style.width = `calc(${this.elem.style.width} / 2)`;
-        elem.style.left = `calc(-${this.elem.style.width} / 1.5)`;
+        elem.style.height = this._elem.style.height;
+        elem.style.width = `calc(${this._elem.style.width} / 2)`;
+        elem.style.left = `calc(-${this._elem.style.width} / 1.5)`;
         elem.style.background = "darkgreen";
         return elem;
     }

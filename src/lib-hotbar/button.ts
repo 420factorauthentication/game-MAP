@@ -31,7 +31,7 @@ class HotbarButton implements HotbarItem {
                     : elem;
 
         // No element found. Let's create one instead.
-        if (!this.elem) this._elem = HotbarButton.elemInit;
+        if (!this._elem) this._elem = HotbarButton.elemInit;
 
         // Register this button as a child of the parent Hotbar
         this.hotbar.add(this);
@@ -53,18 +53,18 @@ class HotbarButton implements HotbarItem {
     set isEnabled(v) {
         this.#isEnabled = v;
         if (v) {
-            this.elem.style.opacity = "1";
-            this.elem.style.pointerEvents = "auto";
+            this._elem.style.opacity = "1";
+            this._elem.style.pointerEvents = "auto";
         } else {
-            this.elem.style.opacity = "0";
-            this.elem.style.pointerEvents = "none";
+            this._elem.style.opacity = "0";
+            this._elem.style.pointerEvents = "none";
         }
     }
     #isEnabled: boolean = true;
 
     /** Destroy DOM Element and cleanup all garbage. */
     destroy() {
-        this.elem?.remove();
+        this._elem?.remove();
         delete this._elem;
     }
 

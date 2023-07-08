@@ -21,7 +21,7 @@ class Hotbar implements HotbarContainer {
                     : elem;
 
         // No element found. Let's create one instead.
-        if (!this.elem) this._elem = Hotbar.elemInit;
+        if (!this._elem) this._elem = Hotbar.elemInit;
     }
 
     /////////
@@ -50,7 +50,7 @@ class Hotbar implements HotbarContainer {
 
         // Init
         this._items.push(item);
-        this.elem.appendChild(item.elem);
+        this._elem.appendChild(item.elem);
         this.updateSize(item);
 
         // Return the added item
@@ -95,7 +95,7 @@ class Hotbar implements HotbarContainer {
 
     /** Destroy DOM Element and cleanup all garbage. */
     destroy() {
-        this.elem?.remove();
+        this._elem?.remove();
         delete this._elem;
     }
 

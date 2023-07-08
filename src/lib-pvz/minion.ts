@@ -47,7 +47,7 @@ class Minion implements MinionEntity {
                     : elem;
 
         // No element found. Let's create one instead.
-        if (!this.elem) this._elem = Minion.elemInit;
+        if (!this._elem) this._elem = Minion.elemInit;
 
         // Generate a new uuid
         this.uuid = uuidv4();
@@ -65,7 +65,7 @@ class Minion implements MinionEntity {
         this.setElemY(_y);
 
         // Add Minion class
-        this.elem.className += " minion";
+        this._elem.className += " minion";
 
         // Tell the MinionManager to add this Minion to it's array
         this.manager.trackMinion(this);
@@ -93,7 +93,7 @@ class Minion implements MinionEntity {
 
         // Destroy DOM Elements and cleanup garbage
         this.hpBar.destroy();
-        this.elem?.remove();
+        this._elem?.remove();
         delete this._elem;
 
         // Tell the MinionManager to delete it's records of this Minion
@@ -185,11 +185,11 @@ class Minion implements MinionEntity {
 
     private get hpBarElemInit() {
         const elem = <HTMLElement>document.createElement("a");
-        this.elem.appendChild(elem);
+        this._elem.appendChild(elem);
         elem.style.position = "absolute";
-        elem.style.width = this.elem.style.width;
-        elem.style.height = `calc(${this.elem.style.height} / 4)`;
-        elem.style.top = `calc(-${this.elem.style.height} / 3)`;
+        elem.style.width = this._elem.style.width;
+        elem.style.height = `calc(${this._elem.style.height} / 4)`;
+        elem.style.top = `calc(-${this._elem.style.height} / 3)`;
         elem.style.background = "darkred";
         return elem;
     }
@@ -242,12 +242,12 @@ class Minion implements MinionEntity {
 
     /** Set elem left position, in viewport width (vw) units. */
     private setElemX(left: number) {
-        this.elem.style.left = "" + left + "vw";
+        this._elem.style.left = "" + left + "vw";
     }
 
     /** Set elem top position, in viewport height (vh) units. */
     private setElemY(top: number) {
-        this.elem.style.top = "" + top + "vh";
+        this._elem.style.top = "" + top + "vh";
     }
 }
 
