@@ -53,6 +53,7 @@ class Minion implements MinionEntity {
         this.uuid = uuidv4();
 
         // Init components
+        this.stats = new Stats(this.type);
         this.ai = new StateMachine(this.moveState);
         this.hpBar = new ProgBar(
             this.hpBarElemInit,
@@ -165,7 +166,7 @@ class Minion implements MinionEntity {
     protected anim:  Spriteling;
     protected hpBar: ProgBar;
     protected ai:    StateMachine;
-    protected stats: Stats = new Stats(this.type);
+    protected stats: Stats;
 
     protected moveState:   State = this.moveStateInit;
     protected attackState: State = this.attackStateInit;

@@ -3,7 +3,8 @@
         "rootDir": "./src",
         "outDir": "./_out",
         "declarationDir": "./_api",
-        "target": "ES6",
+        "module": "ESNext",
+        "target": "ESNext",
         "moduleResolution": "node",
         "composite": true,
         "declarationMap": true

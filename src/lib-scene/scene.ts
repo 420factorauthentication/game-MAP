@@ -6,38 +6,119 @@ import {_Scene} from "./types";
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
- * A Scene that can be loaded or unloaded in a SceneManager.
- * Multiple instances of the same Scene cannot be loaded simultaneously.
+ * An object to load, track, and unload elements from an .html file.
+ * Multiple instances of the same Scene object cannot be loaded simultaneously.
  */
 class Scene implements _Scene {
     /**
      * @param htmlFile Path to an .html file outlining all elements to load.
+     * @param loadTimeout Load requests will timeout after this many milliseconds.
      */
-    constructor(readonly htmlFile: string) {}
+    constructor(
+        readonly htmlFile: string,
+        readonly loadTimeout: number = 2000
+    ) {}
 
     /////////
     // API //
     /////////
+
+    /** Is this Scene currently loaded? */
     get isLoaded() {
         return this._isLoaded;
     }
-    protected _isLoaded: boolean;
+    protected _isLoaded: boolean = false;
 
     /**
-     * Create all elements in the .html file if this Scene isn't already loaded.
+     * Attempts to fetch the contents of this.htmlFile with an XMLHttpRequest.
+     * If successful, sets containerElem's innerHTML to the contents.
+     * Does nothing if fetching fails or this Scene is already loaded.
+     *
+     * Returns a Promise that returns the numerical HTTP status code
+     * of the XMLHttpRequest when it's readyState is 4 (DONE).
+     *
      * @param containerElem The elem to contain all newly created Scene elems.
      * Can be a css selector or existing DOM element or null,
      * in which case a new div element will be created.
      */
-    load(containerElem: HTMLElement | string) {}
+    async load(
+        containerElem: HTMLElement | string = undefined
+    ): Promise<number> {
+        if (this._isLoaded) return;
 
-    /** Destroy all elements associated with this Scene. */
-    unload() {}
+        return new Promise<XMLHttpRequest>((resolve) => {
+            let xhr = new XMLHttpRequest();
+            xhr.timeout = this.loadTimeout;
+            xhr.responseType = "text";
+
+            xhr.onloadend = () => {
+                resolve(xhr);
+            };
+
+            xhr.open("GET", this.htmlFile);
+            xhr.send();
+        }).then<number>((result) => {
+            if (this._isLoaded) return;
+            this._isLoaded = true;
+
+            // Failure: Return status code
+            if (result.status !== 200) return result.status;
+
+            // Lookup containerElem by selector
+            if (containerElem)
+                this._containerElem =
+                    typeof containerElem === "string"
+                        ? (document.querySelector(containerElem) as HTMLElement)
+                        : containerElem;
+
+            // containerElem not found. Let's create one instead.
+            if (!this._containerElem) {
+                this._containerElem = document.createElement("div");
+                document.body.append(this._containerElem);
+            }
+
+            // Create new elements from htmlFile
+            this._containerElem.innerHTML = result.responseText;
+
+            // Success: Return status code
+            return result.status;
+        });
+    }
+
+    /**
+     * Destroy all children of containerElem.
+     * @param delContainer If true, also destroys containerElem.
+     */
+    unload(delContainer: boolean = true) {
+        if (!this._isLoaded) return;
+        this._isLoaded = false;
+
+        if (this._containerElem) {
+            this._containerElem.childNodes.forEach((v: ChildNode) => {
+                v.remove();
+            });
+            if (delContainer) {
+                this._containerElem.remove();
+                this._containerElem = null;
+            }
+        }
+    }
 
     ////////////////
     // COMPONENTS //
     ////////////////
-    get containerElem(): Readonly<HTMLElement> {
+
+    /**
+     * Get a handle to the container element.
+     * It's children are the elems outlined in htmlFile.
+     *
+     * This element is created on scene load,
+     * and potentially destroyed on scene unload.
+     *
+     * Returns undefined if this Scene has never been loaded at all.
+     * Returns null if this element was destroyed during an unload.
+     */
+    get containerElem(): HTMLElement | undefined | null {
         return this._containerElem;
     }
     protected _containerElem: HTMLElement;

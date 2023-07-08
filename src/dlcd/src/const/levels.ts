@@ -8,7 +8,7 @@ import * as MinionTypes from "./minions.js";
 ////////////////////////////////////////////////////////////////////////////////
 
 /** Level One */
-export const one: Readonly<SpawnGroup> = {
+export const One: Readonly<SpawnGroup> = {
     type: MinionTypes.Warrior,
     amount: 15,
     timeStart: 1000,
