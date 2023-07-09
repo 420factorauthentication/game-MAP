@@ -56,11 +56,7 @@ class Scene implements _Scene {
             let xhr = new XMLHttpRequest();
             xhr.timeout = this.loadTimeout;
             xhr.responseType = "text";
-
-            xhr.onloadend = () => {
-                resolve(xhr);
-            };
-
+            xhr.onloadend = () => resolve(xhr);
             xhr.open("GET", this.htmlFile);
             xhr.send();
         }).then<number>((result) => {
@@ -108,9 +104,7 @@ class Scene implements _Scene {
         this._isLoaded = false;
 
         if (this._containerElem) {
-            this._containerElem.childNodes.forEach((v: ChildNode) => {
-                v.remove();
-            });
+            for (const elem of this._containerElem.childNodes) elem.remove();
             if (delContainer) {
                 this._containerElem.remove();
                 this._containerElem = null;
