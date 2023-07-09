@@ -40,9 +40,15 @@ class Scene implements _Scene {
      * @param containerElem The elem to contain all newly created Scene elems.
      * Can be a css selector or existing DOM element or null,
      * in which case a new div element will be created.
+     * @param containerClasses Can optionally provide classes
+     * to append to containerElem's classList during loading.
+     * @param containerId Can optionally provide an id
+     * to set containerElem's id during loading.
      */
     async load(
-        containerElem: HTMLElement | string = undefined
+        containerElem: HTMLElement | string = undefined,
+        containerClasses: string | string[] = undefined,
+        containerId: string = undefined
     ): Promise<number> {
         if (this._isLoaded) return;
 
@@ -76,6 +82,14 @@ class Scene implements _Scene {
                 this._containerElem = document.createElement("div");
                 document.body.append(this._containerElem);
             }
+
+            // Optional class and id parameters
+            if (containerClasses) {
+                containerClasses = Array.prototype.concat(containerClasses);
+                for (const classString of containerClasses)
+                    this._containerElem.classList.add(classString);
+            }
+            if (containerId) this._containerElem.id = containerId;
 
             // Create new elements from htmlFile
             this._containerElem.innerHTML = result.responseText;
