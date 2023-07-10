@@ -5,12 +5,14 @@ import * as Scenes from "./const/scenes.js";
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-// Test lib-scene
-Scenes.StartScreen.load(undefined, ["testClass0", "testClass1"], "testId").then(
-    (httpStatus: number) => {
-        console.log(httpStatus);
-    }
-);
+Scenes.StartScreen.load(undefined, "scene").then((httpStatus: number) => {
+    console.log(httpStatus);
+});
+
+// Test SceneLink
+Scenes.StartScreenStyle.load().then((httpStatus: number) => {
+    console.log(httpStatus);
+});
 setTimeout(() => {
-    Scenes.StartScreen.unload();
+    Scenes.StartScreenStyle.unload();
 }, 4000);

@@ -64,7 +64,7 @@ class Scene implements _Scene {
             this._isLoaded = true;
 
             // Failure: Return status code
-            if (result.status !== 200) return result.status;
+            if (result.status != 200) return result.status;
 
             // Lookup containerElem by selector
             if (containerElem)
