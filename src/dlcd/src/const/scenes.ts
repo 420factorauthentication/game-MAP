@@ -6,7 +6,8 @@ import SceneLink from "../../../lib-scene/slink.js";
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-export const StartScreen: Readonly<Scene> = new Scene("src/scene/start.html");
-export const StartScreenStyle: Readonly<SceneLink> = new SceneLink(
-    "src/scene/start.css"
+export const GameStyles: Readonly<SceneLink> = new SceneLink(
+    "src/style/game.css"
 );
+
+export const StartScreen: Readonly<Scene> = new Scene("src/scene/start.html");

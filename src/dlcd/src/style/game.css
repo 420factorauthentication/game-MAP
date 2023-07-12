@@ -1,0 +1,42 @@
+/** @format */
+
+/* ##################################################################### */
+/* ################################ FONT ############################### */
+/* ##################################################################### */
+
+.uiHuge {
+    font-family: "Patrick Hand", sans-serif;
+    font-size: 12vmin;
+    color: #777;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.uiBig {
+    font-family: "Patrick Hand", sans-serif;
+    font-size: 4vmin;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+/* ##################################################################### */
+/* ############################## POSITION ############################# */
+/* ##################################################################### */
+
+.uiBotRight {
+    position: absolute;
+    bottom: 5vh;
+    right: 5vw;
+    height: 10vh;
+    width: 20vw;
+    text-align: center;
+}
+
+.uiTop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 20vh;
+    width: 100vw;
+    text-align: center;
+}
