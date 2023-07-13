@@ -15,19 +15,16 @@
 
 ## Fresh Install Notes
 
--   Install VSCode and extensions:
-    -   [Prettier Formatter for Visual Studio Code](vscode:extension/esbenp.prettier-vscode)
-    -   [Comment Bars by Zack Frost](vscode:extension/zfzackfrost.commentbars)
--   Install Python, Git, and GitHub CLI
+-   Install VSCode, NPM (and NodeJS), Python, Git, and GitHub CLI
 -   Clone this repo and run `npm install`
 
-<br>
-<br>
-<br>
+<!--####################################################################-->
+<!--####################################################################-->
+<!--####################################################################-->
 
-<!--####################################################################-->
-<!--####################################################################-->
-<!--####################################################################-->
+<br>
+<br>
+<br>
 
 ## HTML and JS Workflow
 
@@ -35,7 +32,7 @@
 
 ### Preprocessors Used
 
-These are automatically installed globally with `npm install`.
+These are automatically installed globally with `npm install`
 
 -   [TypeScript](https://www.typescriptlang.org/)
 -   [Less CSS](https://lesscss.org/)
@@ -43,13 +40,19 @@ These are automatically installed globally with `npm install`.
 
 <!--------------------------->
 
-### Build Tools Used
-
--   [Python](https://www.python.org/) - For recursively compiling .less files
-
 <br>
 
+### Build Tools Used
+
+-   [Visual Studio Code](https://code.visualstudio.com/) -
+    For code snippets and format on save
+-   [Node Package Manager](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm#using-a-node-installer-to-install-nodejs-and-npm) -
+    For JS dependencies and automating parts of fresh installs
+-   [Python](https://www.python.org/) - For recursively compiling .less files
+
 <!--------------------------->
+
+<br>
 
 ### Creating Game Projects
 
@@ -64,26 +67,28 @@ These are automatically installed globally with `npm install`.
 
 ### Storing Large Assets
 
--   The pattern "\*\*/assets/\*\*" uses Git LFS.
+-   The pattern _`**/assets/**`_ uses Git LFS
 -   Large assets are kept in any subfolder named "assets"
 
 <!--------------------------->
 
 <br>
 
-### VSCode Snippets
+### Commenting and Organizing
 
-**JS Modules: Class Property Organizers**
+Use these VSCode Snippets for organizing properties of classes in JS modules:
 
+-   commentSeparator
 -   apiBlockComment
 -   compBlockComment
 -   initBlockComment
 -   helperBlockComment
 
-**Separator Bars**
+Use these command palette actions for general organization
+(from extension [Comment Bars by Zack Frost](vscode:extension/zfzackfrost.commentbars))
 
--   commentSeparator
--   VSCode Extension: [Comment Bars by Zack Frost](vscode:extension/zfzackfrost.commentbars)
+-   Comment Bars: Generate (Quick)
+-   Comment Bars: Generate (Advanced)
 
 <br>
 <br>
@@ -99,9 +104,16 @@ These are automatically installed globally with `npm install`.
 
 ### package.json
 
--   `npm run build` builds all game projects into `_out` and `_api` folders
+-   `npm install` also installs some dev dependencies in the `pre-install` step:
+    -   Global NPM Packages:
+        -   [TypeScript](https://www.npmjs.com/package/typescript)
+        -   [Prettier](https://www.npmjs.com/package/prettier)
+        -   [Less CSS](https://www.npmjs.com/package/less)
+    -   VSCode Extensions:
+        -   [Prettier Formatter for Visual Studio Code](vscode:extension/esbenp.prettier-vscode)
+        -   [Comment Bars by Zack Frost](vscode:extension/zfzackfrost.commentbars)
+-   `npm run build` builds all game projects into _`_out`_ and _`_api`_ folders
 -   `npm run compile` skips some build steps. Use if rebuilding minor changes.
--   `npm install` also pre-installs TypeScript and Prettier globally from NPM
 -   `npm test` runs all Jest tests
 
 <!--------------------------->
@@ -127,10 +139,16 @@ These are automatically installed globally with `npm install`.
 
 ### .vscode/settings.json
 
--   Prettier formats on save, using the VSCode Extension
+-   Prettier formats most languages on save, using the VSCode Extension
     [Prettier Formatter for Visual Studio Code](vscode:extension/esbenp.prettier-vscode)
+-   Python Black formats Python on save, using Microsoft's VSCode Extension
+    [Black Formatter](vscode:extension/ms-python.black-formatter)
 
 <!--------------------------->
+
+### .vscode/\*.code-snippets
+
+-   VSCode project snippets for code templates.
 
 <br>
 

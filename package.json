@@ -14,14 +14,20 @@
         "ts-jest": "^29.0.3"
     },
     "scripts": {
-        "test": "jest",
-        "preinstall": "run-script-os",
-        "preinstall:default:win32": "npm install -g typescript && npm install -g prettier && npm install -g less",
-        "preinstall:darwin:linux": "sudo npm install -g typescript && sudo npm install -g prettier && sudo npm install -g less",
+        "preinstall": "npm run installPreprocessors && npm run installVsCodeExts",
+
+        "installPreprocessors": "run-script-os",
+        "installPreprocessors:default:win32": "npm install -g typescript && npm install -g prettier && npm install -g less",
+        "installPreprocessors:darwin:linux": "sudo npm install -g typescript && sudo npm install -g prettier && sudo npm install -g less",
+
+        "installVsCodeExts": "code --install-extension esbenp.prettier-vscode && code --install-extension zfzackfrost.commentbars",
+        
         "purge": "run-script-os",
         "purge:default:win32": "if exist _out\\ rmdir _out /s /q && if exist _api\\ rmdir _api /s /q",
         "purge:darwin:linux": "rm -Rf ./_out && rm -Rf ./_api",
+
         "compile": "tsc --build && py utils/buildLess.py",
-        "build": "npm run purge && npm run compile"
+        "build": "npm run purge && npm run compile",
+        "test": "jest"
     }
 }
