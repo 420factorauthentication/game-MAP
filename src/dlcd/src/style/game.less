@@ -4,39 +4,44 @@
 /* ################################ FONT ############################### */
 /* ##################################################################### */
 
-.uiHuge {
+.uiFont() {
     font-family: "Patrick Hand", sans-serif;
-    font-size: 12vmin;
-    color: #777;
     overflow: hidden;
     white-space: nowrap;
 }
 
+.uiHuge {
+    .uiFont();
+    font-size: 12vmin;
+    color: #777;
+}
+
 .uiBig {
-    font-family: "Patrick Hand", sans-serif;
+    .uiFont();
     font-size: 4vmin;
-    overflow: hidden;
-    white-space: nowrap;
 }
 
 /* ##################################################################### */
 /* ############################## POSITION ############################# */
 /* ##################################################################### */
 
-.uiBotRight {
+.uiPos() {
     position: absolute;
+    text-align: center;
+}
+
+.uiBotRight {
+    .uiPos();
     bottom: 5vh;
     right: 5vw;
     height: 10vh;
     width: 20vw;
-    text-align: center;
 }
 
 .uiTop {
-    position: absolute;
+    .uiPos();
     top: 0;
     left: 0;
     height: 20vh;
     width: 100vw;
-    text-align: center;
 }
