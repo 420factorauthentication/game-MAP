@@ -1,37 +1,37 @@
 {
-    "Comment Separator": {
-        "prefix": "commentSeparator",
+    "Bar Comment / 80": {
+        "prefix": "jscBar/80",
         "description": "An 80 character line of comment slashes",
         "body": "////////////////////////////////////////////////////////////////////////////////"
     },
-    "Block Comment: API": {
-        "prefix": "apiBlockComment",
+    "Box Comment: API": {
+        "prefix": "jscBoxApi",
         "description": [
-            "A block comment with the text 'API'.",
+            "A box comment with the text 'API'.",
             "A templated header for creating module classes."
         ],
         "body": ["/////////", "// API //", "/////////"]
     },
-    "Block Comment: COMPONENTS": {
-        "prefix": "compBlockComment",
+    "Box Comment: COMPONENTS": {
+        "prefix": "jscBoxComp",
         "description": [
-            "A block comment with the text 'COMPONENTS'.",
+            "A box comment with the text 'COMPONENTS'.",
             "A templated header for creating module classes."
         ],
         "body": ["////////////////", "// COMPONENTS //", "////////////////"]
     },
-    "Block Comment: INIT": {
-        "prefix": "initBlockComment",
+    "Box Comment: INIT": {
+        "prefix": "jscBoxInit",
         "description": [
-            "A block comment with the text 'INIT'.",
+            "A box comment with the text 'INIT'.",
             "A templated header for creating module classes."
         ],
         "body": ["//////////", "// INIT //", "//////////"]
     },
-    "Block Comment: HELPER FUNCTIONS": {
-        "prefix": "helperBlockComment",
+    "Box Comment: HELPER FUNCTIONS": {
+        "prefix": "jscBoxHelper",
         "description": [
-            "A block comment with the text 'HELPER FUNCTIONS'.",
+            "A box comment with the text 'HELPER FUNCTIONS'.",
             "A templated header for creating module classes."
         ],
         "body": [

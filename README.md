@@ -78,11 +78,11 @@ These are automatically installed globally with `npm install`
 
 Use these VSCode Snippets for organizing properties of classes in JS modules:
 
--   commentSeparator
--   apiBlockComment
--   compBlockComment
--   initBlockComment
--   helperBlockComment
+-   jscBar/80
+-   jscBoxApi
+-   jscBoxComp
+-   jscBoxInit
+-   jscBoxHelper
 
 Use these command palette actions for general organization
 (from extension [Comment Bars by Zack Frost](vscode:extension/zfzackfrost.commentbars))
