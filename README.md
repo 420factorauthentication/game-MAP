@@ -9,13 +9,9 @@
 <br>
 <br>
 
-<!--####################################################################-->
-<!--####################################################################-->
-<!--####################################################################-->
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 
 ## Fresh Install / Update
-
-<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 
 ### Windows
 
@@ -40,26 +36,26 @@ Update:
 -   Do the above two steps
 -   Or, run `just update` from repo root to do the same thing
 
-<!--------------------------->
-
 <br>
+
+<!--------------------------->
 
 ### Unix
 
 -   WIP
 
-<!--------------------------->
-
 <br>
+
+<!--------------------------->
 
 ### Globally Installed Preprocessors
 
 -   [TypeScript](https://www.typescriptlang.org/)
 -   [Less CSS](https://lesscss.org/)
 
-<!--------------------------->
-
 <br>
+
+<!--------------------------->
 
 ### Globally Installed Dev Tools
 
@@ -75,9 +71,9 @@ Update:
 -   [Just](https://just.systems/) -
     For automating install and build steps
 
-<!--------------------------->
-
 <br>
+
+<!--------------------------->
 
 ### Locally Installed Dev Tools
 
@@ -86,26 +82,22 @@ Update:
     Note: Local works better with extension<br>
     ([Prettier Formatter for Visual Studio Code](vscode:extension/esbenp.prettier-vscode))
 
-<!--------------------------->
-
 <br>
+
+<!--------------------------->
 
 ### Installed VSCode Extensions
 
 -   [Prettier Formatter for Visual Studio Code](vscode:extension/esbenp.prettier-vscode)
 -   [Comment Bars by Zack Frost](vscode:extension/zfzackfrost.commentbars)
 
-<!--####################################################################-->
-<!--####################################################################-->
-<!--####################################################################-->
-
 <br>
 <br>
 <br>
-
-## HTML and JS Workflow
 
 <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
+## HTML and JS Workflow
 
 ### Creating Game Projects
 
@@ -114,9 +106,9 @@ Update:
 -   Run `just build` to build all game projects into _`_out`_ and _`_api`_ folders
     -   Use `just fastb` instead if you dont need to purge old files before building
 
-<!--------------------------->
-
 <br>
+
+<!--------------------------->
 
 ### Storing Large Assets
 
@@ -124,9 +116,9 @@ Update:
     Large files are kept in any subfolder named "assets"<br>
     Example: High-res art assets, .psd project files, etc.
 
-<!--------------------------->
-
 <br>
+
+<!--------------------------->
 
 ### Commenting and Organizing
 
@@ -144,9 +136,9 @@ Use these command palette actions for general organization
 -   Comment Bars: Generate (Quick)
 -   Comment Bars: Generate (Advanced)
 
-<!--------------------------->
-
 <br>
+
+<!--------------------------->
 
 ### Opinionated Code Formatting On Save
 
@@ -158,11 +150,21 @@ Use these command palette actions for general organization
     Absence of a pragma is used to manually format some files<br>
     Exception: Python files are always formatted
 
-<!--------------------------->
-
 <br>
+
+<!--------------------------->
 
 ### Tests
 
 -   Jest tests include _`.spec.ts`_ and _`.spec.tsx`_ files in any level
 -   Run `just test` in repo root to run all tests
+
+<br>
+<br>
+<br>
+
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
+## License
+
+[WTFPL License](http://www.wtfpl.net/txt/copying/)
