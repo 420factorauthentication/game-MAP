@@ -1,5 +1,6 @@
 # Artifacts
 _out
+_api
 
 # Third Party
 node_modules

@@ -13,10 +13,87 @@
 <!--####################################################################-->
 <!--####################################################################-->
 
-## Fresh Install Notes
+## Fresh Install / Update
 
--   Install VSCode, NPM (and NodeJS), Python, Git, and GitHub CLI
--   Clone this repo and run `npm install`
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
+### Windows
+
+Preparing a fresh install:
+
+-   Install [winget](https://learn.microsoft.com/en-us/windows/package-manager/winget/#install-winget)
+    if your version of Windows doesn't already come with it
+-   Install [GitHub CLI](https://cli.github.com/) with
+    `winget install --scope=machine -e --id GitHub.cli`
+-   Clone this repo with
+    `gh repo clone https://github.com/420factorauthentication/game-MAP.git`
+
+Fresh install:
+
+-   Install dev tools with _`dev/installDev.bat`_<br>
+    Requires admin rights. Run cmd prompt or shell as admin.
+-   Install JS dependencies with `npm install` from repo root<br>
+    Note: NPM is configured to ignore NPM scripts for security<br>
+
+Update:
+
+-   Do the above two steps
+-   Or, run `just update` from repo root to do the same thing
+
+<!--------------------------->
+
+<br>
+
+### Unix
+
+-   WIP
+
+<!--------------------------->
+
+<br>
+
+### Globally Installed Preprocessors
+
+-   [TypeScript](https://www.typescriptlang.org/)
+-   [Less CSS](https://lesscss.org/)
+
+<!--------------------------->
+
+<br>
+
+### Globally Installed Dev Tools
+
+-   [VSCode](https://code.visualstudio.com/) -
+    For code snippets and format on save
+-   [Git](https://git-scm.com/)
+-   [Git LFS](https://git-lfs.com/)
+-   [GitHub CLI](https://cli.github.com/)
+-   [NPM from NodeJS](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) -
+    For JS dependencies
+-   [Python](https://www.python.org/) -
+    For cross-platform file I/O in build steps
+-   [Just](https://just.systems/) -
+    For automating install and build steps
+
+<!--------------------------->
+
+<br>
+
+### Locally Installed Dev Tools
+
+-   [Jest](https://jestjs.io/)
+-   [Prettier](https://prettier.io/)<br>
+    Note: Local works better with extension<br>
+    ([Prettier Formatter for Visual Studio Code](vscode:extension/esbenp.prettier-vscode))
+
+<!--------------------------->
+
+<br>
+
+### Installed VSCode Extensions
+
+-   [Prettier Formatter for Visual Studio Code](vscode:extension/esbenp.prettier-vscode)
+-   [Comment Bars by Zack Frost](vscode:extension/zfzackfrost.commentbars)
 
 <!--####################################################################-->
 <!--####################################################################-->
@@ -30,36 +107,12 @@
 
 <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 
-### Preprocessors Used
-
-These are automatically installed globally with `npm install`
-
--   [TypeScript](https://www.typescriptlang.org/)
--   [Less CSS](https://lesscss.org/)
--   [Prettier](https://prettier.io/)
-
-<!--------------------------->
-
-<br>
-
-### Build Tools Used
-
--   [Visual Studio Code](https://code.visualstudio.com/) -
-    For code snippets and format on save
--   [Node Package Manager](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm#using-a-node-installer-to-install-nodejs-and-npm) -
-    For JS dependencies and automating parts of fresh installs
--   [Python](https://www.python.org/) - For recursively compiling .less files
-
-<!--------------------------->
-
-<br>
-
 ### Creating Game Projects
 
 -   Write JS modules in _`src/lib-**/`_ folders
 -   Write game projects in _`src/**/`_ folders
--   Run `npm run build` to build all game projects into _`_out`_ and _`_api`_ folders
-    -   Use `npm run compile` instead if you dont need to purge old files before building
+-   Run `just build` to build all game projects into _`_out`_ and _`_api`_ folders
+    -   Use `just fastb` instead if you dont need to purge old files before building
 
 <!--------------------------->
 
@@ -67,8 +120,9 @@ These are automatically installed globally with `npm install`
 
 ### Storing Large Assets
 
--   The pattern _`**/assets/**`_ uses Git LFS
--   Large assets are kept in any subfolder named "assets"
+-   The pattern _`**/assets/**`_ uses Git LFS<br>
+    Large files are kept in any subfolder named "assets"<br>
+    Example: High-res art assets, .psd project files, etc.
 
 <!--------------------------->
 
@@ -90,69 +144,25 @@ Use these command palette actions for general organization
 -   Comment Bars: Generate (Quick)
 -   Comment Bars: Generate (Advanced)
 
+<!--------------------------->
+
 <br>
-<br>
-<br>
 
-<!--####################################################################-->
-<!--####################################################################-->
-<!--####################################################################-->
+### Opinionated Code Formatting On Save
 
-## Config File Notes
-
-<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
-
-### package.json
-
--   `npm install` also installs some dev dependencies in the `pre-install` step:
-    -   Global NPM Packages:
-        -   [TypeScript](https://www.npmjs.com/package/typescript)
-        -   [Prettier](https://www.npmjs.com/package/prettier)
-        -   [Less CSS](https://www.npmjs.com/package/less)
-    -   VSCode Extensions:
-        -   [Prettier Formatter for Visual Studio Code](vscode:extension/esbenp.prettier-vscode)
-        -   [Comment Bars by Zack Frost](vscode:extension/zfzackfrost.commentbars)
--   `npm run build` builds all game projects into _`_out`_ and _`_api`_ folders
--   `npm run compile` skips some build steps. Use if rebuilding minor changes.
--   `npm test` runs all Jest tests
+-   [Prettier](https://prettier.io/) formats most languages on save, using extension
+    [Prettier Formatter for Visual Studio Code](vscode:extension/esbenp.prettier-vscode)
+-   [Black](https://pypi.org/project/black/) formats Python on save, using extension
+    [Black Formatter by Microsoft](vscode:extension/ms-python.black-formatter)
+-   Only files with a pragma (comment containing `@format`) are formatted on save<br>
+    Absence of a pragma is used to manually format some files<br>
+    Exception: Python files are always formatted
 
 <!--------------------------->
 
 <br>
 
-### jest.config.js
+### Tests
 
 -   Jest tests include _`.spec.ts`_ and _`.spec.tsx`_ files in any level
-
-<!--------------------------->
-
-<br>
-
-### tsconfig.json
-
--   Import JS modules from library folders (_`lib-`_ prefix)
--   Build artifacts appear in _`_out`_ and `_api` folders
-
-<!--------------------------->
-
-<br>
-
-### .vscode/settings.json
-
--   Prettier formats most languages on save, using the VSCode Extension
-    [Prettier Formatter for Visual Studio Code](vscode:extension/esbenp.prettier-vscode)
--   Python Black formats Python on save, using Microsoft's VSCode Extension
-    [Black Formatter](vscode:extension/ms-python.black-formatter)
-
-<!--------------------------->
-
-### .vscode/\*.code-snippets
-
--   VSCode project snippets for code templates.
-
-<br>
-
-### .prettierrc.json
-
--   Only files with a pragma (comment containing `@format`) are formatted on save
--   Absence of a pragma is used to manually format some files
+-   Run `just test` in repo root to run all tests

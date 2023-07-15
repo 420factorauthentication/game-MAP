@@ -1,4 +1,5 @@
 {
+    // Code snippets for organizing properties of classes in JS modules
     "Bar Comment / 80": {
         "prefix": "jscBar/80",
         "description": "An 80 character line of comment slashes",

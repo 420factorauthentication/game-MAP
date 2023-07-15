@@ -4,10 +4,8 @@ import os
 # Builds all .less files in src to _out #
 #########################################
 
-
 inDir = "src"
 outDir = "_out"
-
 
 for subdir, dirs, files in os.walk(inDir):
     for filename in files:
