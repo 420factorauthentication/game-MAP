@@ -129,7 +129,7 @@ Update:
 
 ### Commenting and Organizing
 
-Use these VSCode Snippets for organizing properties of classes in JS modules:
+VSCode Snippets (for organizing properties of classes in JS modules):
 
 -   jscBar/80
 -   jscBoxApi
@@ -137,11 +137,13 @@ Use these VSCode Snippets for organizing properties of classes in JS modules:
 -   jscBoxInit
 -   jscBoxHelper
 
-Use these command palette actions for general organization
-(from extension [Comment Bars by Zack Frost](vscode:extension/zfzackfrost.commentbars))
+VSCode Commands (from extension
+[Comment Bars by Zack Frost](vscode:extension/zfzackfrost.commentbars)):
 
--   Comment Bars: Generate (Quick)
--   Comment Bars: Generate (Advanced)
+| Title                             | ID                           | Hotkey |
+| --------------------------------- | ---------------------------- | ------ |
+| Comment Bars: Generate (Quick)    | commentbars.generateQuick    |
+| Comment Bars: Generate (Advanced) | commentbars.generateAdvanced |
 
 <br>
 
@@ -165,6 +167,14 @@ Use these command palette actions for general organization
 
 -   Jest tests include _`.spec.ts`_ and _`.spec.tsx`_ files in any level
 -   Run `just test` in repo root to run all tests
+
+VSCode Commands (from extension
+[Live Server by Ritwick Dey](vscode:extension/ritwickdey.LiveServer)):
+
+| Title                 | ID                             | Hotkey           |
+| --------------------- | ------------------------------ | ---------------- |
+| Open with Live Server | extension.liveServer.goOnline  | Alt + L, Alt + C |
+| Stop Live Server      | extension.liveServer.goOffline | Alt + L, Alt + O |
 
 <br>
 <br>
