@@ -9,9 +9,9 @@ call winget install Microsoft.VisualStudioCode --scope=machine --override "/SILE
 call winget install --scope=machine -e --id Git.Git
 call winget install --scope=machine -e --id GitHub.GitLFS
 call winget install --scope=machine -e --id GitHub.cli
+call winget install --scope=machine -e --id Casey.Just
 call winget install --scope=machine -e --id OpenJS.NodeJS
 call winget install --scope=machine -e --id Python.Python.3.12
-call winget install --scope=machine -e --id Casey.Just
 
 @echo(
 @echo(
@@ -28,5 +28,19 @@ call npm install -g less
 @echo ==== INSTALL VSCODE EXTENSIONS ====
 call code --install-extension esbenp.prettier-vscode
 @echo on
+call code --install-extension ritwickdey.LiveServer
+@echo on
 call code --install-extension zfzackfrost.commentbars
+@echo on
+call code --install-extension ZainChen.json
+@echo on
+call code --install-extension skellock.just
+@echo on
+call code --install-extension ms-python.python
+@echo on
+call code --install-extension ms-python.vscode-pylance
+@echo on
+call code --install-extension ms-python.isort
+@echo on
+call code --install-extension ms-python.black-formatter
 @echo on

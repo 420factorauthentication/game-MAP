@@ -80,7 +80,7 @@ Update:
 -   [Jest](https://jestjs.io/)
 -   [Prettier](https://prettier.io/)<br>
     Note: Local works better with extension<br>
-    ([Prettier Formatter for Visual Studio Code](vscode:extension/esbenp.prettier-vscode))
+    ([Prettier - Code formatter](vscode:extension/esbenp.prettier-vscode))
 
 <br>
 
@@ -88,8 +88,15 @@ Update:
 
 ### Installed VSCode Extensions
 
--   [Prettier Formatter for Visual Studio Code](vscode:extension/esbenp.prettier-vscode)
+-   [Prettier - Code formatter](vscode:extension/esbenp.prettier-vscode)
+-   [Live Server by Ritwick Dey](vscode:extension/ritwickdey.LiveServer)
 -   [Comment Bars by Zack Frost](vscode:extension/zfzackfrost.commentbars)
+-   [json by ZainChen](vscode:extension/ZainChen.json)
+-   [just by skellock](vscode:extension/skellock.just)
+-   [Python](vscode:extension/ms-python.python)
+-   [Python: Pylance](vscode:extension/ms-python.vscode-pylance)
+-   [Python: isort](vscode:extension/ms-python.isort)
+-   [Python: Black Formatter](vscode:extension/ms-python.black-formatter)
 
 <br>
 <br>
@@ -143,9 +150,9 @@ Use these command palette actions for general organization
 ### Opinionated Code Formatting On Save
 
 -   [Prettier](https://prettier.io/) formats most languages on save, using extension
-    [Prettier Formatter for Visual Studio Code](vscode:extension/esbenp.prettier-vscode)
+    [Prettier - Code formatter](vscode:extension/esbenp.prettier-vscode)
 -   [Black](https://pypi.org/project/black/) formats Python on save, using extension
-    [Black Formatter by Microsoft](vscode:extension/ms-python.black-formatter)
+    [Python: Black Formatter](vscode:extension/ms-python.black-formatter)
 -   Only files with a pragma (comment containing `@format`) are formatted on save<br>
     Absence of a pragma is used to manually format some files<br>
     Exception: Python files are always formatted
