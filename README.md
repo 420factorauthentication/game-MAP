@@ -110,8 +110,9 @@ Update:
 
 -   Write JS modules in _`src/lib-**/`_ folders
 -   Write game projects in _`src/**/`_ folders
--   Run `just build` to build all game projects into _`_out`_ and _`_api`_ folders
+-   Run `just build` to build JS and TS in `src/` into _`_out`_ and _`_api`_ folders
     -   Use `just fastb` instead if you dont need to purge old files before building
+-   To run a game project, usually launch `src/**/index.html` in a browser after building
 
 <br>
 
