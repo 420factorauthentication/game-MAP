@@ -43,3 +43,10 @@ export interface HotbarItem {
     /** EVENT HANDLER */
     handleEvent(e: KeyboardEvent): void;
 }
+
+/** An array of options that rollbar randomly chooses from. */
+export type RollbarOptions = {
+    onPress: Function;
+    styleCssText?: string;
+    innerHTML?: string;
+}[];

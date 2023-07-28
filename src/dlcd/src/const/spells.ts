@@ -14,10 +14,10 @@ export type Spell = Readonly<{
     func(manager: MinionManager): () => void;
 
     /** The style applied to the new DOM Element generated for the HotbarButton. */
-    styleCssText: string;
+    styleCssText?: string;
 
     /** The inner HTML applied to the new DOM Element generated for the HotbarButton. */
-    innerHTML: string;
+    innerHTML?: string;
 }>;
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -40,9 +40,6 @@ export const Default: Spell = {
 
     innerHTML: "New Spell",
 };
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
 
 /**
  * SWORD SPELL:

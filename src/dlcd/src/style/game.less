@@ -4,20 +4,20 @@
 /* ################################ FONT ############################### */
 /* ##################################################################### */
 
-.uiFont() {
+.ui-font() {
     font-family: "Patrick Hand", sans-serif;
     overflow: hidden;
     white-space: nowrap;
 }
 
-.uiHuge {
-    .uiFont();
+.ui-huge {
+    .ui-font();
     font-size: 12vmin;
     color: #777;
 }
 
-.uiBig {
-    .uiFont();
+.ui-big {
+    .ui-font();
     font-size: 4vmin;
 }
 
@@ -25,23 +25,47 @@
 /* ############################## POSITION ############################# */
 /* ##################################################################### */
 
-.uiPos() {
+.ui-pos() {
     position: absolute;
     text-align: center;
 }
 
-.uiBotRight {
-    .uiPos();
+.ui-bot-left {
+    .ui-pos();
+    bottom: 5vh;
+    left: 5vw;
+    height: 50vh;
+    width: 20vw;
+}
+
+.ui-bot-right {
+    .ui-pos();
     bottom: 5vh;
     right: 5vw;
     height: 10vh;
     width: 20vw;
 }
 
-.uiTop {
-    .uiPos();
+.ui-top {
+    .ui-pos();
     top: 0;
     left: 0;
     height: 20vh;
     width: 100vw;
+}
+
+/* ##################################################################### */
+/* ############################### STYLE ############################### */
+/* ##################################################################### */
+
+.ui-blank {
+    background-color: #999;
+}
+
+#ui-spellbar {
+    background-color: #999;
+    display: grid;
+}
+
+#ui-spellbar > button {
 }
