@@ -41,7 +41,7 @@ class Hotbar implements HotbarContainer {
 
     /** Add a button to this Hotbar, and update graphics. */
     add(item: HotbarItem) {
-        // If this Hotbar has a child whose elem matches the added item,
+        // If items array has an item whose elem matches the added item,
         // the added item is already added to this Hotbar, so do nothing.
         if (this.items.some((e) => e.elem === item.elem)) return;
 
