@@ -1,6 +1,6 @@
 /** @format */
 
-import {RollbarOptions} from "./types";
+import {RollbarOption} from "./types";
 
 import Hotbar from "./hotbar.js";
 import _ from "../../node_modules/underscore/underscore-esm.js";
@@ -17,7 +17,7 @@ class Rollbar extends Hotbar {
      */
     constructor(
         maxItems: number,
-        public rollOptions: RollbarOptions = [],
+        public rollOptions: RollbarOption[] = [],
         elem?: HTMLElement | string
     ) {
         super(maxItems, elem);

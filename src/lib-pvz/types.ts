@@ -139,7 +139,7 @@ export type SpawnGroup = {
  * Used to track what a MinionManager is currently spawning,
  * and to stop a spawning in progress.
  */
-export interface SpawnLevel extends SpawnGroup {
+export type SpawnLevel = SpawnGroup & {
     /** A globally unique id, different from all existing SpawnLevels. */
     readonly uuid: string;
-}
+};

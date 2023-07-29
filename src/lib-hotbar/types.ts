@@ -44,9 +44,16 @@ export interface HotbarItem {
     handleEvent(e: KeyboardEvent): void;
 }
 
-/** An array of options that rollbar randomly chooses from. */
-export type RollbarOptions = {
+/** A HotbarButton setting that can be randomly chosen when rolled. */
+export type RollbarOption = {
+    /** When HotbarButton is clicked, or hotkey is pressed, this is called. */
     onPress: Function;
+    /** Applied to HotbarButton DOM Element. */
     styleCssText?: string;
+    /** Applied to HotbarButton DOM Element. */
     innerHTML?: string;
-}[];
+    /** Description text to show when cursor hovers over HotbarButton. */
+    tooltip?: string;
+    /** Flavor text to show somewhere. Will do more with this later. */
+    flavor?: string;
+};

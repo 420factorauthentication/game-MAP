@@ -1,26 +1,21 @@
 /** @format */
 
 import {MinionManager} from "../../../lib-pvz/types";
+import {RollbarOption} from "../../../lib-hotbar/types";
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-/** Template for designing new Spells. */
-export type Spell = Readonly<{
-    /**
-     * Generates a Spell function at runtime, used for HotbarButton.onPress.
-     * @param manager Used to find targets for the Spell function.
-     */
-    func(manager: MinionManager): () => void;
-    /** The style applied to the new DOM Element generated for the HotbarButton. */
-    styleCssText?: string;
-    /** The inner HTML applied to the new DOM Element generated for the HotbarButton. */
-    innerHTML?: string;
-    /** Description text to show when cursor hovers over HotbarButton. */
-    tooltip?: string;
-    /** Flavor text to show in expanded menus. */
-    flavor?: string;
-}>;
+export type Spell = Readonly<
+    Omit<RollbarOption, "onPress"> & {
+        /**
+         * Generates a Spell function for HotbarButton.onPress,
+         * at runtime so you have access to a MinionManager.
+         * @param manager Used to find targets for the Spell function.
+         */
+        func(manager: MinionManager): () => void;
+    }
+>;
 
 // ====================================================== //
 // ======================= SPELLS ======================= //
