@@ -61,16 +61,24 @@ class _GameManager {
                 Scenes.GameScreen.containerElem.querySelector(".ui-spellbar");
             this._spellbar = new Rollbar(4, prototypeSpells, spellbarElem);
 
-            for (const buttonElem of spellbarElem.children) {
+            for (const node of spellbarElem.childNodes) {
+                // Get rid of unwanted whitespace text nodes after inline elems
+                if (node.nodeName === "#text") {
+                    node.parentNode.removeChild(node);
+                    continue;
+                } else if (node.nodeName !== "button") continue;
+
+                let i = 0;
                 this._spellbar.add(
                     new HotbarButton(
                         this._spellbar,
-                        SpellKeys.Cast0.default,
+                        SpellKeys["Cast" + i.toString()].default,
                         true,
                         undefined,
-                        buttonElem as HTMLElement
+                        node as HTMLElement
                     )
                 );
+                i++;
             }
 
             // Return HTTP status code from loading Scene
