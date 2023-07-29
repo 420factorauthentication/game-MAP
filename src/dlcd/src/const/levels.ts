@@ -2,15 +2,16 @@
 
 import {SpawnGroup} from "../../../lib-pvz/types";
 
-import * as MinionTypes from "./minions.js";
+import {Tribal} from "./minions.js";
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-/** Level One */
-export const One: Readonly<SpawnGroup> = {
-    type: MinionTypes.Warrior,
-    amount: 15,
-    timeStart: 1000,
-    timeStep: 250,
-};
+export namespace Levels {
+    export const One: SpawnGroup = {
+        type: Tribal.Warrior,
+        amount: 15,
+        timeStart: 1000,
+        timeStep: 250,
+    };
+}

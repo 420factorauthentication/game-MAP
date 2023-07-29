@@ -24,12 +24,12 @@ export interface BaseEntity {
  * atkSpd is in attacks per second (Hz).
  * atkDmg is how much hp is subtracted per attack.
  */
-export interface MinionType {
-    hp: number;
-    movSpd: number;
-    atkSpd: number;
-    atkDmg: number;
-}
+export type MinionType = {
+    readonly hp: number;
+    readonly movSpd: number;
+    readonly atkSpd: number;
+    readonly atkDmg: number;
+};
 
 /**
  * A spawned enemy entity, represented by an HTMLElement.
@@ -63,9 +63,11 @@ export interface MinionEntity {
     readonly target: BaseEntity;
 
     /** x position coordinate, in viewport width (vw) units. */
-    x: number;
+    get x(): number;
+    set x(v: number);
     /** y position coordinate, in viewport height (vh) units. */
-    y: number;
+    get y(): number;
+    set y(v: number);
 
     /** How much damage this Minion can sustain before dying. */
     get hp(): number;
@@ -122,16 +124,16 @@ export interface MinionManager {
  * with a time delay inbetween each Minion spawn.
  * Each Minion will have a new HTMLElement created for it.
  */
-export interface SpawnGroup {
+export type SpawnGroup = {
     /** The base stats of the spawned minions. */
-    type: MinionType;
+    readonly type: MinionType;
     /** How many minions to spawn. */
-    amount: number;
+    readonly amount: number;
     /** How long until the first minion is spawned, in ms. */
-    timeStart: number;
+    readonly timeStart: number;
     /** How long inbetween each minion spawn, in ms. */
-    timeStep: number;
-}
+    readonly timeStep: number;
+};
 
 /**
  * Used to track what a MinionManager is currently spawning,
