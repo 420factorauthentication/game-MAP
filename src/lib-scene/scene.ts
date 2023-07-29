@@ -36,6 +36,7 @@ class Scene implements _Scene {
      *
      * Returns a Promise that returns the numerical HTTP status code
      * of the XMLHttpRequest when it's readyState is 4 (DONE).
+     * Exception: Returns void if Scene is already loaded.
      *
      * @param containerElem The elem to contain all newly created Scene elems.
      * Can be a css selector or existing DOM element or null,

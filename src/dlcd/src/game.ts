@@ -16,23 +16,27 @@ import Base from "../../lib-pvz/base.js";
 ////////////////////////////////////////////////////////////////////////////////
 
 class _GameManager {
-    #spellbar: Rollbar;
+    protected _spellbar: Rollbar;
     get spellbar() {
-        return this.#spellbar;
+        return this._spellbar;
     }
 
-    #base: Base;
+    protected _base: Base;
     get base() {
-        return this.#base;
+        return this._base;
     }
 
-    #minionMan: MinionSpawner;
+    protected _minionMan: MinionSpawner;
     get minionMan() {
-        return this.#minionMan;
+        return this._minionMan;
     }
 
-    initPrototype() {
-        Scenes.GameScreen.load(undefined, "scene").then((httpCode: number) => {
+    /**
+     * Create elems and singletons needed for game prototype
+     * Returns a Promise that returns Scene HttpStatus when everything is loaded
+     */
+    async initPrototype(): Promise<number> {
+        return Scenes.GameScreen.load(undefined, "scene").then((httpStatus) => {
             // Create spell funcs with minion manager at runtime
             let prototypeSpells: RollbarOption[] = [];
             for (const key in MeleeSpells) {
@@ -43,24 +47,24 @@ class _GameManager {
             }
 
             // Init base
-            this.#base = new Base(
+            this._base = new Base(
                 RomanBases.Wood.hp,
                 RomanBases.Wood.x,
                 RomanBases.Wood.y
             );
 
             // Init minion manager
-            this.#minionMan = new MinionSpawner(this.#base);
+            this._minionMan = new MinionSpawner(this._base);
 
             // Init spellbar
             let spellbarElem: HTMLElement =
-                Scenes.GameScreen.containerElem.querySelector("#ui-spellbar");
-            this.#spellbar = new Rollbar(4, prototypeSpells, spellbarElem);
+                Scenes.GameScreen.containerElem.querySelector(".ui-spellbar");
+            this._spellbar = new Rollbar(4, prototypeSpells, spellbarElem);
 
             for (const buttonElem of spellbarElem.children) {
-                this.#spellbar.add(
+                this._spellbar.add(
                     new HotbarButton(
-                        this.#spellbar,
+                        this._spellbar,
                         SpellKeys.Cast0.default,
                         true,
                         undefined,
@@ -68,6 +72,9 @@ class _GameManager {
                     )
                 );
             }
+
+            // Return HTTP status code from loading Scene
+            return httpStatus;
         });
     }
 }

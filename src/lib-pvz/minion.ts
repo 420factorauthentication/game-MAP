@@ -54,6 +54,8 @@ class Minion implements MinionEntity {
 
         // Init components
         this.stats = new Stats(this.type);
+        this.moveState = this.moveStateInit;
+        this.attackState = this.attackStateInit;
         this.ai = new StateMachine(this.moveState);
         this.hpBar = new ProgBar(
             this.hpBarElemInit,
@@ -163,13 +165,12 @@ class Minion implements MinionEntity {
     get elem() {return this._elem;}
     protected _elem: HTMLElement;
 
-    protected anim:  Spriteling;
-    protected hpBar: ProgBar;
-    protected ai:    StateMachine;
     protected stats: Stats;
-
-    protected moveState:   State = this.moveStateInit;
-    protected attackState: State = this.attackStateInit;
+    protected moveState: State;
+    protected attackState: State;
+    protected ai: StateMachine;
+    protected hpBar: ProgBar;
+    protected anim: Spriteling;
 
     //////////
     // INIT //

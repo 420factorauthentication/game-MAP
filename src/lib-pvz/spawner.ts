@@ -88,7 +88,7 @@ class MinionSpawner implements MinionManager {
     }
 
     /** Uses promises to wait timeStep inbetween spawning each Minion */
-    private loop(
+    private async loop(
         i: number,
         spawns: SpawnGroup,
         newUUID: string
