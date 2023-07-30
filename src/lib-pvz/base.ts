@@ -83,6 +83,7 @@ class Base implements BaseEntity {
         elem.style.width = "5vw";
         elem.style.height = "90vh";
         elem.style.background = "content-box radial-gradient(yellow, gold)";
+        elem.style.zIndex = "1";
         return elem;
     }
 
@@ -92,8 +93,9 @@ class Base implements BaseEntity {
         elem.style.position = "absolute";
         elem.style.height = this._elem.style.height;
         elem.style.width = `calc(${this._elem.style.width} / 2)`;
-        elem.style.left = `calc(-${this._elem.style.width} / 1.5)`;
+        elem.style.left = `calc(${this._elem.style.width} / 2)`;
         elem.style.background = "darkgreen";
+        elem.style.zIndex = "2";
         return elem;
     }
 }
