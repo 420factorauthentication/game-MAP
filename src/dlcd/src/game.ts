@@ -2,10 +2,11 @@
 
 import {RollbarOption} from "../../lib-hotbar/types";
 
-import * as Scenes from "./const/scenes.js";
-import {MeleeSpells} from "./const/spells.js";
+import {GameScreen as GameScene} from "./const/scenes.js";
+import * as Spells from "./const/spells.js";
 import {SpellKeys} from "./const/options.js";
-import {RomanBases} from "./const/bases.js";
+import {Wood as WoodBase} from "./const/bases.js";
+import {Mid as MidDistance, Wide as WideSpread} from "./const/spawners.js";
 
 import Rollbar from "../../lib-hotbar/rollbar.js";
 import HotbarButton from "../../lib-hotbar/button.js";
@@ -36,29 +37,40 @@ class _GameManager {
      * Returns a Promise that returns Scene HttpStatus when everything is loaded
      */
     async initPrototype(): Promise<number> {
-        return Scenes.GameScreen.load(undefined, "scene").then((httpStatus) => {
+        return GameScene.load(undefined, "scene").then((httpStatus) => {
+            if (httpStatus != 200) return;
+
             // Create spell funcs with minion manager at runtime
             let prototypeSpells: RollbarOption[] = [];
-            for (const key in MeleeSpells) {
+            for (const key in Spells) {
                 prototypeSpells.push({
-                    ...MeleeSpells[key],
-                    onPress: MeleeSpells[key].func(this.minionMan),
+                    ...Spells[key],
+                    onPress: Spells[key].func(this.minionMan),
                 });
             }
 
             // Init base
+            let baseElem: HTMLElement =
+                GameScene.containerElem.querySelector("#game-base");
             this._base = new Base(
-                RomanBases.Wood.hp,
-                RomanBases.Wood.x,
-                RomanBases.Wood.y
+                WoodBase.hp,
+                WoodBase.x,
+                WoodBase.y,
+                baseElem
             );
 
             // Init minion manager
-            this._minionMan = new MinionSpawner(this._base);
+            this._minionMan = new MinionSpawner(
+                this._base,
+                MidDistance.minX,
+                MidDistance.maxX,
+                WideSpread.minY,
+                WideSpread.maxY
+            );
 
             // Init spellbar
             let spellbarElem: HTMLElement =
-                Scenes.GameScreen.containerElem.querySelector(".ui-spellbar");
+                GameScene.containerElem.querySelector("#game-spellbar");
             this._spellbar = new Rollbar(4, prototypeSpells, spellbarElem);
 
             for (const node of spellbarElem.childNodes) {

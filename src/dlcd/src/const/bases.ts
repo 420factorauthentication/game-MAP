@@ -5,10 +5,8 @@ import {BaseEntity} from "../../../lib-pvz/types";
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-export namespace RomanBases {
-    export const Wood: Readonly<BaseEntity> = {
-        hp: 4,
-        x: 5,
-        y: 50,
-    };
-}
+export const Wood: Readonly<BaseEntity> = {
+    hp: 12,
+    x: 20,
+    y: 50,
+};

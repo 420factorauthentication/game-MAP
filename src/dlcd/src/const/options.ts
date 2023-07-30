@@ -7,6 +7,7 @@
 export type Option<t> = {
     readonly id: string;
     readonly default: t;
+    current?: t;
 };
 
 // ====================================================== //

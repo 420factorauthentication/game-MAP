@@ -28,14 +28,15 @@
 .ui-pos() {
     position: absolute;
     text-align: center;
+    z-index: 10;
 }
 
 .ui-bot-left {
     .ui-pos();
     bottom: 5vh;
     left: 5vw;
-    height: 50vh;
-    width: 20vw;
+    height: 20vh;
+    width: 50vw;
 }
 
 .ui-bot-right {
@@ -54,18 +55,28 @@
     width: 100vw;
 }
 
+.game-mid-left {
+    .ui-pos();
+    top: 50vh;
+    left: 20vw;
+    height: 45vh;
+    width: 15vw;
+    transform: translate(-100%, -50%);
+}
+
 /* ##################################################################### */
 /* ############################### STYLE ############################### */
 /* ##################################################################### */
 
-.ui-blank {
+.ui-bg {
     background-color: #999;
 }
 
-#ui-spellbar {
-    background-color: #999;
+.ui-bar0 {
+    .ui-bg();
     display: grid;
+    grid-auto-flow: column;
 }
 
-#ui-spellbar > button {
+.ui-bar0 > button {
 }

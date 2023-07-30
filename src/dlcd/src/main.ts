@@ -1,7 +1,7 @@
 /** @format */
 
 import * as Scenes from "./const/scenes.js";
-import {PrototypeLevels} from "./const/levels.js";
+import {LvlOne} from "./const/levels.js";
 
 import _GameManager from "./game.js";
 
@@ -17,7 +17,7 @@ Scenes.StartScreen.load(undefined, "scene").then((httpStatus) => {
         .addEventListener("click", () => {
             Scenes.StartScreen.unload();
             GameManager.initPrototype().then((httpStatus) => {
-                GameManager.minionMan.startLevel(PrototypeLevels.One);
+                GameManager.minionMan.startLevel(LvlOne);
             });
         });
 });

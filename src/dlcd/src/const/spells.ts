@@ -21,16 +21,14 @@ export type Spell = Readonly<
 // ======================= SPELLS ======================= //
 // ====================================================== //
 
-export namespace MeleeSpells {
-    export const Sword: Spell = {
-        func(manager) {
-            return () => {
-                manager.minionsSortX[0]?.changeHp(-3);
-            };
-        },
-        styleCssText: "background: rgba(169, 69, 42, 169);",
-        innerHTML: "Sword of Semver",
-        tooltip: "Deal 3 damage to front minion.",
-        flavor: "It'll give you major and minor cuts. You'll need to patch yourself up.",
-    };
-}
+export const Sword: Spell = {
+    func(manager) {
+        return () => {
+            manager.minionsSortX[0]?.changeHp(-3);
+        };
+    },
+    styleCssText: "background: rgba(169, 69, 42, 169);",
+    innerHTML: "Sword of Semver",
+    tooltip: "Deal 3 damage to front minion.",
+    flavor: "It'll give you major and minor cuts. You'll need to patch yourself up.",
+};
