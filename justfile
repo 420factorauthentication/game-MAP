@@ -27,10 +27,10 @@ _compile:
     py dev/buildLess.py
 
 # Delete old build artifacts then build new artifacts
-build: clean _compile
+rebuild: clean _compile
 
 # Build without cleaning old artifacts
-fastb: _compile
+build: _compile
 
 # Run JS tests
 @test:
