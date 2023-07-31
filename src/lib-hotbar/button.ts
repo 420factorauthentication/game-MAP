@@ -13,6 +13,7 @@ class HotbarButton implements HotbarItem {
      * @param disableAllOnPress
      * If true, disables all buttons in parent Hotbar after button press/click.
      * @param onPress When hotkey is pressed, or button is clicked, this is called.
+     * Can be undefined, in which case nothing happens on button press/click.
      * @param elem Can be a css selector or existing DOM element or null,
      * in which case a new div element will be created.
      */
@@ -20,7 +21,7 @@ class HotbarButton implements HotbarItem {
         private _hotbar: HotbarContainer,
         public hotkey: string,
         public disableAllOnPress: boolean = false,
-        public onPress: Function = () => {},
+        public onPress: Function | undefined,
         elem?: HTMLElement | string
     ) {
         // Lookup element by selector
@@ -101,7 +102,7 @@ class HotbarButton implements HotbarItem {
     handleEvent(e: KeyboardEvent) {
         if (!this.isEnabled) return;
         if (e.key != this.hotkey) return;
-        this.onPress();
+        if (this.onPress) this.onPress();
         if (this.disableAllOnPress === true) this.hotbar.disableAll();
     }
 }

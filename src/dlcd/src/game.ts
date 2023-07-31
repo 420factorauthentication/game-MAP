@@ -7,6 +7,7 @@ import * as Spells from "./const/spells.js";
 import {SpellKeys} from "./const/options.js";
 import {Wood as WoodBase} from "./const/bases.js";
 import {Mid as MidDistance, Wide as WideSpread} from "./const/spawners.js";
+import {SpellbarMax, SpellbarSpeed} from "./const/player.js";
 
 import Rollbar from "../../lib-hotbar/rollbar.js";
 import HotbarButton from "../../lib-hotbar/button.js";
@@ -32,13 +33,20 @@ class _GameManager {
         return this._minionMan;
     }
 
+    protected _prototypeIsLoaded: boolean;
+    get prototypeIsLoaded() {
+        return this._prototypeIsLoaded;
+    }
+
     /**
-     * Create elems and singletons needed for game prototype
-     * Returns a Promise that returns Scene HttpStatus when everything is loaded
+     * Create elems and singletons needed for game prototype.
+     * Returns a Promise that returns Scene HttpStatus when everything is loaded.
+     * Exception: Returns void if Scene is already loaded.
      */
-    async initPrototype(): Promise<number> {
+    async loadPrototype(): Promise<number> {
+        if (this._prototypeIsLoaded) return;
         return GameScene.load(undefined, "scene").then((httpStatus) => {
-            if (httpStatus != 200) return;
+            if (httpStatus != 200) return httpStatus;
 
             // Create spell funcs with minion manager at runtime
             let prototypeSpells: RollbarOption[] = [];
@@ -71,27 +79,41 @@ class _GameManager {
             // Init spellbar
             let spellbarElem: HTMLElement =
                 GameScene.containerElem.querySelector("#game-spellbar");
-            this._spellbar = new Rollbar(4, prototypeSpells, spellbarElem);
+            this._spellbar = new Rollbar(
+                SpellbarMax,
+                false,
+                prototypeSpells,
+                spellbarElem
+            );
 
+            let whitespaceTextNodesToRemove: Node[] = [];
+            let i = 0;
+
+            // Iterate through all spellbar children nodes
+            // Remove unwanted whitespace text nodes after inline elems
+            // Add button nodes to rollbar items
             for (const node of spellbarElem.childNodes) {
-                // Get rid of unwanted whitespace text nodes after inline elems
                 if (node.nodeName === "#text") {
-                    node.parentNode.removeChild(node);
+                    whitespaceTextNodesToRemove.push(node);
                     continue;
-                } else if (node.nodeName !== "button") continue;
+                } else if (i >= SpellbarMax) continue;
+                else if (node.nodeName !== "BUTTON") continue;
 
-                let i = 0;
-                this._spellbar.add(
-                    new HotbarButton(
-                        this._spellbar,
-                        SpellKeys["Cast" + i.toString()].default,
-                        true,
-                        undefined,
-                        node as HTMLElement
-                    )
+                new HotbarButton(
+                    this._spellbar,
+                    SpellKeys["Cast" + i.toString()].default,
+                    true,
+                    undefined,
+                    node as HTMLElement
                 );
                 i++;
             }
+
+            for (const node of whitespaceTextNodesToRemove)
+                node.parentNode.removeChild(node);
+
+            // Start spellbar rolling
+            this._spellbar.start(SpellbarSpeed);
 
             // Return HTTP status code from loading Scene
             return httpStatus;

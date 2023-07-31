@@ -16,7 +16,7 @@ Scenes.StartScreen.load(undefined, "scene").then((httpStatus) => {
         .querySelector("#start-button")
         .addEventListener("click", () => {
             Scenes.StartScreen.unload();
-            GameManager.initPrototype().then((httpStatus) => {
+            GameManager.loadPrototype().then((httpStatus) => {
                 GameManager.minionMan.startLevel(LvlOne);
             });
         });

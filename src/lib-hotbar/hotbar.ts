@@ -9,10 +9,15 @@ import {HotbarContainer, HotbarItem} from "./types";
 class Hotbar implements HotbarContainer {
     /**
      * @param _maxItems Prevents user from adding more buttons than this limit.
+     * @param autoSize If true, auto-resizes button styles based on maxItems
      * @param elem Can be a css selector or existing DOM element or null,
      * in which case a new div element will be created.
      */
-    constructor(private _maxItems: number, elem?: HTMLElement | string) {
+    constructor(
+        private _maxItems: number,
+        public autoSize: boolean,
+        elem?: HTMLElement | string
+    ) {
         // Lookup element by selector
         if (elem)
             this._elem =
@@ -33,25 +38,25 @@ class Hotbar implements HotbarContainer {
         return this._maxItems;
     }
     set maxItems(v) {
-        if (v < this.items.length)
+        if (v < this._items.length)
             throw new Error("Cant set max items below current length");
         this._maxItems = v;
-        this.updateAllSizes();
+        if (this.autoSize) this.updateAllSizes();
     }
 
     /** Add a button to this Hotbar, and update graphics. */
     add(item: HotbarItem) {
         // If items array has an item whose elem matches the added item,
         // the added item is already added to this Hotbar, so do nothing.
-        if (this.items.some((e) => e.elem === item.elem)) return;
+        if (this._items.some((e) => e.elem === item.elem)) return;
 
         // If user attempts to add more than max, throw an Error
-        if (this.items.length >= this.maxItems) throw new Error("Max items");
+        if (this._items.length >= this.maxItems) throw new Error("Max items");
 
         // Init
         this._items.push(item);
         this._elem.appendChild(item.elem);
-        this.updateSize(item);
+        if (this.autoSize) this.updateSize(item);
 
         // Return the added item
         return item;
@@ -61,12 +66,12 @@ class Hotbar implements HotbarContainer {
     remove(index: number): void;
     remove(item: HotbarItem): void;
     remove(v: number | HotbarItem) {
-        let index = typeof v === "number" ? v : this.items.indexOf(v);
-        let item = typeof v === "number" ? this.items[v] : v;
+        let index = typeof v === "number" ? v : this._items.indexOf(v);
+        let item = typeof v === "number" ? this._items[v] : v;
 
         // If item not found, do nothing
         if (!item) return;
-        if (!this.items.some((e) => e.elem === item.elem)) return;
+        if (!this._items.some((e) => e.elem === item.elem)) return;
 
         // Cleanup garbage
         removeEventListener("keydown", item);
@@ -144,7 +149,7 @@ class Hotbar implements HotbarContainer {
 
     /** Recalculate DOM Element size of all buttons in this Hotbar. */
     protected updateAllSizes() {
-        for (const item of this.items) this.updateSize(item);
+        for (const item of this._items) this.updateSize(item);
     }
 }
 
