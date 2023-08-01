@@ -48,18 +48,14 @@ class _GameManager {
         return GameScene.load(undefined, "scene").then((httpStatus) => {
             if (httpStatus != 200) return httpStatus;
 
-            // Create spell funcs with minion manager at runtime
+            // Variables
             let prototypeSpells: RollbarOption[] = [];
-            for (const key in Spells) {
-                prototypeSpells.push({
-                    ...Spells[key],
-                    onPress: Spells[key].func(this.minionMan),
-                });
-            }
-
-            // Init base
             let baseElem: HTMLElement =
                 GameScene.containerElem.querySelector("#game-base");
+            let spellbarElem: HTMLElement =
+                GameScene.containerElem.querySelector("#game-spellbar");
+
+            // Init base
             this._base = new Base(
                 WoodBase.hp,
                 WoodBase.x,
@@ -76,9 +72,15 @@ class _GameManager {
                 WideSpread.maxY
             );
 
+            // Create spell funcs with minion manager at runtime
+            for (const key in Spells) {
+                prototypeSpells.push({
+                    ...Spells[key],
+                    onPress: Spells[key].func(this.minionMan),
+                });
+            }
+
             // Init spellbar
-            let spellbarElem: HTMLElement =
-                GameScene.containerElem.querySelector("#game-spellbar");
             this._spellbar = new Rollbar(
                 SpellbarMax,
                 false,
@@ -86,12 +88,12 @@ class _GameManager {
                 spellbarElem
             );
 
-            let whitespaceTextNodesToRemove: Node[] = [];
-            let i = 0;
-
             // Iterate through all spellbar children nodes
             // Remove unwanted whitespace text nodes after inline elems
             // Add button nodes to rollbar items
+            let whitespaceTextNodesToRemove: Node[] = [];
+            let i = 0;
+
             for (const node of spellbarElem.childNodes) {
                 if (node.nodeName === "#text") {
                     whitespaceTextNodesToRemove.push(node);

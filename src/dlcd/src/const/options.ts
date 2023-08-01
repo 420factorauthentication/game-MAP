@@ -17,18 +17,18 @@ export type Option<t> = {
 export namespace SpellKeys {
     export const Cast0: Option<string> = {
         id: "spellKey0",
-        default: "Q",
+        default: "q",
     };
     export const Cast1: Option<string> = {
         id: "spellKey1",
-        default: "W",
+        default: "w",
     };
     export const Cast2: Option<string> = {
         id: "spellKey2",
-        default: "E",
+        default: "e",
     };
     export const Cast3: Option<string> = {
         id: "spellKey3",
-        default: "R",
+        default: "r",
     };
 }
