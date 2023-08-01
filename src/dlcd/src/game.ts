@@ -9,20 +9,16 @@ import {Wood as WoodBase} from "./const/bases.js";
 import {Mid as MidDistance, Wide as WideSpread} from "./const/spawners.js";
 import {SpellbarMax, SpellbarSpeed} from "./const/player.js";
 
+import Base from "../../lib-pvz/base.js";
+import MinionSpawner from "../../lib-pvz/spawner.js";
 import Rollbar from "../../lib-hotbar/rollbar.js";
 import HotbarButton from "../../lib-hotbar/button.js";
-import MinionSpawner from "../../lib-pvz/spawner.js";
-import Base from "../../lib-pvz/base.js";
+import KeyUI from "../../lib-hotbar/keyui.js";
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
 class _GameManager {
-    protected _spellbar: Rollbar;
-    get spellbar() {
-        return this._spellbar;
-    }
-
     protected _base: Base;
     get base() {
         return this._base;
@@ -31,6 +27,16 @@ class _GameManager {
     protected _minionMan: MinionSpawner;
     get minionMan() {
         return this._minionMan;
+    }
+
+    protected _spellbar: Rollbar;
+    get spellbar() {
+        return this._spellbar;
+    }
+
+    protected _keyui: KeyUI;
+    get keyui() {
+        return this._keyui;
     }
 
     protected _prototypeIsLoaded: boolean;
@@ -54,6 +60,11 @@ class _GameManager {
                 GameScene.containerElem.querySelector("#game-base");
             let spellbarElem: HTMLElement =
                 GameScene.containerElem.querySelector("#game-spellbar");
+            let keyuiElem: HTMLElement =
+                GameScene.containerElem.querySelector("#game-keyui");
+            let spellHotkeys: string[] = [];
+            for (const arrayKey in SpellKeys)
+                spellHotkeys.push(SpellKeys[arrayKey].default);
 
             // Init base
             this._base = new Base(
@@ -83,36 +94,23 @@ class _GameManager {
             // Init spellbar
             this._spellbar = new Rollbar(
                 SpellbarMax,
-                false,
+                true,
                 prototypeSpells,
                 spellbarElem
             );
 
-            // Iterate through all spellbar children nodes
-            // Remove unwanted whitespace text nodes after inline elems
-            // Add button nodes to rollbar items
-            let whitespaceTextNodesToRemove: Node[] = [];
-            let i = 0;
-
-            for (const node of spellbarElem.childNodes) {
-                if (node.nodeName === "#text") {
-                    whitespaceTextNodesToRemove.push(node);
-                    continue;
-                } else if (i >= SpellbarMax) continue;
-                else if (node.nodeName !== "BUTTON") continue;
-
+            // Add spellbar buttons
+            for (let i = 0; i < SpellbarMax; i++)
                 new HotbarButton(
                     this._spellbar,
-                    SpellKeys["Cast" + i.toString()].default,
+                    spellHotkeys[i],
                     true,
                     undefined,
-                    node as HTMLElement
+                    document.createElement("button")
                 );
-                i++;
-            }
 
-            for (const node of whitespaceTextNodesToRemove)
-                node.parentNode.removeChild(node);
+            // Init keyui
+            this._keyui = new KeyUI(SpellbarMax, spellHotkeys, keyuiElem);
 
             // Start spellbar rolling
             this._spellbar.start(SpellbarSpeed);

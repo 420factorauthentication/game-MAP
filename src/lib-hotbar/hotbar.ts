@@ -141,9 +141,9 @@ class Hotbar implements HotbarContainer {
     // HELPER FUNCTIONS //
     //////////////////////
 
-    /** Recalculate DOM Element size, to fit based on maxItems. */
+    /** Recalculate DOM Element size of a button, to fit based on maxItems. */
     protected updateSize(item: HotbarItem) {
-        item.elem.style.width = "" + 100 / this.maxItems + "%";
+        item.elem.style.width = "" + 100 / this._maxItems + "%";
         item.elem.style.height = "100%";
     }
 

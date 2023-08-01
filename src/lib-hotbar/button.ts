@@ -88,7 +88,7 @@ class HotbarButton implements HotbarItem {
     // INIT //
     //////////
     static get elemInit() {
-        const elem = <HTMLElement>document.createElement("a");
+        const elem = <HTMLElement>document.createElement("button");
         elem.style.display = "block";
         elem.style.boxSizing = "border-box";
         elem.style.background = "content-box radial-gradient(slategray, gray)";
