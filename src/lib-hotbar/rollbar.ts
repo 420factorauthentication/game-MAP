@@ -3,7 +3,7 @@
 import {RollbarOption} from "./types";
 
 import Hotbar from "./hotbar.js";
-import _ from "../../node_modules/underscore/underscore-esm.js";
+import {sample} from "../../node_modules/underscore/underscore-esm.js";
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -77,7 +77,7 @@ class Rollbar extends Hotbar {
         if (this.enableAllOnRoll) this.enableAll();
 
         // Grab a random sample from this.rollOptions
-        const rolls: RollbarOption[] = _.sample(
+        const rolls: RollbarOption[] = sample(
             this.rollOptions,
             this._items.length
         );
