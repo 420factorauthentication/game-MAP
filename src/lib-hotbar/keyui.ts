@@ -13,7 +13,7 @@ class KeyUI {
      */
     constructor(
         maxItems: number,
-        hotkeys: string[],
+        hotkeys: string[] = [],
         elem?: HTMLElement | string
     ) {
         this._maxItems = maxItems;
@@ -117,7 +117,10 @@ class KeyUI {
         let i = 0;
         for (const elem of this._elem.children) {
             let child = elem as HTMLElement;
-            child.innerHTML = this._hotkeys[i++].toUpperCase();
+            child.innerHTML = this._hotkeys[i]
+                ? this._hotkeys[i].toUpperCase()
+                : "";
+            i++;
         }
     }
 }

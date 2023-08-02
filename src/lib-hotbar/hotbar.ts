@@ -15,7 +15,7 @@ class Hotbar implements HotbarContainer {
      */
     constructor(
         private _maxItems: number,
-        public autoSize: boolean,
+        public autoSize: boolean = true,
         elem?: HTMLElement | string
     ) {
         // Lookup element by selector
