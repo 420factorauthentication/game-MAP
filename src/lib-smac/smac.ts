@@ -16,13 +16,11 @@ class StateMachine {
         this.set(state);
     }
 
-    /**
-     * Get current State.
-     */
-    get state() {
-        return this.#state;
+    /** Look at current State. */
+    get state(): Readonly<State> {
+        return Object.freeze(Object.assign({}, this._state));
     }
-    #state: State;
+    protected _state: State;
 
     /**
      * Set to a new State.
@@ -36,7 +34,7 @@ class StateMachine {
      * @param newState The new State to set to.
      * @param args Will be passed to State funcs (onExit, onEnter, onLoop).
      */
-    set(newState: State | undefined, ...args): Promise<boolean> {
+    async set(newState: State | undefined, ...args): Promise<boolean> {
         // Run onExit and onEnter
         if (this.state?.onExit) this.state.onExit(...args);
         if (newState?.onEnter) newState.onEnter(...args);
@@ -51,7 +49,7 @@ class StateMachine {
             );
 
         // Assign new State to StateMachine
-        this.#state = newState;
+        this._state = newState;
 
         // If not transition, return insta-resolving Promise
         if (!isTransition(newState)) return new Promise<boolean>(() => true);
