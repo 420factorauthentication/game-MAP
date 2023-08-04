@@ -96,6 +96,7 @@ class KeyUI {
         child.style.textAlign = "end";
         child.style.padding = "2%";
         child.style.pointerEvents = "none";
+        child.style.userSelect = "none";
         return child;
     }
 
