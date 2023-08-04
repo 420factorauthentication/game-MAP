@@ -27,7 +27,7 @@ export const Sword: Spell = {
             manager.minionsSortX[0]?.changeHp(-3);
         };
     },
-    // styleCssText: "background: rgba(169, 69, 42, 169);",
+    styleCssText: "background-color: rgba(169, 69, 42, 169);",
     innerHTML: "Sword of Semver",
     tooltip: "Deal 3 damage to front minion.",
     flavor: "It'll give you major and minor cuts. You'll need to patch yourself up.",

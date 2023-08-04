@@ -9,20 +9,21 @@ import {HotbarContainer, HotbarItem} from "./types";
 class HotbarButton implements HotbarItem {
     /**
      * @param _hotbar The parent Hotbar. Automatically adds to it's array.
-     * @param hotkey When this key is pressed, onPress() is called.
-     * @param disableAllOnPress
-     * If true, disables all buttons in parent Hotbar after button press/click.
-     * @param onPress When hotkey is pressed, or button is clicked, this is called.
-     * Can be undefined, in which case nothing happens on button press/click.
      * @param elem Can be a css selector or existing DOM element or null,
      * in which case a new div element will be created.
+     * @param hotkey When this key is pressed, onPress functions are called.
+     * Can be undefined, in which case the button can only be clicked with mouse.
+     * @param onPress When hotkey is pressed, or button is clicked, these are called.
+     * Can be empty, in which case nothing happens on button press/click.
+     * @param disableAllOnPress
+     * If true, disables all buttons in parent Hotbar after button press/click.
      */
     constructor(
         private _hotbar: HotbarContainer,
-        public hotkey: string,
-        public disableAllOnPress: boolean = false,
-        public onPress: Function | undefined,
-        elem?: HTMLElement | string
+        elem?: HTMLElement | string,
+        public hotkey?: string,
+        public onPress: Array<Function> = [],
+        public disableAllOnPress: boolean = false
     ) {
         // Lookup element by selector
         if (elem)
@@ -102,7 +103,7 @@ class HotbarButton implements HotbarItem {
     handleEvent(e: KeyboardEvent) {
         if (!this.isEnabled) return;
         if (e.key != this.hotkey) return;
-        if (this.onPress) this.onPress();
+        for (const func of this.onPress) func();
         if (this.disableAllOnPress === true) this.hotbar.disableAll();
     }
 }

@@ -63,6 +63,7 @@ class Hotbar implements HotbarContainer {
     }
 
     /** Remove a button from this Hotbar, and update graphics. */
+    remove(v: number | HotbarItem): void;
     remove(index: number): void;
     remove(item: HotbarItem): void;
     remove(v: number | HotbarItem) {

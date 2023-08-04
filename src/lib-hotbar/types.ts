@@ -26,16 +26,22 @@ export interface HotbarContainer {
 
 /** A button that calls a function when clicked, or when a key is pressed. */
 export interface HotbarItem {
-    /** When this key is pressed, onPress() is called. */
-    hotkey: string;
-    /** If true, disables all buttons in parent Hotbar after button press/click. */
-    disableAllOnPress: boolean;
-    /** When hotkey is pressed, or button is clicked, this is called. */
-    onPress: Function;
     /** The parent Hotbar. Automatically adds to it's array. */
     get hotbar(): HotbarContainer;
     /** The button element. Is a child of this.hotbar.elem. */
     get elem(): HTMLElement;
+    /**
+     * When this key is pressed, onPress functions are called.
+     * Can be undefined, in which case the button can only be clicked with mouse.
+     */
+    hotkey?: string;
+    /**
+     * When hotkey is pressed, or button is clicked, these are called.
+     * Can be empty, in which case nothing happens on button press/click.
+     */
+    onPress?: Array<Function>;
+    /** If true, disables all buttons in parent Hotbar after button press/click. */
+    disableAllOnPress: boolean;
     /** If false, this button is hidden and stops doing anything on click/press. */
     isEnabled: boolean;
     /** Destroy DOM Element and cleanup all garbage. */
@@ -46,8 +52,8 @@ export interface HotbarItem {
 
 /** A HotbarButton setting that can be randomly chosen when rolled. */
 export type RollbarOption = {
-    /** When HotbarButton is clicked, or hotkey is pressed, this is called. */
-    onPress: Function;
+    /** When HotbarButton is clicked, or hotkey is pressed, these are called. */
+    onPress: Array<Function>;
     /** Applied to HotbarButton DOM Element. */
     styleCssText?: string;
     /** Applied to HotbarButton DOM Element. */
