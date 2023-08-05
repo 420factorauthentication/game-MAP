@@ -100,15 +100,14 @@ class _GameManager {
             );
 
             // Add spellbar buttons
-            for (let i = 0; i < SpellbarMax; i++) {
-                let newBtn = new HotbarButton(
+            for (let i = 0; i < SpellbarMax; i++)
+                new HotbarButton(
                     this._spellbar,
                     document.createElement("button"),
                     spellHotkeys[i],
                     [],
                     true
                 );
-            }
 
             // Init keyui
             this._keyui = new KeyUI(SpellbarMax, spellHotkeys, keyuiElem);

@@ -11,9 +11,9 @@
 
 <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 
-## Fresh Install / Update
+## Dev Toolchain
 
-### Windows
+### Windows - Fresh Install / Update
 
 Preparing a fresh install:
 
@@ -40,7 +40,7 @@ Update:
 
 <!--------------------------->
 
-### Unix
+### Unix - Fresh Install / Update
 
 -   WIP
 
@@ -60,14 +60,14 @@ Update:
 ### Globally Installed Dev Tools
 
 -   [VSCode](https://code.visualstudio.com/) -
-    For code snippets and format on save
+    For IntelliSense, code snippets, and format on save
 -   [Git](https://git-scm.com/)
 -   [Git LFS](https://git-lfs.com/)
 -   [GitHub CLI](https://cli.github.com/)
 -   [NPM from NodeJS](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) -
     For JS dependencies
 -   [Python](https://www.python.org/) -
-    For cross-platform file I/O in build steps
+    For cross-platform file I/O in build steps, and generating SVG
 -   [Just](https://just.systems/) -
     For automating install and build steps
 
@@ -122,7 +122,7 @@ Update:
 
 -   The pattern _`**/assets/**`_ uses Git LFS<br>
     Large files are kept in any subfolder named "assets"<br>
-    Example: High-res art assets, .psd project files, etc.
+    Example: High-res art and audio assets, software project files, etc.
 
 <br>
 
