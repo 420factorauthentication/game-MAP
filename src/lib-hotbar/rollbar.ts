@@ -57,17 +57,17 @@ class Rollbar extends Hotbar {
     start(intervalTime: number) {
         this._isOn = true;
 
-        // Start new loop with new UUID to stop old loops
-        let newUUID = uuidv4();
-        this.#loopUUID = newUUID;
-        this.loop(intervalTime, newUUID);
-
         // Cache initial button settings
         for (let i = 0; i < this._items.length; i++) {
             this.#initialOnPress[i] = this._items[i].onPress;
             this.#initialCssText[i] = this._items[i].elem.style.cssText;
             this.#initialInnerHTML[i] = this._items[i].elem.innerHTML;
         }
+
+        // Start new loop with new UUID to stop old loops
+        let newUUID = uuidv4();
+        this.#loopUUID = newUUID;
+        this.loop(intervalTime, newUUID);
     }
 
     /** Turn it off. It will stop rolling new button settings periodically. */
