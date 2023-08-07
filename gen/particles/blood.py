@@ -1,9 +1,18 @@
 import random
+import typing
+
+##################
+# Util Functions #
+##################
+
+
+def randfloat(min: float, max: float):
+    return min + random.random() * (max - min)
+
 
 ################################################################################
 # Generates an SVG animation of blood particles exploding from a central point #
 ################################################################################
-
 
 # Overwrite file if exists
 f = open("src/dlcd/assets/art/hitfx-blood.svg", "w")
@@ -16,9 +25,12 @@ viewHeight = 64
 particleWidth = 32
 particleHeight = 32
 
-# To start in center with origin being top left of an object
-startX = (viewWidth / 2) - (particleWidth / 2)
-startY = (viewHeight / 2) - (particleHeight / 2)
+# Origin = top left of an object
+particleCenterX = (viewWidth / 2) - (particleWidth / 2)
+particleCenterY = (viewHeight / 2) - (particleHeight / 2)
+particleEndX = viewWidth - particleWidth
+particleEndY = viewHeight - particleHeight
+
 
 # Header
 f.write(
@@ -56,20 +68,39 @@ f.write(
 # Generate blood particles with randomized parameters
 for i in range(8):
     id = random.randrange(13)
-    animDur = 0.5 + random.random() * (1.0 - 0.5)
+    animDur = randfloat(0.5, 1.0)
+
+    xEnd = randfloat(0, particleEndX)
+    yEnd = randfloat(0, particleEndY)
+
     f.write(
         '  <use href="#particle'
         + str(id)
         + '" x="'
-        + str(startX)
+        + str(particleCenterX)
         + '" y="'
-        + str(startY)
+        + str(particleCenterY)
         + '">'
-        "\n    <animateMotion"
-        '\n      dur="' + str(animDur) + 's"\n'
-        "\n    />"
-        "\n  </use>"
     )
+
+    f.write("    <animateMotion")
+    f.write(
+        '      path="'
+        + " ".join(
+            [
+                "M",
+                str(particleCenterX),
+                str(particleCenterY),
+                "H",
+                str(particleEndX),
+                str(particleEndY),
+            ]
+        )
+    )
+    f.write('      dur="' + str(animDur) + 's"')
+    f.write("    />")
+
+    f.write("  </use>")
 
 # Footer
 f.write("\n</svg>")
