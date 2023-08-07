@@ -15,11 +15,11 @@ def randfloat(min: float, max: float):
 ################################################################################
 
 # Overwrite file if exists
-f = open("src/dlcd/assets/art/hitfx-blood.svg", "w")
+f = open("src/lib-svg/anim/bloodhit0.svg", "w")
 
 # Viewbox
-viewWidth = 64
-viewHeight = 64
+viewWidth = 256
+viewHeight = 256
 
 # Dont change this; SVG particle paths already have hardcoded points from Adobe Illustrator
 particleWidth = 32
@@ -37,7 +37,7 @@ f.write(
     '<?xml version="1.0" encoding="UTF-8"?>'
     '\n<svg preserveAspectRatio="none" '
     'xmlns="http://www.w3.org/2000/svg" '
-    'xmlns:xlink="http://www.w3.org/1999/xlink"> '
+    'xmlns:xlink="http://www.w3.org/1999/xlink" '
     'viewBox="0 0 ' + str(viewWidth) + " " + str(viewHeight) + '">'
     "\n  <defs>"
     "\n    <style>"
@@ -68,40 +68,55 @@ f.write(
 # Generate blood particles with randomized parameters
 for i in range(8):
     id = random.randrange(13)
-    animDur = randfloat(0.5, 1.0)
-
-    xEnd = randfloat(0, particleEndX)
-    yEnd = randfloat(0, particleEndY)
+    animDur = "%.4f" % randfloat(0.3, 0.6)
+    endX = "%.4f" % randfloat(0, particleEndX)
+    endY = "%.4f" % randfloat(0, particleEndY)
+    endDeg = random.randrange(90, 360)
 
     f.write(
         '  <use href="#particle'
         + str(id)
-        + '" x="'
-        + str(particleCenterX)
-        + '" y="'
-        + str(particleCenterY)
+        # + '" x="'
+        # + str(particleCenterX)
+        # + '" y="'
+        # + str(particleCenterY)
         + '">'
     )
 
-    f.write("    <animateMotion")
-    f.write(
-        '      path="'
-        + " ".join(
-            [
-                "M",
-                str(particleCenterX),
-                str(particleCenterY),
-                "H",
-                str(particleEndX),
-                str(particleEndY),
-            ]
-        )
-    )
-    f.write('      dur="' + str(animDur) + 's"')
-    f.write("    />")
+    f.write("\n")
+    f.write('    <animate attributeName="x"')
+    f.write(' values="' + str(particleCenterX) + ";" + str(endX) + '"')
+    f.write(' dur="' + str(animDur) + 's"')
+    f.write(' fill="freeze"')
+    f.write(" />")
 
+    f.write("\n")
+    f.write('    <animate attributeName="y"')
+    f.write(' values="' + str(particleCenterY) + ";" + str(endY) + '"')
+    f.write(' dur="' + str(animDur) + 's"')
+    f.write(' fill="freeze"')
+    f.write(" />")
+
+    f.write("\n")
+    f.write('    <animate attributeName="opacity"')
+    f.write(' values="1;0"')
+    f.write(' dur="' + str(animDur) + 's"')
+    f.write(' fill="freeze"')
+    f.write(" />")
+
+    f.write("\n")
+    f.write('    <animateTransform attributeName="transform"')
+    f.write(' type="rotate"')
+    f.write(' from="0 ' + " ".join([str(particleCenterX), str(particleCenterY)]) + '"')
+    f.write(' to="' + " ".join([str(endDeg), str(endX), str(endY)]) + '"')
+    f.write(' dur="' + str(animDur) + 's"')
+    f.write(' attributeType="XML" fill="freeze"')
+    f.write(" />")
+
+    f.write("\n")
     f.write("  </use>")
 
 # Footer
-f.write("\n</svg>")
+f.write("\n")
+f.write("</svg>")
 f.close()
