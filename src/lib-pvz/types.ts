@@ -44,6 +44,8 @@ export type MinionType = {
  * All time values are in ms.
  */
 export interface MinionEntity {
+    get elem(): HTMLElement;
+
     /** A globally unique id, different from all existing MinionEntities. */
     readonly uuid: string;
 

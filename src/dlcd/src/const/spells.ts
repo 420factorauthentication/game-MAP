@@ -24,7 +24,28 @@ export type Spell = Readonly<
 export const Sword: Spell = {
     func(manager) {
         return () => {
-            manager.minionsSortX[0]?.changeHp(-3);
+            let target = manager.minionsSortX[0];
+            if (!target) return;
+
+            // Blood hit fx
+            let imgNode = document.createElement("img");
+            document.body.append(imgNode);
+            imgNode.src = "../lib-svg/anim/hitblood0.svg";
+            imgNode.style.zIndex = "3";
+            imgNode.style.width = target.elem.style.width;
+            imgNode.style.height = target.elem.style.height;
+            imgNode.style.position = target.elem.style.position;
+            imgNode.style.top = target.elem.style.top;
+            imgNode.style.right = target.elem.style.right;
+            imgNode.style.bottom = target.elem.style.bottom;
+            imgNode.style.left = target.elem.style.left;
+
+            setTimeout(() => {
+                document.body.removeChild(imgNode);
+            }, 550);
+
+            // Damage
+            target.changeHp(-3);
         };
     },
     styleCssText: "background-color: rgba(169, 69, 42, 169);",
