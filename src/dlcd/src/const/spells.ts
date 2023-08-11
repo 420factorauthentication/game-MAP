@@ -28,24 +28,25 @@ export const Sword: Spell = {
             if (!target) return;
 
             // Blood hit fx
-            let imgNode = document.createElement("img");
-            document.body.append(imgNode);
-            imgNode.src = "../lib-svg/anim/hitblood0.svg";
-            imgNode.style.zIndex = "3";
-            imgNode.style.width = target.elem.style.width;
-            imgNode.style.height = target.elem.style.height;
-            imgNode.style.position = target.elem.style.position;
-            imgNode.style.top = target.elem.style.top;
-            imgNode.style.right = target.elem.style.right;
-            imgNode.style.bottom = target.elem.style.bottom;
-            imgNode.style.left = target.elem.style.left;
-
+            let imgBlood = document.createElement("img");
+            document.body.append(imgBlood);
+            imgBlood.src = "../lib-svg/anim/hitblood0.svg";
+            imgBlood.style.zIndex = "3";
+            imgBlood.style.width = target.elem.style.width;
+            imgBlood.style.height = target.elem.style.height;
+            imgBlood.style.position = target.elem.style.position;
+            imgBlood.style.top = target.elem.style.top;
+            imgBlood.style.right = target.elem.style.right;
+            imgBlood.style.bottom = target.elem.style.bottom;
+            imgBlood.style.left = target.elem.style.left;
             setTimeout(() => {
-                document.body.removeChild(imgNode);
+                document.body.removeChild(imgBlood);
             }, 550);
 
+            // Flash white fx
+
             // Damage
-            target.changeHp(-3);
+            target.changeHp(-1);
         };
     },
     styleCssText: "background-color: rgba(169, 69, 42, 169);",

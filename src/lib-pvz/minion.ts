@@ -37,6 +37,7 @@ class Minion implements MinionEntity {
         readonly target: BaseEntity,
         private _x: number,
         private _y: number,
+        private _spriteURL: string,
         elem?: HTMLElement | string
     ) {
         // Lookup element by selector
@@ -49,11 +50,14 @@ class Minion implements MinionEntity {
         // No element found. Let's create one instead.
         if (!this._elem) this._elem = Minion.elemInit;
 
+        // Update elem sprite image
+        this._elem.style.backgroundImage = _spriteURL;
+
         // Generate a new uuid
         this.uuid = uuidv4();
 
         // Init components
-        this.stats = new Stats(this.type);
+        this.stats = new Stats(type);
         this.moveState = this.moveStateInit;
         this.attackState = this.attackStateInit;
         this.ai = new StateMachine(this.moveState);
@@ -68,7 +72,7 @@ class Minion implements MinionEntity {
         this.setElemY(_y);
 
         // Add Minion class
-        this._elem.className += " minion";
+        this._elem.classList.add("minion");
 
         // Tell the MinionManager to add this Minion to it's array
         this.manager.trackMinion(this);
@@ -80,6 +84,10 @@ class Minion implements MinionEntity {
 
     /** A globally unique id, different from all existing Minions. */
     readonly uuid: string;
+
+    /** Path to image. Used for minion background-image and for mask-image of fx. */
+    get spriteURL() {return this._spriteURL;}
+    set spriteURL(v) {this._spriteURL = v; this._elem.style.backgroundImage = v;}
 
     /** Kill this minion, then destroy DOM Element and cleanup all garbage. */
     die() {

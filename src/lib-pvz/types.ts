@@ -29,6 +29,7 @@ export type MinionType = {
     readonly movSpd: number;
     readonly atkSpd: number;
     readonly atkDmg: number;
+    readonly spriteURL: string;
 };
 
 /**
@@ -49,6 +50,10 @@ export interface MinionEntity {
     /** A globally unique id, different from all existing MinionEntities. */
     readonly uuid: string;
 
+    /** Path to image. Used for minion background-image and for mask-image of fx. */
+    get spriteURL(): string;
+    set spriteURL(v);
+
     /** Kill this minion, then destroy DOM Element and cleanup all garbage. */
     die: () => void;
 
@@ -66,10 +71,10 @@ export interface MinionEntity {
 
     /** x position coordinate, in viewport width (vw) units. */
     get x(): number;
-    set x(v: number);
+    set x(v);
     /** y position coordinate, in viewport height (vh) units. */
     get y(): number;
-    set y(v: number);
+    set y(v);
 
     /** How much damage this Minion can sustain before dying. */
     get hp(): number;
