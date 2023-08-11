@@ -50,8 +50,10 @@ class Minion implements MinionEntity {
         // No element found. Let's create one instead.
         if (!this._elem) this._elem = Minion.elemInit;
 
-        // Update elem sprite image
-        this._elem.style.backgroundImage = _spriteURL;
+        // Init elem sprite image
+        this._setBG(_spriteURL);
+        this._elem.style.backgroundRepeat = "no-repeat";
+        this._elem.style.backgroundSize = "100% 100%";
 
         // Generate a new uuid
         this.uuid = uuidv4();
@@ -68,8 +70,9 @@ class Minion implements MinionEntity {
         );
         
         // Init position
-        this.setElemX(_x);
-        this.setElemY(_y);
+        this._elem.style.position = "absolute";
+        this._setElemX(_x);
+        this._setElemY(_y);
 
         // Add Minion class
         this._elem.classList.add("minion");
@@ -87,7 +90,7 @@ class Minion implements MinionEntity {
 
     /** Path to image. Used for minion background-image and for mask-image of fx. */
     get spriteURL() {return this._spriteURL;}
-    set spriteURL(v) {this._spriteURL = v; this._elem.style.backgroundImage = v;}
+    set spriteURL(v) {this._spriteURL = v; this._setBG(v);}
 
     /** Kill this minion, then destroy DOM Element and cleanup all garbage. */
     die() {
@@ -115,8 +118,8 @@ class Minion implements MinionEntity {
     get x() {return this._x;}
     get y() {return this._y;}
 
-    set x (v) {this._x = v; this.setElemX(v);}
-    set y (v) {this._y = v; this.setElemY(v);}
+    set x (v) {this._x = v; this._setElemX(v);}
+    set y (v) {this._y = v; this._setElemY(v);}
 
     get hp()     {return this.stats.current("hp");}
     get movSpd() {return this.stats.current("movSpd");}
@@ -127,44 +130,44 @@ class Minion implements MinionEntity {
     modHp(amount: number, time: number) {
         if (time <= 0) return;
         this.stats.addMod("hp", amount, time)[1].then(() => {
-            this.onHpChange();
-        }); this.onHpChange();
+            this._onHpChange();
+        }); this._onHpChange();
     }
     modMovSpd(amount: number, time: number) {
         if (time <= 0) return;
         this.stats.addMod("movSpd", amount, time)[1].then(() => {
-            this.onMovChange();
-        }); this.onMovChange();
+            this._onMovChange();
+        }); this._onMovChange();
     }
     modAtkSpd(amount: number, time: number) {
         if (time <= 0) return;
         this.stats.addMod("atkSpd", amount, time)[1].then(() => {
-            this.onAtkChange();
-        }); this.onAtkChange();
+            this._onAtkChange();
+        }); this._onAtkChange();
     }
     modAtkDmg(amount: number, time: number) {
         if (time <= 0) return;
         this.stats.addMod("atkDmg", amount, time)[1].then(() => {
-            this.onAtkChange();
-        }); this.onAtkChange();
+            this._onAtkChange();
+        }); this._onAtkChange();
     }
 
     // Adjust a stat permanently //
     changeHp(amount: number) {
         this.stats.change("hp", amount);
-        this.onHpChange();
+        this._onHpChange();
     }
     changeMovSpd(amount: number) {
         this.stats.change("movSpd", amount);
-        this.onMovChange();
+        this._onMovChange();
     }
     changeAtkSpd(amount: number) {
         this.stats.change("atkSpd", amount);
-        this.onAtkChange();
+        this._onAtkChange();
     }
     changeAtkDmg(amount: number) {
         this.stats.change("atkDmg", amount);
-        this.onAtkChange();
+        this._onAtkChange();
     }
 
     ////////////////
@@ -186,10 +189,8 @@ class Minion implements MinionEntity {
     private static get elemInit() {
         const elem = <HTMLElement>document.createElement("a");
         document.body.appendChild(elem);
-        elem.style.position = "absolute";
         elem.style.width = "64px";
         elem.style.height = "64px";
-        elem.style.background = "content-box radial-gradient(crimson, skyblue)";
         return elem;
     }
 
@@ -233,31 +234,36 @@ class Minion implements MinionEntity {
     //////////////////////
     // HELPER FUNCTIONS //
     //////////////////////
-    private onHpChange() {
+    private _onHpChange() {
         this.hpBar.value = this.stats.current("hp");
         if (this.hp <= 0) this.die();
     }
 
-    private onMovChange() {
+    private _onMovChange() {
         this.moveState = this.moveStateInit;
         if (this.ai.state?.uuid == "minionMove")
             this.ai.set(this.moveState);
     }
 
-    private onAtkChange() {
+    private _onAtkChange() {
         this.attackState = this.attackStateInit;
         if (this.ai.state?.uuid == "minionAttack")
             this.ai.set(this.attackState);
     }
 
     /** Set elem left position, in viewport width (vw) units. */
-    private setElemX(left: number) {
+    private _setElemX(left: number) {
         this._elem.style.left = "" + left + "vw";
     }
 
     /** Set elem top position, in viewport height (vh) units. */
-    private setElemY(top: number) {
+    private _setElemY(top: number) {
         this._elem.style.top = "" + top + "vh";
+    }
+
+    /** Set elem background-image to url */
+    private _setBG(path: string) {
+        this._elem.style.backgroundImage = "url('" + path + "')";
     }
 }
 

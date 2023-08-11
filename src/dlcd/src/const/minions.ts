@@ -5,10 +5,11 @@ import {MinionType} from "../../../lib-pvz/types";
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-/** A primitive tribal warrior. */
-export const Warrior: MinionType = {
+/** A zombie. */
+export const Zombro: MinionType = {
     hp: 2,
     movSpd: 2,
     atkSpd: 1,
     atkDmg: 1,
+    spriteURL: "./assets/art/sprite-zombro.svg",
 };

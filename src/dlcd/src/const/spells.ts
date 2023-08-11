@@ -30,7 +30,7 @@ export const Sword: Spell = {
             // Blood hit fx
             let imgBlood = document.createElement("img");
             document.body.append(imgBlood);
-            imgBlood.src = "../lib-svg/anim/hitblood0.svg";
+            imgBlood.src = "../lib-svg/anim/hitblood_0.svg";
             imgBlood.style.zIndex = "3";
             imgBlood.style.width = target.elem.style.width;
             imgBlood.style.height = target.elem.style.height;

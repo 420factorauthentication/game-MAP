@@ -2,13 +2,13 @@
 
 import {SpawnGroup} from "../../../lib-pvz/types";
 
-import {Warrior} from "./minions.js";
+import {Zombro} from "./minions.js";
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
 export const LvlOne: SpawnGroup = {
-    type: Warrior,
+    type: Zombro,
     amount: 15,
     timeStart: 1000,
     timeStep: 250,
