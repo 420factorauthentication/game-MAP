@@ -11,5 +11,5 @@ export const Zombro: MinionType = {
     movSpd: 2,
     atkSpd: 1,
     atkDmg: 1,
-    spriteURL: "./assets/art/sprite-zombro.svg",
+    spriteURL: "assets/art/sprite-zombro.svg",
 };
