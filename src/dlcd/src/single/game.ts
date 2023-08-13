@@ -1,19 +1,28 @@
 /** @format */
 
-import {RollbarOption} from "../../lib-hotbar/types";
+import {RollbarOption} from "../../../lib-hotbar/types";
 
-import {GameScreen as GameScene} from "./const/scenes.js";
-import * as Spells from "./const/spells.js";
-import {SpellKeys} from "./const/options.js";
-import {Wood as WoodBase} from "./const/bases.js";
-import {Mid as MidDistance, Wide as WideSpread} from "./const/spawners.js";
-import {SpellbarMax, SpellbarSpeed} from "./const/player.js";
+import {
+    GameScreen as GameScene,
+    TechMenu as TechMenuScene,
+} from "../const/scenes.js";
+import * as Spells from "../const/spells.js";
+import {SpellKeys} from "../const/options.js";
+import {Wood as WoodBase} from "../const/bases.js";
+import {
+    SpellbarMax,
+    SpellbarSpeed,
+    SpawnMinX,
+    SpawnMaxX,
+    SpawnMinY,
+    SpawnMaxY,
+} from "../const/game.js";
 
-import Base from "../../lib-pvz/base.js";
-import MinionSpawner from "../../lib-pvz/spawner.js";
-import Rollbar from "../../lib-hotbar/rollbar.js";
-import HotbarButton from "../../lib-hotbar/button.js";
-import KeyUI from "../../lib-hotbar/keyui.js";
+import Base from "../../../lib-pvz/base.js";
+import MinionSpawner from "../../../lib-pvz/spawner.js";
+import Rollbar from "../../../lib-hotbar/rollbar.js";
+import HotbarButton from "../../../lib-hotbar/button.js";
+import KeyUI from "../../../lib-hotbar/keyui.js";
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -77,10 +86,10 @@ class _GameManager {
             // Init minion manager
             this._minionMan = new MinionSpawner(
                 this._base,
-                MidDistance.minX,
-                MidDistance.maxX,
-                WideSpread.minY,
-                WideSpread.maxY
+                SpawnMinX,
+                SpawnMaxX,
+                SpawnMinY,
+                SpawnMaxY
             );
 
             // Create spell funcs with minion manager at runtime
@@ -114,6 +123,9 @@ class _GameManager {
 
             // Start spellbar rolling
             this._spellbar.start(SpellbarSpeed);
+
+            // TEST TECH MENU
+            TechMenuScene.load();
 
             // Return HTTP status code from loading Scene
             return httpStatus;
