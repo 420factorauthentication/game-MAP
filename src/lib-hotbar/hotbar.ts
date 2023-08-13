@@ -75,7 +75,6 @@ class Hotbar implements HotbarContainer {
         if (!this._items.some((e) => e.elem === item.elem)) return;
 
         // Cleanup garbage
-        removeEventListener("keydown", item);
         item.destroy();
         this._items.splice(index, 1);
     }
@@ -83,7 +82,6 @@ class Hotbar implements HotbarContainer {
     /** Remove all buttons from this Hotbar. */
     removeAll() {
         for (const item of this._items) {
-            removeEventListener("keydown", item);
             item.destroy();
         }
         this._items = [];

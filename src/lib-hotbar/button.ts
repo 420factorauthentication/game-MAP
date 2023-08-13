@@ -40,8 +40,7 @@ class HotbarButton implements HotbarItem {
 
         // Setup event listeners
         addEventListener("keydown", this);
-
-        // TODO: IMPLEMENT CLICKING ON BUTTON
+        this._elem.addEventListener("click", this);
     }
 
     /////////
@@ -66,6 +65,8 @@ class HotbarButton implements HotbarItem {
 
     /** Destroy DOM Element and cleanup all garbage. */
     destroy() {
+        removeEventListener("keydown", this);
+        this._elem?.removeEventListener("click", this);
         this._elem?.remove();
         delete this._elem;
     }
@@ -102,7 +103,13 @@ class HotbarButton implements HotbarItem {
     //////////////////////
     handleEvent(e: KeyboardEvent) {
         if (!this.isEnabled) return;
-        if (e.key != this.hotkey) return;
+        switch (e.type) {
+            default:
+                return;
+            case "keydown":
+                if (e.key != this.hotkey) return;
+            case "click":
+        }
         for (const func of this.onPress) func();
         if (this.disableAllOnPress === true) this.hotbar.disableAll();
     }
