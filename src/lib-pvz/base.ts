@@ -1,7 +1,7 @@
 import {BaseEntity} from "./types";
 
 import {Flow} from "../lib-progbar/const.js";
-import ProgBar from "../lib-progbar/progbar.js";
+import ClipBar from "../lib-progbar/clipbar.js";
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -35,7 +35,7 @@ class Base implements BaseEntity {
         if (!this._elem) this._elem = this.elemInit;
         
         // Init components
-        this.hpBar = new ProgBar(
+        this.hpBar = new ClipBar(
             this.hpBarElemInit,
             this.hp, 0, this.hp,
             Flow.btmToTop
@@ -68,7 +68,7 @@ class Base implements BaseEntity {
     get elem() {return this._elem;}
     protected _elem: HTMLElement;
 
-    protected hpBar: ProgBar;
+    protected hpBar: ClipBar;
 
     //////////
     // INIT //

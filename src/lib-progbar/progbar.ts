@@ -1,6 +1,6 @@
 /** @format */
 
-import {ProgBarFlow} from "./types";
+import {ProgBarFlow, _ProgBar} from "./types";
 
 import {Flow} from "./const.js";
 
@@ -8,21 +8,27 @@ import {Flow} from "./const.js";
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
- * An HP bar or similar.
- * Elem BG = Filled area of bar.
- * Nothing = Unfilled area of bar.
- *
- * Uses CSS to calculate BG size:
- * - background-clip: content-box
- * - padding: 100% minus missing HP
+ * An HP Bar or similar.
+ * ProgBar is base abstract class.
+ * Different implementations should use different CSS and HTML features to show
+ * a bar graphic that changes proportionally to min, max, and current bar value.
  */
-class ProgBar {
+abstract class ProgBar implements _ProgBar {
     /**
-     * @param elem Required. Can be a css selector or existing DOM element.
-     * @param _value: Starting bar value. Must be between min and max.
-     * @param _min: Minimum bar value. Can be anything.
-     * @param _max: Maximum bar value. Can be anything.
-     * @param _flow: Graphic orientation setting. See const.ts and types.ts
+     * @param elem
+     * Required. Can be a css selector or existing DOM element.
+     * A lone node or parent node with children.
+     * CSS and HTML of node(s) will change based on min, max, and current bar value.
+     * @param _value
+     * Starting bar value. Can be any number.
+     *  If outside min/max:
+     *  - this.percent WILL go past 0% or 100%
+     *  - Bar graphics WONT go past 0% or 100%
+     * @param _min Minimum bar value. Can be any number.
+     * @param _max Maximum bar value. Can be any number.
+     * @param _flow
+     * Bar graphic orientation setting (See const.ts and types.ts).
+     * On set, recalcs bar graphics.
      */
     constructor(
         elem: HTMLElement | string,
@@ -39,71 +45,104 @@ class ProgBar {
                     : elem;
 
         // No element found. Error.
-        if (!this._elem) throw new Error("ProgBar elem not found!");
-
-        // Init ProgBar behavior.
-        this._elem.style.boxSizing = "border-box";
-        this._elem.style.backgroundClip = "content-box";
-        this.calcPadding();
+        if (!this._elem) throw new Error("ClipBar elem not found!");
     }
 
-    /** This element's BG will change to show bar graphics. */
+    /**
+     * A lone node or parent node with children.
+     * CSS and HTML of node(s) will change based on min, max, and current bar value.
+     */
     get elem() {
         return this._elem;
     }
     protected _elem: HTMLElement;
 
-    /** Current bar value, as a percent (0 to 0.9999). */
-    get percent() {
+    /**
+     * Current bar value, as a percent:
+     *  - At   0% value of max-min, return  0.0
+     *  - At 100% value of max-min, return  1.0
+     *  - At 150% value of max-min, return  1.5
+     *  - At -50% value of max-min, return -0.5
+     *  - Etc.
+     */
+    get percent(): number {
         return (this._value - this._min) / (this._max - this._min);
     }
 
-    /** Current bar value. */
-    get value() {
+    /**
+     * Current bar value. Can be any number.
+     * On set, recalcs bar graphics.
+     *  If outside max-min:
+     *  - this.percent WILL go past 0% or 100%
+     *  - Bar graphics WONT go past 0% or 100%
+     */
+    get value(): number {
         return this._value;
     }
     set value(v) {
         this._value = v;
-        this.calcPadding();
+        this.calcBarGraphics();
     }
 
-    /** Minimum bar value. */
-    get min() {
+    /** Minimum bar value. Can be any number. On set, recalcs bar graphics. */
+    get min(): number {
         return this._min;
     }
     set min(v) {
         this._min = v;
-        this.calcPadding();
+        this.calcBarGraphics();
     }
 
-    /** Maximum bar value. */
-    get max() {
+    /** Maximum bar value. Can be any number. On set, recalcs bar graphics. */
+    get max(): number {
         return this._max;
     }
     set max(v) {
         this._max = v;
-        this.calcPadding();
+        this.calcBarGraphics();
     }
 
-    /** Bar orientation setting. */
-    get flow() {
+    /**
+     * Bar graphic orientation setting (See const.ts and types.ts).
+     * On set, recalcs bar graphics.
+     */
+    get flow(): ProgBarFlow {
         return this._flow;
     }
     set flow(v) {
         this._flow = v;
-        this.calcPadding();
+        this.calcBarGraphics();
     }
 
-    /** Set width and redraw bar graphics. */
-    set width(v: string) {
-        this._elem.style.width = v;
-        if ((this.flow = Flow.leftToRight)) this.calcPadding();
+    /**
+     * Set elem width (CSS Style Text).
+     * Set it this way instead of setting this.elem.style.width directly,
+     * because this way should also recalc bar graphics on set.
+     */
+    set width(cssStyleText: string) {
+        this._elem.style.width = cssStyleText;
+        switch (this.flow) {
+            default:
+                return;
+            case Flow.leftToRight:
+            case Flow.rightToLeft:
+                this.calcBarGraphics();
+        }
     }
 
-    /** Set height and redraw bar graphics. */
-    set height(v: string) {
-        this._elem.style.height = v;
-        if ((this.flow = Flow.btmToTop)) this.calcPadding();
+    /**
+     * Set elem height (CSS Style Text).
+     * Set it this way instead of setting this.elem.style.height directly,
+     * because this way should also recalc bar graphics on set. */
+    set height(cssStyleText: string) {
+        this._elem.style.height = cssStyleText;
+        switch (this.flow) {
+            default:
+                return;
+            case Flow.btmToTop:
+            case Flow.topToBtm:
+                this.calcBarGraphics();
+        }
     }
 
     /** Destroy DOM Element and cleanup all garbage. */
@@ -112,26 +151,11 @@ class ProgBar {
         delete this._elem;
     }
 
-    /** Redraw bar graphics. */
-    private calcPadding() {
-        switch (this.flow) {
-            default:
-            case Flow.leftToRight:
-                const rightPadding = `calc(
-                    ${this._elem.style.width} *
-                    ${Math.min(Math.max(1 - this.percent, 0), 1)}
-                )`;
-                this._elem.style.padding = `0 ${rightPadding} 0 0`;
-                break;
-            case Flow.btmToTop:
-                const topPadding = `calc(
-                    ${this._elem.style.height} *
-                    ${Math.min(Math.max(1 - this.percent, 0), 1)}
-                )`;
-                this._elem.style.padding = `${topPadding} 0 0`;
-                break;
-        }
-    }
+    /**
+     * Recalculate bar graphics.
+     * Should be automatically called after changing something.
+     */
+    protected abstract calcBarGraphics();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

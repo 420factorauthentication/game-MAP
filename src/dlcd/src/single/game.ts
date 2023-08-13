@@ -125,7 +125,7 @@ class _GameManager {
             this._spellbar.start(SpellbarSpeed);
 
             // TEST TECH MENU
-            TechMenuScene.load();
+            // TechMenuScene.load();
 
             // Return HTTP status code from loading Scene
             return httpStatus;

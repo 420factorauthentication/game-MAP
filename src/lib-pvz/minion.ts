@@ -3,7 +3,7 @@ import {State} from "../lib-smac/types";
 
 import StateMachine from "../lib-smac/smac.js";
 import Stats from "../lib-statsys/stats.js";
-import ProgBar from "../lib-progbar/progbar.js";
+import ClipBar from "../lib-progbar/clipbar.js";
 
 import Spriteling from "../../node_modules/spriteling/dist/spriteling.js";
 import uuidv4 from "../../node_modules/uuid/dist/esm-browser/v4.js";
@@ -63,7 +63,7 @@ class Minion implements MinionEntity {
         this.moveState = this.moveStateInit;
         this.attackState = this.attackStateInit;
         this.ai = new StateMachine(this.moveState);
-        this.hpBar = new ProgBar(
+        this.hpBar = new ClipBar(
             this.hpBarElemInit,
             this.stats.current("hp"),
             0, this.stats.base["hp"]
@@ -180,7 +180,7 @@ class Minion implements MinionEntity {
     protected moveState: State;
     protected attackState: State;
     protected ai: StateMachine;
-    protected hpBar: ProgBar;
+    protected hpBar: ClipBar;
     protected anim: Spriteling;
 
     //////////
