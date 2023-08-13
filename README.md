@@ -4,7 +4,22 @@
 
 ### Game and Media Modules and Projects
 
-**GameMAP** is a monorepo of personal HTML5 game projects and related JS modules.
+**GameMAP** is a monorepo of personal HTML5 game projects and JS modules.  
+I'm creating an ad hoc web development framework and game engine.  
+Then I'm creating browser-based indie games with it.  
+I'm doing this from scratch to learn:
+
+-   Indie game development
+    -   Software engineering
+    -   Digital painting and vector graphics
+    -   Sound design and music composition
+    -   Productivity in software used for above (Adobe Creative Cloud, DAWs, etc.)
+-   Front-end web design
+-   The various web development frameworks, dev tools, and practices out there
+-   Personal style guides / practices for solo or small-team projects
+
+I plan on posting free browser-based indie games on Newgrounds and Itch.io as a hobby.  
+I also plan on creating a static portfolio website and hosting it on Amazon S3, to see what it's like.
 
 <br>
 <br>
@@ -52,6 +67,7 @@ Update:
 
 -   [TypeScript](https://www.typescriptlang.org/)
 -   [Less CSS](https://lesscss.org/)
+-   [JSDoc](https://jsdoc.app/about-getting-started.html)
 
 <br>
 
@@ -60,7 +76,7 @@ Update:
 ### Globally Installed Dev Tools
 
 -   [VSCode](https://code.visualstudio.com/) -
-    For IntelliSense, code snippets, and format on save
+    For IntelliSense, JSDoc in IntelliSense, code snippets, and format on save
 -   [Git](https://git-scm.com/)
 -   [Git LFS](https://git-lfs.com/)
 -   [GitHub CLI](https://cli.github.com/)
