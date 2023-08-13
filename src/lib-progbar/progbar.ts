@@ -7,10 +7,22 @@ import {Flow} from "./const.js";
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-/** Uses style.backgroundClip to adjust background size to simulate bar filling. */
+/**
+ * An HP bar or similar.
+ * Elem BG = Filled area of bar.
+ * Nothing = Unfilled area of bar.
+ *
+ * Uses CSS to calculate BG size:
+ * - background-clip: content-box
+ * - padding: 100% minus missing HP
+ */
 class ProgBar {
     /**
-     * @param elem Can be a css selector or existing DOM element.
+     * @param elem Required. Can be a css selector or existing DOM element.
+     * @param _value: Starting bar value. Must be between min and max.
+     * @param _min: Minimum bar value. Can be anything.
+     * @param _max: Maximum bar value. Can be anything.
+     * @param _flow: Graphic orientation setting. See const.ts and types.ts
      */
     constructor(
         elem: HTMLElement | string,
