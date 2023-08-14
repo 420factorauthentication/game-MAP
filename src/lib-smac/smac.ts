@@ -26,9 +26,9 @@ export class StateMachine {
      * Set to a new State.
      *
      * Returns a Promise that resolves to:
-     *  ANOTHER PROMISE if destination is another transition
-     *  TRUE if transitionTime finishes naturally, or the state is not a transition
-     *  FALSE if transition is manually stopped or state changes before it finishes
+     * - ANOTHER PROMISE if destination is another transition
+     * - TRUE if transitionTime finishes naturally, or the state is not a transition
+     * - FALSE if transition is manually stopped or state changes before it finishes
      *    (still waits full transitionTime before returning false)
      *
      * @param newState The new State to set to.
