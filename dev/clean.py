@@ -17,3 +17,10 @@ except Exception as error:
     print("Error deleting _api:", type(error).__name__, "–", error)
 else:
     print("Success deleting _api")
+
+try:
+    shutil.rmtree("_doc")
+except Exception as error:
+    print("Error deleting _doc:", type(error).__name__, "–", error)
+else:
+    print("Success deleting _doc")

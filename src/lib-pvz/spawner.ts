@@ -17,7 +17,7 @@ import uuidv4 from "../../node_modules/uuid/dist/esm-browser/v4.js";
 ////////////////////////////////////////////////////////////////////////////////
 
 /** A singleton that handles spawning, killing, and fetching existing Minions. */
-class MinionSpawner implements MinionManager {
+export class MinionSpawner implements MinionManager {
     /**
      * @param target Newly spawned minions will target this.
      * @param minX Left edge of spawn box, in viewport width (vw) units.

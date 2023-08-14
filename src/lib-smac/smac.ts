@@ -8,7 +8,7 @@ import {isTransition} from "./const.js";
 ////////////////////////////////////////////////////////////////////////////////
 
 /** A state machine model for asynchronous function execution. */
-class StateMachine {
+export class StateMachine {
     /**
      * @param state Initial State. Can be undefined.
      */

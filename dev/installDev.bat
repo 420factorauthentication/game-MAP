@@ -21,7 +21,7 @@ call npm install -g typescript
 @echo on
 call npm install -g less
 @echo on
-call npm install -g jsdoc
+call npm install -g typedoc
 @echo on
 
 @echo(

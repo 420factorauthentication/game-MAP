@@ -8,7 +8,7 @@ import uuidv4 from "../../node_modules/uuid/dist/esm-browser/v4.js";
 ////////////////////////////////////////////////////////////////////////////////
 
 /** A system for tracking asynchronous stat number changes. */
-class Stats {
+export class Stats {
     /**
      * @param base Can be any object.
      * All of it's accessible properties serve as starting numbers.

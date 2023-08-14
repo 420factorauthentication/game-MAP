@@ -6,7 +6,7 @@ import {HotbarContainer, HotbarItem} from "./types";
 ////////////////////////////////////////////////////////////////////////////////
 
 /** A row of buttons that call functions when clicked, or when a key is pressed. */
-class Hotbar implements HotbarContainer {
+export class Hotbar implements HotbarContainer {
     /**
      * @param _maxItems Prevents user from adding more buttons than this limit.
      * @param autoSize If true, auto-resizes button styles based on maxItems

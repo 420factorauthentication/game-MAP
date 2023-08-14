@@ -4,7 +4,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 /** A UI that displays the hotkeys for each button in a hotbar. */
-class KeyUI {
+export class KeyUI {
     /**
      * @param maxItems The max items of the associated hotbar. Used to size UI.
      * @param hotkeys The button hotkeys of the associated hotbar. Used to set UI.

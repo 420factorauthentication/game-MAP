@@ -9,7 +9,7 @@ import {_SceneLink} from "./types";
  * An object to load, track, and unload a stylesheet link elem from a .css file.
  * Multiple instances of the same SceneLink object cannot be loaded simultaneously.
  */
-class SceneLink implements _SceneLink {
+export class SceneLink implements _SceneLink {
     /** @param cssFile Path to a .css file to use on load. */
     constructor(readonly cssFile: string) {}
 

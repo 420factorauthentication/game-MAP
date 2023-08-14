@@ -6,7 +6,7 @@ import {HotbarContainer, HotbarItem} from "./types";
 ////////////////////////////////////////////////////////////////////////////////
 
 /** A button that calls a function when clicked, or when a key is pressed. */
-class HotbarButton implements HotbarItem {
+export class HotbarButton implements HotbarItem {
     /**
      * @param _hotbar The parent Hotbar. Automatically adds to it's array.
      * @param elem Can be a css selector or existing DOM element or null,

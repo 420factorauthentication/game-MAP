@@ -13,7 +13,7 @@ import {Flow} from "./const.js";
  * Different implementations should use different CSS and HTML features to show
  * a bar graphic that changes proportionally to min, max, and current bar value.
  */
-abstract class ProgBar implements _ProgBar {
+export abstract class ProgBar implements _ProgBar {
     /**
      * @param elem
      * Required. Can be a css selector or existing DOM element.

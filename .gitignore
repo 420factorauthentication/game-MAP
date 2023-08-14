@@ -1,6 +1,7 @@
 # Artifacts
 _api/
 _out/
+_doc/
 
 # Visual Studio cache directory
 .vs/

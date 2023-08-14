@@ -19,7 +19,7 @@ import uuidv4 from "../../node_modules/uuid/dist/esm-browser/v4.js";
  * Accessing this.items[i] and changing onPress, elem.style.cssText, or elem.innerHTML,
  * will do nothing, as every roll will reset the items back to the initial cache.
  */
-class Rollbar extends Hotbar {
+export class Rollbar extends Hotbar {
     /**
      * @param maxItems Prevents user from adding more buttons than this limit.
      * @param autoSize If true, auto-resizes button styles based on maxItems

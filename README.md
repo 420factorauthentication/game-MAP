@@ -4,7 +4,7 @@
 
 ### Game and Media Modules and Projects
 
-**GameMAP** is a monorepo of personal HTML5 game projects and JS modules.  
+**GameMAP** is a monorepo of personal HTML5 indie game projects and JS modules.  
 I'm creating an ad hoc web development framework and game engine.  
 Then I'm creating browser-based indie games with it.  
 I'm doing this from scratch to learn:
@@ -13,7 +13,9 @@ I'm doing this from scratch to learn:
     -   Software engineering
     -   Digital painting and vector graphics
     -   Sound design and music composition
-    -   Productivity in software used for above (Adobe Creative Cloud, DAWs, etc.)
+    -   Game design
+    -   Storytelling
+    -   Productivity in software used for above (IDEs, Adobe Creative Cloud, DAWs, etc.)
 -   Front-end web design
 -   The various web development frameworks, dev tools, and practices out there
 -   Personal style guides / practices for solo or small-team projects
@@ -44,12 +46,14 @@ Fresh install:
 -   Install dev tools with _`dev/installDev.bat`_<br>
     Requires admin rights. Run cmd prompt or shell as admin.
 -   Install JS dependencies with `npm install` from repo root<br>
-    Note: NPM is configured to ignore NPM scripts for security<br>
+    Update JS dependencies with `npm update` from repo root<br>
+    Clean old JS dependencies with `npm prune` from repo root
+    Note: NPM is configured to ignore NPM scripts for security
 
 Update:
 
--   Do the above two steps
--   Or, run `just update` from repo root to do the same thing
+-   Do all steps in Fresh Install again
+-   Or, run `just updateDev` from repo root to do the same thing
 
 <br>
 
@@ -67,7 +71,7 @@ Update:
 
 -   [TypeScript](https://www.typescriptlang.org/)
 -   [Less CSS](https://lesscss.org/)
--   [JSDoc](https://jsdoc.app/about-getting-started.html)
+-   [TypeDoc](https://typedoc.org/)
 
 <br>
 

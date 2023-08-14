@@ -21,7 +21,7 @@ import uuidv4 from "../../node_modules/uuid/dist/esm-browser/v4.js";
  * modStat() adjusts a stat for a set time. \
  * changeStat() adjusts a stat permanently.
  */
-class Minion implements MinionEntity {
+export class Minion implements MinionEntity {
     /**
      * @param manager Contains records of all existing minions for cleanup.
      * @param type Is used to define starting stats.

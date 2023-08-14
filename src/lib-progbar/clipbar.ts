@@ -19,7 +19,7 @@ import ProgBar from "./progbar.js";
  * Elem BG = Filled area of bar.
  * Nothing = Unfilled area of bar.
  */
-class ClipBar extends ProgBar {
+export class ClipBar extends ProgBar {
     /**
      * @param elem
      * Required. Can be a css selector or existing DOM element.
