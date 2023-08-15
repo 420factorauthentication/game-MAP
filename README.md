@@ -9,19 +9,21 @@ I'm creating an ad hoc web development framework and game engine.
 Then I'm creating browser-based indie games with it.  
 I'm doing this from scratch to learn:
 
+-   Front-end web design
+-   The various web development frameworks, dev tools, and practices out there
+-   Personal style guides / practices for solo or informal small-team projects
+-   Software productivity (keyboard shortcuts, features, macros, etc.)
 -   Indie game development
     -   Software engineering
     -   Digital painting and vector graphics
     -   Sound design and music composition
     -   Game design
     -   Storytelling
-    -   Productivity in software used for above (IDEs, Adobe Creative Cloud, DAWs, etc.)
--   Front-end web design
--   The various web development frameworks, dev tools, and practices out there
--   Personal style guides / practices for solo or small-team projects
 
 I plan on posting free browser-based indie games on Newgrounds and Itch.io as a hobby.  
 I also plan on creating a static portfolio website and hosting it on Amazon S3, to see what it's like.
+
+Below are notes on my personal dev environment setup. Feel free to use what you prefer.
 
 <br>
 <br>
