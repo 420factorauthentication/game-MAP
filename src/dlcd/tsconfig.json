@@ -2,7 +2,7 @@
     "compilerOptions": {
         "allowJs": true
     },
-    "extends": "../../tsconfig.proj.json",
+    "extends": "../../.config/tsconfig.proj.json",
     "include": ["./src/**/*", "../lib-*/**/*"],
     "exclude": ["../**/*.spec.*"]
 }

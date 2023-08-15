@@ -5,7 +5,9 @@ import {HotbarContainer, HotbarItem} from "./types";
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-/** A row of buttons that call functions when clicked, or when a key is pressed. */
+/**
+ * A row of buttons that call functions when clicked, or when a key is pressed.
+ */
 export class Hotbar implements HotbarContainer {
     /**
      * @param _maxItems Prevents user from adding more buttons than this limit.
@@ -75,14 +77,14 @@ export class Hotbar implements HotbarContainer {
         if (!this._items.some((e) => e.elem === item.elem)) return;
 
         // Cleanup garbage
-        item.destroy();
+        item.preDestroy();
         this._items.splice(index, 1);
     }
 
     /** Remove all buttons from this Hotbar. */
     removeAll() {
         for (const item of this._items) {
-            item.destroy();
+            item.preDestroy();
         }
         this._items = [];
     }
@@ -97,10 +99,12 @@ export class Hotbar implements HotbarContainer {
         for (const item of this._items) item.isEnabled = false;
     }
 
-    /** Destroy DOM Element and cleanup all garbage. */
-    destroy() {
+    /**
+     * Begin the JS garbage collection process.
+     * After calling this, manually nullify/undefine all handles to this object instance.
+     */
+    preDestroy() {
         this._elem?.remove();
-        delete this._elem;
     }
 
     ////////////////

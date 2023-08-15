@@ -1,0 +1,16 @@
+/** @format */
+
+{
+    "$schema": "https://typedoc.org/schema.json",
+
+    "tsconfig": "tsconfig.json",
+    "entryPoints": ["../src"],
+    "entryPointStrategy": "expand",
+    "exclude": ["**/*+(index|main|.spec|.e2e).ts"],
+    "out": "../_doc",
+
+    "name": "GameMAP API",
+    "readme": "../src/README.md",
+    "plugin": ["typedoc-theme-hierarchy"],
+    "theme": "hierarchy"
+}

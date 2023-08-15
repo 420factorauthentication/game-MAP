@@ -57,8 +57,11 @@ export interface MinionEntity {
     /** Kill this minion, then destroy DOM Element and cleanup all garbage. */
     die: () => void;
 
-    /** Destroy DOM Element and cleanup all garbage. */
-    destroy: () => void;
+    /**
+     * Begin the JS garbage collection process.
+     * After calling this, manually nullify/undefine all handles to this object instance.
+     */
+    preDestroy: () => void;
 
     /** Contains records of all existing minions for cleanup. */
     readonly manager: MinionManager;

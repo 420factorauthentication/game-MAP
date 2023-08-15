@@ -23,6 +23,8 @@ call npm install -g less
 @echo on
 call npm install -g typedoc
 @echo on
+call npm install -g typedoc-theme-hierarchy
+@echo on
 
 @echo(
 @echo(

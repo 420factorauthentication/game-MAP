@@ -51,10 +51,10 @@ export class MinionSpawner implements MinionManager {
     }
 
     /** Get info about what this MinionSpawner is currently spawning. */
-    get currentLevel(): Readonly<SpawnLevel> {
+    get currentLevel(): Readonly<SpawnLevel> | undefined {
         return this.#currentLevel;
     }
-    #currentLevel: SpawnLevel;
+    #currentLevel: SpawnLevel | undefined;
 
     /**
      * Spawn a group of Minions.
@@ -132,7 +132,7 @@ export class MinionSpawner implements MinionManager {
     /**
      * Kill all Minions tracked by this MinionManager.
      * Triggers things like death animations before destruction.
-     * Automatically cleans up garbage.
+     * Also begin JS garbage cleanup.
      */
     killAll() {
         while (this.minions.length > 0) this.minions[0].die();
@@ -141,10 +141,10 @@ export class MinionSpawner implements MinionManager {
     /**
      * Instantly destroy all Minions tracked by this MinionManager.
      * Doesn't trigger things like death animations.
-     * Automatically cleans up garbage.
+     * Also begin JS garbage cleanup.
      */
     destroyAll() {
-        while (this.minions.length > 0) this.minions[0].destroy();
+        while (this.minions.length > 0) this.minions[0].preDestroy();
     }
 
     /** Add an existing Minion to this MinionManager's array of Minions. */

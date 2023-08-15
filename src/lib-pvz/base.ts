@@ -56,10 +56,12 @@ export class Base implements BaseEntity {
         console.log("GAME OVER")
     }
 
-    /** Remove DOM Element and cleanup all garbage. */
-    destroy() {
+    /**
+     * Begin the JS garbage collection process.
+     * After calling this, manually nullify/undefine all handles to this object instance.
+     */
+    preDestroy() {
         this._elem?.remove();
-        delete this._elem;
     }
 
     ////////////////

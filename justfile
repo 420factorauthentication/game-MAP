@@ -33,7 +33,7 @@ clean:
 
 # Build source code
 _compile:
-    tsc --build
+    tsc -b .config
     py dev/buildLess.py
 
 # Build JSDoc pages
@@ -52,4 +52,4 @@ build: _compile _compileDocs
 
 # Run JS tests
 @test:
-    jest
+    jest -c .config/jest.config.js

@@ -45,7 +45,7 @@ export interface HotbarItem {
     /** If false, this button is hidden and stops doing anything on click/press. */
     isEnabled: boolean;
     /** Destroy DOM Element and cleanup all garbage. */
-    destroy(): void;
+    preDestroy(): void;
     /** EVENT HANDLER */
     handleEvent(e: KeyboardEvent): void;
 }

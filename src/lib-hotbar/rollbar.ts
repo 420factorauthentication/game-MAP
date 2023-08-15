@@ -127,7 +127,7 @@ export class Rollbar extends Hotbar {
         if (!this._items.some((e) => e.elem === item.elem)) return;
 
         // Cleanup garbage
-        item.destroy();
+        item.preDestroy();
         this._items.splice(index, 1);
 
         // EXTENSION: Also cleanup cache of initial button settings,

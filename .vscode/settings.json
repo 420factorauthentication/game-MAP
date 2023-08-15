@@ -1,6 +1,7 @@
 {
-    "prettier.resolveGlobalModules": true,
     "prettier.tabWidth": 4,
+    "prettier.configPath": ".config/.prettierrc.json",
+    "prettier.ignorePath": ".config/.prettierignore",
 
     "[markdown]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode",

@@ -69,7 +69,7 @@ export interface _ProgBar {
     set height(cssStyleText: string);
 
     /** Destroy DOM Element and cleanup all garbage. */
-    destroy();
+    preDestroy();
 
     /**
      * Recalculate bar graphics.

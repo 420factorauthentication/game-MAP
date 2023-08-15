@@ -92,25 +92,28 @@ export class Minion implements MinionEntity {
     get spriteURL() {return this._spriteURL;}
     set spriteURL(v) {this._spriteURL = v; this._setBG(v);}
 
-    /** Kill this minion, then destroy DOM Element and cleanup all garbage. */
+    /**
+     * Handle all game systems related to this minion's death here.
+     * Also begin JS garbage cleanup. */
     die() {
-        // TODO: PLAY DEATH ANIMATION HERE
-
-        // Destroy DOM Element and cleanup all garbage
-        this.destroy();
+        this.preDestroy();
+        // Todo: Play death animation
     }
 
-    /** Destroy DOM Element and cleanup all garbage. */
-    destroy() {
+    /**
+     * Begin the JS garbage collection process.
+     * Also tells the MinionManager to delete it's handle to this object instance.
+     * After calling this, manually nullify/undefine all other handles to this object instance.
+     */
+    preDestroy() {
         // Stop all AI behaviors
         this.ai.set(undefined);
 
-        // Destroy DOM Elements and cleanup garbage
-        this.hpBar.destroy();
+        // Destroy DOM Elements
+        this.hpBar.preDestroy();
         this._elem?.remove();
-        delete this._elem;
 
-        // Tell the MinionManager to delete it's records of this Minion
+        // Tell the MinionManager to delete it's handle to this Minion object instance.
         this.manager.stopTrackingMinion(this);
     }
 

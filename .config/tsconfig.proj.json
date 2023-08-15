@@ -1,8 +1,8 @@
 {
     "compilerOptions": {
-        "rootDir": "./src",
-        "outDir": "./_out",
-        "declarationDir": "./_api",
+        "rootDir": "../src",
+        "outDir": "../_out",
+        "declarationDir": "../_api",
         "module": "ESNext",
         "target": "ESNext",
         "moduleResolution": "node",
