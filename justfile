@@ -7,7 +7,26 @@ installDevFile := if os_family() == "windows" {"installDev.bat"} else {"installD
 _default:
     @just --list
 
-# Update dev tools and JS dependencies. Requires admin rights. Run cmd prompt or shell as admin.
+# Build app
+build: _compile
+    @{{br}}
+    @{{br}}
+
+_compile:
+    tsc -b .config
+    py dev/buildLess.py
+
+# Delete old app then build app
+rebuild: _clean _compile
+    @{{br}}
+    @{{br}}
+
+_clean:
+    @py dev/clean.py
+    @{{br}}
+    @{{br}}
+
+# Update dev tools and JS dependencies. Requires admin.
 updateDev:
     @cd dev && {{installDevFile}}
     @{{br}}
@@ -25,30 +44,9 @@ updateDev:
     @{{br}}
     @{{br}}
 
-# Delete old build artifacts
-clean:
-    @py dev/clean.py
-    @{{br}}
-    @{{br}}
-
-# Build source code
-_compile:
-    tsc -b .config
-    py dev/buildLess.py
-
-# Build JSDoc pages
-_compileDocs:
+# Build TypeDoc pages
+compileDocs:
     typedoc
-
-# Delete old build artifacts then build new artifacts
-rebuild: clean _compile _compileDocs
-    @{{br}}
-    @{{br}}
-
-# Build without cleaning old artifacts
-build: _compile _compileDocs
-    @{{br}}
-    @{{br}}
 
 # Run JS tests
 @test:
