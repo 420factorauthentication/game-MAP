@@ -20,7 +20,7 @@ export class StateMachine {
     get state(): Readonly<State> {
         return Object.freeze(Object.assign({}, this._state));
     }
-    protected _state: State;
+    protected _state: State | undefined;
 
     /**
      * Set to a new State.

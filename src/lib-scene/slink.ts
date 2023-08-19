@@ -29,7 +29,7 @@ export class SceneLink {
      * Returns a Promise that returns the numerical HTTP status code
      * of the XMLHttpRequest when it's readyState is 4 (DONE).
      */
-    async load(): Promise<number> {
+    async load(): Promise<number | void> {
         if (this._isLoaded) return;
 
         return new Promise<XMLHttpRequest>((resolve) => {
@@ -38,7 +38,7 @@ export class SceneLink {
             xhr.onloadend = () => resolve(xhr);
             xhr.open("HEAD", this.cssFile);
             xhr.send();
-        }).then<number>((result) => {
+        }).then<number | void>((result) => {
             if (this._isLoaded) return;
             this._isLoaded = true;
 
@@ -60,7 +60,7 @@ export class SceneLink {
     unload() {
         if (!this._isLoaded) return;
         this._isLoaded = false;
-        this._linkElem.remove();
+        this._linkElem?.remove();
         this._linkElem = null;
     }
 

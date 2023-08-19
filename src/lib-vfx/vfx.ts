@@ -37,9 +37,10 @@ export function vfx(
 
     const tempElem = document.createElement("img");
     document.body.append(tempElem);
-    if (vfxImgSrc) tempElem.src = vfxImgSrc;
     tempElem.alt = " ";
-    for (const [k, v] of Object.entries(vfxStyle)) tempElem.style[k] = v;
+    if (vfxImgSrc) tempElem.src = vfxImgSrc;
+    if (vfxStyle)
+        for (const [k, v] of Object.entries(vfxStyle)) tempElem.style[k] = v;
     tempElem.style.zIndex = zIndex;
     absPos(tempElem, rect);
 
@@ -78,10 +79,12 @@ export function transitionVFX(
     const tempElem = newVFX.tempElem;
 
     // Replace camelCase CSS with hyphen-separated CSS and set transition
+    if (!vfxStyleEnd) return newVFX;
     let transitionProperty = Object.keys(vfxStyleEnd).join(", ");
     const capsChars = transitionProperty.matchAll(/[A-Z]/g);
     let loopCounter = 0;
     for (const match of capsChars) {
+        if (!match.index) continue; //bandaid fix for compiler error: "match.index possibly undefined"
         transitionProperty = replaceAt(
             transitionProperty,
             match.index + loopCounter,

@@ -45,10 +45,10 @@ export class Scene {
      * to set containerElem's id during loading.
      */
     async load(
-        containerElem: HTMLElement | string = undefined,
-        containerClasses: string | string[] = undefined,
-        containerId: string = undefined
-    ): Promise<number> {
+        containerElem?: HTMLElement | string,
+        containerClasses?: string | string[],
+        containerId?: string
+    ): Promise<number | void> {
         if (this._isLoaded) return;
 
         return new Promise<XMLHttpRequest>((resolve) => {
@@ -58,7 +58,7 @@ export class Scene {
             xhr.onloadend = () => resolve(xhr);
             xhr.open("GET", this.htmlFile);
             xhr.send();
-        }).then<number>((result) => {
+        }).then<number | void>((result) => {
             if (this._isLoaded) return;
             this._isLoaded = true;
 
@@ -125,10 +125,10 @@ export class Scene {
      * Returns undefined if this Scene has never been loaded at all.
      * Returns null if this element was destroyed during an unload.
      */
-    get containerElem(): HTMLElement | undefined | null {
+    get containerElem() {
         return this._containerElem;
     }
-    protected _containerElem: HTMLElement;
+    protected _containerElem: HTMLElement | undefined | null;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

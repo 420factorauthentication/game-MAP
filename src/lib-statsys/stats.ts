@@ -114,9 +114,8 @@ export class Stats {
         // If StatMod Time is 0 (permanent), return insta-resolving promise
         let modEndPromise: Promise<boolean>;
         if (time <= 0) modEndPromise = new Promise<boolean>(() => true);
-
         // Otherwise, return a promise that resolves after StatMod Time
-        if (time > 0)
+        else
             modEndPromise = new Promise<boolean>((resolve) => {
                 setTimeout(resolve, time);
             }).then(() => this.removeMod(uuid));
@@ -134,13 +133,13 @@ export class Stats {
      * @param uuid The globally unique id of the StatMod to remove.
      */
     removeMod(uuid: string): boolean {
-        if (!this.containsMod(uuid)) return false;
+        const mod = this.getMod(uuid);
+        if (!mod) return false;
 
-        // Remove written down StatMod object
+        // Cleanup StatMod object
         this.#mods.splice(this.getModIndex(uuid), 1);
 
-        // Remove written down number adjustment
-        const mod = this.getMod(uuid);
+        // Revert stat number adjustment
         this.change(mod.key, -mod.amount);
 
         // StatMod was found and successfully removed
