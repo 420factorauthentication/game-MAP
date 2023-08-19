@@ -1,7 +1,7 @@
 /** @format */
 
 import {RollbarOption} from "./types";
-import {HotbarItem} from "./types";
+import type {HotbarButton} from "./button";
 
 import Hotbar from "./hotbar.js";
 import {sample} from "../../node_modules/underscore/underscore-esm.js";
@@ -35,7 +35,7 @@ export class Rollbar extends Hotbar {
     ) {
         super(maxItems, autoSize, elem);
 
-        // Init cache of initial button settings
+        // Init private cache of initial button settings
         this.#initialOnPress = [];
         this.#initialCssText = [];
         this.#initialInnerHTML = [];
@@ -91,7 +91,7 @@ export class Rollbar extends Hotbar {
     /////////////////////////////
 
     /** Add a button to this Hotbar, and update graphics. */
-    add(item: HotbarItem) {
+    add(item: HotbarButton) {
         // If items array has an item whose elem matches the added item,
         // the added item is already added to this Hotbar, so do nothing.
         if (this._items.some((e) => e.elem === item.elem)) return;
@@ -115,10 +115,10 @@ export class Rollbar extends Hotbar {
     }
 
     /** Remove a button from this Hotbar, and update graphics. */
-    remove(v: number | HotbarItem): void;
+    remove(v: number | HotbarButton): void;
     remove(index: number): void;
-    remove(item: HotbarItem): void;
-    remove(v: number | HotbarItem) {
+    remove(item: HotbarButton): void;
+    remove(v: number | HotbarButton) {
         let index = typeof v === "number" ? v : this._items.indexOf(v);
         let item = typeof v === "number" ? this._items[v] : v;
 
@@ -182,7 +182,7 @@ export class Rollbar extends Hotbar {
         // For each sampled option, update an existing button
         let i = 0;
         for (i; i < rolls.length; i++) {
-            this._items[i].onPress = []
+            this._items[i].onPress = new Array<Function>()
                 .concat(this.#initialOnPress[i], rolls[i].onPress)
                 .filter((x) => x);
 
@@ -211,6 +211,10 @@ export class Rollbar extends Hotbar {
         // Re-apply style sizes, since they were overwritten
         if (this.autoSize) this.updateAllSizes();
     }
+
+    ///////////////////
+    // PRIVATE CACHE //
+    ///////////////////
 
     // Cache of initial button settings, merged with new settings of each roll.
     #initialOnPress: Function[][];

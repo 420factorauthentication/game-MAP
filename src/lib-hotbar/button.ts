@@ -1,12 +1,12 @@
 /** @format */
 
-import {HotbarContainer, HotbarItem} from "./types";
+import type {Hotbar} from "./hotbar";
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
 /** A button that calls a function when clicked, or when a key is pressed. */
-export class HotbarButton implements HotbarItem {
+export class HotbarButton {
     /**
      * @param _hotbar The parent Hotbar. Automatically adds to it's array.
      * @param elem Can be a css selector or existing DOM element or null,
@@ -19,7 +19,7 @@ export class HotbarButton implements HotbarItem {
      * If true, disables all buttons in parent Hotbar after button press/click.
      */
     constructor(
-        private _hotbar: HotbarContainer,
+        private _hotbar: Hotbar,
         elem?: HTMLElement | string,
         public hotkey?: string,
         public onPress: Array<Function> = [],

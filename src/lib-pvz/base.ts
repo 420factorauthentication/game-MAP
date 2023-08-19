@@ -1,4 +1,5 @@
-import {BaseEntity} from "./types";
+
+import {BaseType} from "./types"
 
 import {Flow} from "../lib-progbar/const.js";
 import ClipBar from "../lib-progbar/clipbar.js";
@@ -11,7 +12,7 @@ import ClipBar from "../lib-progbar/clipbar.js";
  * Minions spawn on the right and move left.
  * When they reach the same x, they will automatically attack the Base.
  */
-export class Base implements BaseEntity {
+export class Base implements BaseType {
     /**
      * @param x Is in viewport width units (vw).
      * @param y Is in viewport height units (vh).

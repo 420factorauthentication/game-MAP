@@ -1,11 +1,11 @@
 /** @format */
 
-import {BaseEntity} from "../../../lib-pvz/types";
+import type {BaseType} from "../../../lib-pvz/types";
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-export const Wood: Readonly<BaseEntity> = {
+export const Wood: Readonly<BaseType> = {
     hp: 12,
     x: 20,
     y: 50,

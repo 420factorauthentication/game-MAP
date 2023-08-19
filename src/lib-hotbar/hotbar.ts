@@ -1,6 +1,6 @@
 /** @format */
 
-import {HotbarContainer, HotbarItem} from "./types";
+import type {HotbarButton} from "./button";
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -8,7 +8,7 @@ import {HotbarContainer, HotbarItem} from "./types";
 /**
  * A row of buttons that call functions when clicked, or when a key is pressed.
  */
-export class Hotbar implements HotbarContainer {
+export class Hotbar {
     /**
      * @param _maxItems Prevents user from adding more buttons than this limit.
      * @param autoSize If true, auto-resizes button styles based on maxItems
@@ -47,7 +47,7 @@ export class Hotbar implements HotbarContainer {
     }
 
     /** Add a button to this Hotbar, and update graphics. */
-    add(item: HotbarItem) {
+    add(item: HotbarButton) {
         // If items array has an item whose elem matches the added item,
         // the added item is already added to this Hotbar, so do nothing.
         if (this._items.some((e) => e.elem === item.elem)) return;
@@ -65,10 +65,10 @@ export class Hotbar implements HotbarContainer {
     }
 
     /** Remove a button from this Hotbar, and update graphics. */
-    remove(v: number | HotbarItem): void;
+    remove(v: number | HotbarButton): void;
     remove(index: number): void;
-    remove(item: HotbarItem): void;
-    remove(v: number | HotbarItem) {
+    remove(item: HotbarButton): void;
+    remove(v: number | HotbarButton) {
         let index = typeof v === "number" ? v : this._items.indexOf(v);
         let item = typeof v === "number" ? this._items[v] : v;
 
@@ -112,10 +112,10 @@ export class Hotbar implements HotbarContainer {
     ////////////////
 
     /** All buttons in this Hotbar. */
-    get items(): readonly HotbarItem[] {
+    get items(): readonly HotbarButton[] {
         return this._items;
     }
-    protected _items: HotbarItem[] = [];
+    protected _items: HotbarButton[] = [];
 
     /** The Hotbar element. Button elements will be children to this. */
     get elem() {
@@ -145,7 +145,7 @@ export class Hotbar implements HotbarContainer {
     //////////////////////
 
     /** Recalculate DOM Element size of a button, to fit based on maxItems. */
-    protected updateSize(item: HotbarItem) {
+    protected updateSize(item: HotbarButton) {
         item.elem.style.width = "" + 100 / this._maxItems + "%";
         item.elem.style.height = "100%";
     }

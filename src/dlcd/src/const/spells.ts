@@ -1,6 +1,6 @@
 /** @format */
 
-import {MinionManager} from "../../../lib-pvz/types";
+import type {MinionSpawner} from "../../../lib-pvz/spawner";
 import {RollbarOption} from "../../../lib-hotbar/types";
 
 // import {baseFX, maskFX} from "../func/fx.js";
@@ -13,10 +13,10 @@ export type Spell = Readonly<
     Omit<RollbarOption, "onPress"> & {
         /**
          * Generates a Spell function for HotbarButton.onPress,
-         * at runtime so you have access to a MinionManager.
+         * at runtime so you have access to a MinionSpawner.
          * @param manager Used to find targets for the Spell function.
          */
-        func(manager: MinionManager): () => void;
+        func(manager: MinionSpawner): () => void;
     }
 >;
 

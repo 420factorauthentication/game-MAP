@@ -1,7 +1,5 @@
 /** @format */
 
-import {_Scene} from "./types";
-
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -9,7 +7,7 @@ import {_Scene} from "./types";
  * An object to load, track, and unload elements from an .html file.
  * Multiple instances of the same Scene object cannot be loaded simultaneously.
  */
-export class Scene implements _Scene {
+export class Scene {
     /**
      * @param htmlFile Path to an .html file outlining all elements to load.
      * @param loadTimeout Load requests will timeout after this many milliseconds.

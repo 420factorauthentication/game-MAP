@@ -105,7 +105,7 @@ export class KeyUI {
         for (let i = this._elem.childElementCount; i < this._maxItems; i++)
             this.newChild();
         for (let i = this.elem.childElementCount; i > this._maxItems; i--)
-            this.elem.removeChild(this.elem.lastChild);
+            this.elem.lastChild?.remove();
         // Update sizes
         for (const elem of this._elem.children) {
             let child = elem as HTMLElement;

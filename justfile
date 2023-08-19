@@ -17,12 +17,12 @@ _compile:
     py dev/buildLess.py
 
 # Delete old app then build app
-rebuild: _clean _compile
+rebuild: _cleanApp _compile
     @{{br}}
     @{{br}}
 
-_clean:
-    @py dev/clean.py
+_cleanApp:
+    @py dev/cleanApp.py
     @{{br}}
     @{{br}}
 
@@ -45,8 +45,22 @@ updateDev:
     @{{br}}
 
 # Build TypeDoc pages
-compileDocs:
+buildDocs: _compileDocs
+    @{{br}}
+    @{{br}}
+
+_compileDocs:
     typedoc
+
+# Delete old TypeDoc pages then build TypeDoc pages
+rebuildDocs: _cleanDocs _compileDocs
+    @{{br}}
+    @{{br}}
+
+_cleanDocs:
+    @py dev/cleanDocs.py
+    @{{br}}
+    @{{br}}
 
 # Run JS tests
 @test:

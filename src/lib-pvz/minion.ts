@@ -1,4 +1,6 @@
-import {BaseEntity, MinionEntity, MinionManager, MinionType} from "./types";
+import type {Base} from "./base"
+import type {MinionSpawner} from "./spawner";
+import {MinionType} from "./types";
 import {State} from "../lib-smac/types";
 
 import StateMachine from "../lib-smac/smac.js";
@@ -20,8 +22,10 @@ import uuidv4 from "../../node_modules/uuid/dist/esm-browser/v4.js";
  * Stats start out as the base number from MinionType. \
  * modStat() adjusts a stat for a set time. \
  * changeStat() adjusts a stat permanently.
+ * 
+ * All time values are in ms.
  */
-export class Minion implements MinionEntity {
+export class Minion {
     /**
      * @param manager Contains records of all existing minions for cleanup.
      * @param type Is used to define starting stats.
@@ -32,9 +36,9 @@ export class Minion implements MinionEntity {
      * in which case a new anchor element will be created.
      */
     constructor(
-        readonly manager: MinionManager,
+        readonly manager: MinionSpawner,
         readonly type: MinionType,
-        readonly target: BaseEntity,
+        readonly target: Base,
         private _x: number,
         private _y: number,
         private _spriteURL: string,
@@ -77,7 +81,7 @@ export class Minion implements MinionEntity {
         // Add Minion class
         this._elem.classList.add("minion");
 
-        // Tell the MinionManager to add this Minion to it's array
+        // Tell the MinionSpawner to add this Minion to it's array
         this.manager.trackMinion(this);
     }
 
@@ -94,7 +98,8 @@ export class Minion implements MinionEntity {
 
     /**
      * Handle all game systems related to this minion's death here.
-     * Also begin JS garbage cleanup. */
+     * Also begin JS garbage cleanup.
+     */
     die() {
         this.preDestroy();
         // Todo: Play death animation
@@ -102,7 +107,7 @@ export class Minion implements MinionEntity {
 
     /**
      * Begin the JS garbage collection process.
-     * Also tells the MinionManager to delete it's handle to this object instance.
+     * Also tells the MinionSpawner to delete it's handle to this object instance.
      * After calling this, manually nullify/undefine all other handles to this object instance.
      */
     preDestroy() {
@@ -113,7 +118,7 @@ export class Minion implements MinionEntity {
         this.hpBar.preDestroy();
         this._elem?.remove();
 
-        // Tell the MinionManager to delete it's handle to this Minion object instance.
+        // Tell the MinionSpawner to delete it's handle to this Minion object instance.
         this.manager.stopTrackingMinion(this);
     }
 

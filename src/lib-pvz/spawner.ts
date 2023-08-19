@@ -1,23 +1,18 @@
 /** @format */
 
-import {
-    BaseEntity,
-    MinionType,
-    MinionManager,
-    MinionEntity,
-    SpawnGroup,
-    SpawnLevel,
-} from "./types";
+import type {Base} from "./base";
+import {MinionType, SpawnGroup, SpawnLevel} from "./types";
 
 import Minion from "./minion.js";
-import {rand} from "../lib-utils/utils.js";
+import {rand} from "../lib-utils/math.js";
+
 import uuidv4 from "../../node_modules/uuid/dist/esm-browser/v4.js";
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
 /** A singleton that handles spawning, killing, and fetching existing Minions. */
-export class MinionSpawner implements MinionManager {
+export class MinionSpawner {
     /**
      * @param target Newly spawned minions will target this.
      * @param minX Left edge of spawn box, in viewport width (vw) units.
@@ -26,21 +21,21 @@ export class MinionSpawner implements MinionManager {
      * @param maxY Bottom edge of spawnbox, in viewport height (vh) units.
      */
     constructor(
-        public target: BaseEntity,
+        public target: Base,
         public minX: number = 50,
         public maxX: number = 80,
         public minY: number = 10,
         public maxY: number = 50
     ) {}
 
-    /** Get an array of all existing Minions tracked by this MinionManager. */
-    get minions(): readonly MinionEntity[] {
+    /** Get an array of all existing Minions tracked by this MinionSpawner. */
+    get minions(): readonly Minion[] {
         return this.#minions;
     }
-    #minions: MinionEntity[] = [];
+    #minions: Minion[] = [];
 
     /** Get minions array, sorted from lowest x to highest x. */
-    get minionsSortX(): readonly MinionEntity[] {
+    get minionsSortX(): readonly Minion[] {
         const minionsCopy = [...this.minions];
         minionsCopy.sort((a, b) => {
             if (a.x < b.x) return -1;
@@ -117,7 +112,7 @@ export class MinionSpawner implements MinionManager {
      * @param elem Can be a css selector or existing DOM element or null,
      * in which case a new anchor element will be created.
      */
-    spawn(type: MinionType, elem?: HTMLElement | string): MinionEntity {
+    spawn(type: MinionType, elem?: HTMLElement | string): Minion {
         return new Minion(
             this,
             type,
@@ -130,7 +125,7 @@ export class MinionSpawner implements MinionManager {
     }
 
     /**
-     * Kill all Minions tracked by this MinionManager.
+     * Kill all Minions tracked by this MinionSpawner.
      * Triggers things like death animations before destruction.
      * Also begin JS garbage cleanup.
      */
@@ -139,7 +134,7 @@ export class MinionSpawner implements MinionManager {
     }
 
     /**
-     * Instantly destroy all Minions tracked by this MinionManager.
+     * Instantly destroy all Minions tracked by this MinionSpawner.
      * Doesn't trigger things like death animations.
      * Also begin JS garbage cleanup.
      */
@@ -147,8 +142,8 @@ export class MinionSpawner implements MinionManager {
         while (this.minions.length > 0) this.minions[0].preDestroy();
     }
 
-    /** Add an existing Minion to this MinionManager's array of Minions. */
-    trackMinion(minion: MinionEntity) {
+    /** Add an existing Minion to this MinionSpawner's array of Minions. */
+    trackMinion(minion: Minion) {
         // If this MinionSpawner already has a Minion with a matching uuid, return
         if (this.minions.some((e) => e.uuid === minion.uuid)) return;
 
@@ -156,8 +151,8 @@ export class MinionSpawner implements MinionManager {
         this.#minions.push(minion);
     }
 
-    /** Remove an existing Minion from this MinionManager's array of Minions. */
-    stopTrackingMinion(minion: MinionEntity) {
+    /** Remove an existing Minion from this MinionSpawner's array of Minions. */
+    stopTrackingMinion(minion: Minion) {
         // If this MinionSpawner doesnt have a Minion with a matching uuid, return
         if (!this.minions.some((e) => e.uuid === minion.uuid)) return;
 
