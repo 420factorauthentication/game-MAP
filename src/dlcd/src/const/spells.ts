@@ -3,7 +3,8 @@
 import {MinionManager} from "../../../lib-pvz/types";
 import {RollbarOption} from "../../../lib-hotbar/types";
 
-import {baseFX, maskFX} from "../func/fx.js";
+// import {baseFX, maskFX} from "../func/fx.js";
+import {vfx, transitionVFX} from "../../../lib-vfx/vfx.js";
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -30,11 +31,23 @@ export const Sword: Spell = {
             if (!target) return;
 
             // FX: flash white and blood hit
-            baseFX(target.elem, "../lib-svg/anim/hitblood_0.svg", 550);
-            maskFX(target.elem, "assets/art/sprite-zombro.svg", 400, {
-                color: "white",
-                transitionDur: "0.35s",
-            });
+            vfx(
+                {rect: target.elem.getBoundingClientRect(), zIndex: 4},
+                550,
+                {},
+                "../lib-svg/anim/hitblood_0.svg"
+            );
+            transitionVFX(
+                {rect: target.elem.getBoundingClientRect(), zIndex: 3},
+                400,
+                {
+                    backgroundColor: "white",
+                    maskImage: "url('assets/art/sprite-zombro.svg')",
+                    maskRepeat: "no-repeat",
+                    maskSize: "100% 100%",
+                },
+                {backgroundColor: "transparent"}
+            );
 
             // Damage
             target.changeHp(-1);

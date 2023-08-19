@@ -3,7 +3,7 @@
 import * as Scenes from "./const/scenes.js";
 import {LvlOne} from "./const/levels.js";
 
-import {PlayGame} from "./func/game.js";
+import {PlayGame} from "./game.js";
 
 // import _GameManager from "./single/game.js";
 
