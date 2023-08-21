@@ -8,7 +8,9 @@ import {Flow} from "./const.js";
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
- * An HP Bar or similar.
+ * An element with a fill texture and an empty texture. \
+ * The area of each texture is proportional to a given progress percentage.
+
  * ProgBar is base abstract class.
  * Different implementations should use different CSS and HTML features to show
  * a bar graphic that changes proportionally to min, max, and current bar value.
@@ -49,8 +51,8 @@ export abstract class ProgBar {
     }
 
     /**
-     * A lone node or parent node with children.
-     * CSS and HTML of node(s) will change based on min, max, and current bar value.
+     * A lone element or parent element with children.
+     * CSS and HTML of elem(s) will change based on min, max, and current bar value.
      */
     get elem() {
         return this._elem;
@@ -72,9 +74,6 @@ export abstract class ProgBar {
     /**
      * Current bar value. Can be any number.
      * On set, recalcs bar graphics.
-     *  If outside max-min:
-     *  - this.percent WILL go past 0% or 100%
-     *  - Bar graphics WONT go past 0% or 100%
      */
     get value(): number {
         return this._value;
@@ -157,7 +156,7 @@ export abstract class ProgBar {
      * Recalculate bar graphics.
      * Should be automatically called after changing something.
      */
-    protected abstract calcBarGraphics();
+    protected abstract calcBarGraphics(): void;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -15,7 +15,10 @@ export class HotbarButton {
      * Can be undefined, in which case the button can only be clicked with mouse.
      * @param onPress When hotkey is pressed, or button is clicked, these are called.
      * Can be empty, in which case nothing happens on button press/click.
-     * @param disableAllOnPress
+     * @param singleButtonUse
+     * If true, disables this button after pressing/clicking it.
+     * If singleBarUse is true, will be disabled regardless of singleButtonUse.
+     * @param singleBarUse
      * If true, disables all buttons in parent Hotbar after button press/click.
      */
     constructor(
@@ -23,7 +26,8 @@ export class HotbarButton {
         elem?: HTMLElement | string,
         public hotkey?: string,
         public onPress: Array<Function> = [],
-        public disableAllOnPress: boolean = false
+        public singleButtonUse: boolean = false,
+        public singleBarUse: boolean = false
     ) {
         // Lookup element by selector
         if (elem)
@@ -33,9 +37,12 @@ export class HotbarButton {
                     : elem;
 
         // No element found. Let's create one instead.
-        if (!this._elem) this._elem = HotbarButton.elemInit;
+        if (!this._elem) this._elem = document.createElement("button");
 
-        // Register this button as a child of the parent Hotbar
+        // Apply "flex: 1 1 0" to automatically size equally with siblings
+        this._elem.style.flex = "1 1 0"
+
+        // Add as child to given Hotbar
         this.hotbar.add(this);
 
         // Setup event listeners
@@ -49,10 +56,10 @@ export class HotbarButton {
 
     /** If false, this button is hidden and stops doing anything on click/press. */
     get isEnabled() {
-        return this.#isEnabled;
+        return this._isEnabled;
     }
     set isEnabled(v) {
-        this.#isEnabled = v;
+        this._isEnabled = v;
         if (v) {
             this._elem.style.opacity = "1";
             this._elem.style.pointerEvents = "auto";
@@ -61,7 +68,7 @@ export class HotbarButton {
             this._elem.style.pointerEvents = "none";
         }
     }
-    #isEnabled: boolean = true;
+    protected _isEnabled: boolean = true;
 
     /**
      * Begin the JS garbage collection process.
@@ -88,23 +95,13 @@ export class HotbarButton {
     }
     protected _elem: HTMLElement;
 
-    //////////
-    // INIT //
-    //////////
-    static get elemInit() {
-        const elem = <HTMLElement>document.createElement("button");
-        elem.style.display = "block";
-        elem.style.boxSizing = "border-box";
-        elem.style.background = "content-box radial-gradient(slategray, gray)";
-        elem.style.border = "2px solid black";
-        return elem;
-    }
-
-    //////////////////////
-    // HELPER FUNCTIONS //
-    //////////////////////
+    ////////////
+    // EVENTS //
+    ////////////
     handleEvent(e: KeyboardEvent) {
         if (!this.isEnabled) return;
+
+        // Handle exceptions
         switch (e.type) {
             default:
                 return;
@@ -112,8 +109,13 @@ export class HotbarButton {
                 if (e.key != this.hotkey) return;
             case "click":
         }
+
+        // Call onPress functions
         for (const func of this.onPress) func();
-        if (this.disableAllOnPress === true) this.hotbar.disableAll();
+
+        // If single use, disable appropriate buttons
+        if (this.singleButtonUse === true) this.isEnabled = false;
+        if (this.singleBarUse === true) this.hotbar.disableAll();
     }
 }
 

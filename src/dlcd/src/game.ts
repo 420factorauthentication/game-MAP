@@ -1,7 +1,5 @@
 /** @format */
 
-import {RollbarOption} from "../../lib-hotbar/types";
-
 import {
     GameScreen as GameScene,
     TechMenu as TechMenuScene,
@@ -65,18 +63,16 @@ export const PlayGame = (() => {
             );
 
             cache.spellbar = new Rollbar(
-                SpellbarMax,
-                true,
+                GameScene.containerElem.querySelector(
+                    "#game-spellbar"
+                ) as HTMLElement,
                 Object.values(Spells).map((v) => {
                     const {func, ...allButFunc} = v;
                     return {
                         ...allButFunc,
                         onPress: [func(cache.minionMan)],
                     };
-                }),
-                GameScene.containerElem.querySelector(
-                    "#game-spellbar"
-                ) as HTMLElement
+                })
             );
             for (let i = 0; i < SpellbarMax; i++)
                 new HotbarButton(
@@ -84,15 +80,16 @@ export const PlayGame = (() => {
                     document.createElement("button"),
                     Object.values(SpellKeys)[i].default,
                     [],
+                    true,
                     true
                 );
 
             cache.keyui = new KeyUI(
-                SpellbarMax,
-                Object.values(SpellKeys).map((v) => v.default),
                 GameScene.containerElem.querySelector(
                     "#game-keyui"
-                ) as HTMLElement
+                ) as HTMLElement,
+                SpellbarMax,
+                Object.values(SpellKeys).map((v) => v.default)
             );
 
             cache.spellbar.start(SpellbarSpeed);

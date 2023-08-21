@@ -3,22 +3,24 @@
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-/** A UI that displays the hotkeys for each button in a hotbar. */
+/**
+ * A UI that displays the hotkeys for each button in a hotbar.
+ * Automatically creates one span for each button.
+ * Applies "flex: 1 1 0" to each span to align them.
+ *
+ */
 export class KeyUI {
     /**
-     * @param maxItems The max items of the associated hotbar. Used to size UI.
-     * @param hotkeys The button hotkeys of the associated hotbar. Used to set UI.
      * @param elem Can be a css selector or existing DOM element or null,
-     * in which case a new div element will be created.
+     * in which case a new div element will be created. Applies "display: flex"
+     * @param buttonCount The amount of buttons to create UI for.
+     * @param hotkeys The text to show above each button.
      */
     constructor(
-        maxItems: number,
-        hotkeys: string[] = [],
-        elem?: HTMLElement | string
+        elem?: HTMLElement | string,
+        protected _buttonCount: number = 0,
+        protected _hotkeys: string[] = []
     ) {
-        this._maxItems = maxItems;
-        this._hotkeys = hotkeys;
-
         // Lookup element by selector
         if (elem)
             this._elem =
@@ -26,10 +28,16 @@ export class KeyUI {
                     ? (document.querySelector(elem) as HTMLElement)
                     : elem;
 
-        // No element found. Let's create one instead.
-        if (!this._elem) this._elem = KeyUI.elemInit;
+        // No element found. Create one with default settings.
+        if (!this._elem) {
+            this._elem = document.createElement("div");
+            document.body
+                .appendChild(this._elem)
+                .setAttribute("style", "width: 25%; height: 25%;");
+        }
 
         // Init UI
+        this._elem.style.display = "flex";
         this._elem.style.pointerEvents = "none";
         this.updateCount();
         this.updateText();
@@ -39,17 +47,16 @@ export class KeyUI {
     // API //
     /////////
 
-    /** The max items of the associated hotbar. Used to size UI. */
-    get maxItems() {
-        return this._maxItems;
+    /** The amount of buttons to create UI for. When set, updates elems. */
+    get buttonCount() {
+        return this._buttonCount;
     }
-    set maxItems(v) {
-        this._maxItems = v;
+    set buttonCount(v) {
+        this._buttonCount = v;
         this.updateCount();
     }
-    protected _maxItems: number;
 
-    /** The button hotkeys of the associated hotbar. Used to set UI. */
+    /** The text to show above each button. When set, updates elems. */
     get hotkeys() {
         return this._hotkeys;
     }
@@ -57,7 +64,6 @@ export class KeyUI {
         this._hotkeys = v;
         this.updateText();
     }
-    protected _hotkeys: string[];
 
     ////////////////
     // COMPONENTS //
@@ -69,30 +75,13 @@ export class KeyUI {
     }
     protected _elem: HTMLElement;
 
-    //////////
-    // INIT //
-    //////////
-
-    protected static get elemInit() {
-        const elem = <HTMLElement>document.createElement("div");
-        document.body.appendChild(elem);
-        elem.style.position = "absolute";
-        elem.style.left = "25vw";
-        elem.style.top = "80vh";
-        elem.style.width = "50vw";
-        elem.style.height = "15vh";
-        elem.style.display = "flex";
-        elem.style.flexDirection = "row";
-        return elem;
-    }
-
     //////////////////////
     // HELPER FUNCTIONS //
     //////////////////////
 
     protected newChild() {
-        const child = <HTMLElement>document.createElement("span");
-        this._elem.appendChild(child);
+        const child = this._elem.appendChild(document.createElement("span"));
+        child.style.flex = "1 1 0";
         child.style.textAlign = "end";
         child.style.padding = "2%";
         child.style.pointerEvents = "none";
@@ -101,17 +90,10 @@ export class KeyUI {
     }
 
     protected updateCount() {
-        // Update children count to match maxItems
-        for (let i = this._elem.childElementCount; i < this._maxItems; i++)
+        for (let i = this._elem.childElementCount; i < this._buttonCount; i++)
             this.newChild();
-        for (let i = this.elem.childElementCount; i > this._maxItems; i--)
+        for (let i = this.elem.childElementCount; i > this._buttonCount; i--)
             this.elem.lastChild?.remove();
-        // Update sizes
-        for (const elem of this._elem.children) {
-            let child = elem as HTMLElement;
-            child.style.width = "" + 100 / this._maxItems + "%";
-            child.style.height = "100%";
-        }
     }
 
     protected updateText() {

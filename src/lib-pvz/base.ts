@@ -77,8 +77,7 @@ export class Base implements BaseType {
     // INIT //
     //////////
     private get elemInit() {
-        const elem = <HTMLElement>document.createElement("a");
-        document.body.appendChild(elem);
+        const elem = document.body.appendChild(document.createElement("a"));
         elem.style.position = "absolute";
         elem.style.transform = "translate(-100%, -50%)";
         elem.style.left = "" + this.x + "vw";

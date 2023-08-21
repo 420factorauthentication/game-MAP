@@ -75,7 +75,7 @@ export class Scene {
             // containerElem not found. Let's create one instead.
             if (!this._containerElem) {
                 this._containerElem = document.createElement("div");
-                document.body.append(this._containerElem);
+                document.body.appendChild(this._containerElem);
             }
 
             // Optional class and id parameters

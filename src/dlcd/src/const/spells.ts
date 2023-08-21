@@ -3,7 +3,8 @@
 import type {MinionSpawner} from "../../../lib-pvz/spawner";
 import {RollbarOption} from "../../../lib-hotbar/types";
 
-// import {baseFX, maskFX} from "../func/fx.js";
+import {ZLayerFxFlash, ZLayerFxParticles} from "../const/game.js";
+
 import {vfx, transitionVFX} from "../../../lib-vfx/vfx.js";
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -30,16 +31,24 @@ export const Sword: Spell = {
             let target = manager.minionsSortX[0];
             if (!target) return;
 
-            // FX: flash white and blood hit
+            // FX: blood particles
             vfx(
-                {rect: target.elem.getBoundingClientRect(), zIndex: 4},
                 550,
+                {
+                    rect: target.elem.getBoundingClientRect(),
+                    zIndex: ZLayerFxParticles,
+                },
                 {},
                 "../lib-svg/anim/hitblood_0.svg"
             );
+
+            // FX: flash white
             transitionVFX(
-                {rect: target.elem.getBoundingClientRect(), zIndex: 3},
                 400,
+                {
+                    rect: target.elem.getBoundingClientRect(),
+                    zIndex: ZLayerFxFlash,
+                },
                 {
                     backgroundColor: "white",
                     maskImage: "url('assets/art/sprite-zombro.svg')",

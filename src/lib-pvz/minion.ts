@@ -195,8 +195,7 @@ export class Minion {
     // INIT //
     //////////
     private static get elemInit() {
-        const elem = <HTMLElement>document.createElement("a");
-        document.body.appendChild(elem);
+        const elem = document.body.appendChild(document.createElement("a"));
         elem.style.width = "64px";
         elem.style.height = "64px";
         return elem;
