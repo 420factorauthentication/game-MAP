@@ -8,51 +8,58 @@ import ClipBar from "../lib-progbar/clipbar.js";
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
- * An entity with HP that can be attacked by Minions.
+ * A singleton that tracks player HP and configures minion walking distance.
  * Minions spawn on the right and move left.
- * When they reach the same x, they will automatically attack the Base.
+ * When they reach the given x, they begin damaging player HP.
  */
 export class Base implements BaseType {
     /**
-     * @param x Is in viewport width units (vw).
-     * @param y Is in viewport height units (vh).
-     * @param elem Can be a css selector or existing DOM element or null,
+     * @param startingHP How much HP the player starts with.
+     * @param x Minions stop here and begin attacking. Viewport width units (vw).
+     * @param hpBarElem An element to create a {@link ClipBar} to use as an HP bar.
+     * Can be a css selector or existing DOM element or null,
      * in which case a new anchor element will be created.
      */
     constructor(
-        private _hp: number,
+        startingHP: number,
         readonly x: number,
-        readonly y: number,
-        elem?: HTMLElement | string
+        hpBarElem?: HTMLElement | string
     ) {
-        // Lookup element by selector
-        if (elem)
-            this._elem =
-                typeof elem === "string"
-                    ? (document.querySelector(elem) as HTMLElement)
-                    : elem;
+        this._hp = startingHP;
 
-        // No element found. Let's create one instead.
-        if (!this._elem) this._elem = this.elemInit;
-        
-        // Init components
-        this.hpBar = new ClipBar(
-            this.hpBarElemInit,
-            this.hp, 0, this.hp,
-            Flow.btmToTop
-        );
+        // Lookup HP Bar element by selector
+        if (hpBarElem)
+            this._hpBarElem =
+                typeof hpBarElem === "string"
+                    ? (document.querySelector(hpBarElem) as HTMLElement)
+                    : hpBarElem;
+
+        // No element found. Create one with default settings.
+        if (!this._hpBarElem) {
+            this._hpBarElem = document.createElement("a");
+            document.body
+                .appendChild(this._hpBarElem)
+                .setAttribute("style", "width: 25%; height: 10%; background: red;");
+        }
+
+        // Init HP bar
+        this.hpBar = new ClipBar(this._hpBarElem, this.hp, 0, this.hp);
     }
 
     /////////
     // API //
     /////////
+
+    /** Current player HP. If less than or equal to 0, triggers a game over. */
     get hp() {return this._hp;}
     set hp(v) {
         this._hp = v;
-        this.hpBar.value = this.hp;
-        if (this.hp <= 0) this.die();
+        this.hpBar.value = this._hp;
+        if (this._hp <= 0) this.die();
     }
+    protected _hp: number;
 
+    /** Trigger a game over. */
     die() {
         console.log("GAME OVER")
     }
@@ -62,44 +69,16 @@ export class Base implements BaseType {
      * After calling this, manually nullify/undefine all handles to this object instance.
      */
     preDestroy() {
-        this._elem?.remove();
+        this._hpBarElem?.remove();
     }
 
     ////////////////
     // COMPONENTS //
     ////////////////
-    get elem() {return this._elem;}
-    protected _elem: HTMLElement;
+    get hpBarElem() {return this._hpBarElem;}
+    protected _hpBarElem: HTMLElement;
 
     protected hpBar: ClipBar;
-
-    //////////
-    // INIT //
-    //////////
-    private get elemInit() {
-        const elem = document.body.appendChild(document.createElement("a"));
-        elem.style.position = "absolute";
-        elem.style.transform = "translate(-100%, -50%)";
-        elem.style.left = "" + this.x + "vw";
-        elem.style.top = "" + this.y + "vh";
-        elem.style.width = "5vw";
-        elem.style.height = "90vh";
-        elem.style.background = "content-box radial-gradient(yellow, gold)";
-        elem.style.zIndex = "1";
-        return elem;
-    }
-
-    private get hpBarElemInit() {
-        const elem = <HTMLElement>document.createElement("a");
-        this._elem.appendChild(elem);
-        elem.style.position = "absolute";
-        elem.style.height = this._elem.style.height;
-        elem.style.width = `calc(${this._elem.style.width} / 2)`;
-        elem.style.left = `calc(${this._elem.style.width} / 2)`;
-        elem.style.background = "darkgreen";
-        elem.style.zIndex = "2";
-        return elem;
-    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

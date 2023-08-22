@@ -5,14 +5,11 @@
 
 /**
  * Contains all base stats to define one type of Base.
- *
  * x is in viewport width units.
- * y is in viewport height units.
  */
 export interface BaseType {
     hp: number;
     x: number;
-    y: number;
 }
 
 /**

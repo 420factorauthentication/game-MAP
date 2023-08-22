@@ -48,9 +48,8 @@ export const PlayGame = (() => {
             cache.base = new Base(
                 WoodBase.hp,
                 WoodBase.x,
-                WoodBase.y,
                 GameScene.containerElem.querySelector(
-                    "#game-base"
+                    "#game-hpbar"
                 ) as HTMLElement
             );
 
