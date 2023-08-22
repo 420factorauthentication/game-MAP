@@ -51,8 +51,11 @@ export class Minion {
                     ? (document.querySelector(elem) as HTMLElement)
                     : elem;
 
-        // No element found. Let's create one instead.
-        if (!this._elem) this._elem = Minion.elemInit;
+        // No element found. Create one with default settings.
+        if (!this._elem) this._elem = document.createElement("a");
+        document.body
+            .appendChild(this._elem)
+            .setAttribute("style", "width: 64px; height: 64px;");
 
         // Init elem sprite image
         this._setBG(_spriteURL);
@@ -194,12 +197,6 @@ export class Minion {
     //////////
     // INIT //
     //////////
-    private static get elemInit() {
-        const elem = document.body.appendChild(document.createElement("a"));
-        elem.style.width = "64px";
-        elem.style.height = "64px";
-        return elem;
-    }
 
     private get hpBarElemInit() {
         const elem = <HTMLElement>document.createElement("a");
