@@ -7,5 +7,5 @@ import type {BaseType} from "../../../lib-pvz/types";
 
 export const Wood: Readonly<BaseType> = {
     hp: 12,
-    x: 20,
+    x: 33,
 };
