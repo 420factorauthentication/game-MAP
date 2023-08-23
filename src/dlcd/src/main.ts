@@ -1,6 +1,5 @@
 /** @format */
 
-import * as Scenes from "./const/scenes.js";
 import {LvlOne} from "./const/levels.js";
 
 import {PlayGame} from "./game.js";
@@ -11,7 +10,6 @@ import {PlayGame} from "./game.js";
 // ################################ MAIN ############################### //
 // ##################################################################### //
 
-Scenes.GameStyles.load();
 PlayGame();
 
 // ##################################################################### //
