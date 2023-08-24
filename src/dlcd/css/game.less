@@ -4,14 +4,25 @@
 /* ############################### STYLE ############################### */
 /* ##################################################################### */
 
-.ui-bg() {
-    z-index: 10;
+.ui-bg0 {
+    background-color: #999;
+    outline: thick double #9e9e9e;
 }
 
-.ui-bg0 {
-    .ui-bg();
-    background-color: #999;
-    outline: black solid 2px;
+.ui-bg1 {
+    background-color: darkcyan;
+    outline: thick double #32a1ce;
+}
+
+.ui-bg2 {
+    background-color: wheat;
+    outline: thick double antiquewhite;
+}
+
+#game-hpbar {
+    .ui-bg0();
+    background-color: #ab0e0e;
+    border-radius: 2vw 5vw 5vw 2vw / 4vw 10vw 10vw 4vw;
 }
 
 /* ##################################################################### */
@@ -22,49 +33,25 @@
     padding: 5vh 5vw;
     box-sizing: border-box;
     display: grid;
-    grid-template-columns: 1fr 2fr;
-    grid-template-rows: 1fr 8fr 3fr;
+    grid-template: 1fr 8fr 3fr / 1fr 2fr;
     gap: 32px 32px;
 }
 
-// -------------------------------------------------------------------------- //
-// ---------------------------------- TEMP ---------------------------------- //
-// -------------------------------------------------------------------------- //
-
-.temp-hp {
-    .ui-bg();
-    background-color: #ab0e0e;
-    outline: #555 solid 4px;
-    border-radius: 2vw 5vw 5vw 2vw / 4vw 10vw 10vw 4vw;
+#game * {
+    z-index: 10;
 }
 
-.temp-base {
-    .ui-bg();
-    background-color: darkcyan;
-    outline: #222 solid 8px;
-}
-
-.temp-res {
-    .ui-bg0();
+.flex-row {
     display: flex;
+    flex-flow: row nowrap;
 }
 
-.temp-res * {
+.flex-col {
     display: flex;
-    flex-direction: column;
-    flex: 1 1 0;
-    margin: 0;
-}
-.temp-res * * {
-    flex: 1 1 0;
-    justify-content: end;
+    flex-flow: column nowrap;
 }
 
-.temp-nav {
-    .ui-bg0();
-    display: flex;
-}
-
-.temp-nav * {
+.flex-row *,
+.flex-col * {
     flex: 1 1 0;
 }

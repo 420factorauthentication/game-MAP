@@ -32,6 +32,7 @@ export class Rollbar extends Hotbar {
         super(elem);
         // Init cache //
         this.#initialOnPress = [];
+        this.#initialConditions = [];
         this.#initialCssText = [];
         this.#initialInnerHTML = [];
     }
@@ -55,6 +56,7 @@ export class Rollbar extends Hotbar {
         // Cache initial button settings
         for (let i = 0; i < this._items.length; i++) {
             this.#initialOnPress[i] = this._items[i].onPress;
+            this.#initialConditions[i] = this._items[i].conditions;
             this.#initialCssText[i] = this._items[i].elem.style.cssText;
             this.#initialInnerHTML[i] = this._items[i].elem.innerHTML;
         }
@@ -70,6 +72,7 @@ export class Rollbar extends Hotbar {
         this._isOn = false;
         // Reset cache //
         this.#initialOnPress = [];
+        this.#initialConditions = [];
         this.#initialCssText = [];
         this.#initialInnerHTML = [];
     }
@@ -90,6 +93,7 @@ export class Rollbar extends Hotbar {
         // Update cache if on //
         if (!this._isOn) return item;
         this.#initialOnPress.push(item.onPress);
+        this.#initialConditions.push(item.conditions);
         this.#initialCssText.push(item.elem.style.cssText);
         this.#initialInnerHTML.push(item.elem.innerHTML);
         return item;
@@ -108,6 +112,7 @@ export class Rollbar extends Hotbar {
         if (!this._isOn) return true;
         let index = typeof v === "number" ? v : this._items.indexOf(v);
         this.#initialOnPress.splice(index, 1);
+        this.#initialConditions.splice(index, 1);
         this.#initialCssText.splice(index, 1);
         this.#initialInnerHTML.splice(index, 1);
         return true;
@@ -119,6 +124,7 @@ export class Rollbar extends Hotbar {
         // Reset cache if on //
         if (!this.isOn) return;
         this.#initialOnPress = [];
+        this.#initialConditions = [];
         this.#initialCssText = [];
         this.#initialInnerHTML = [];
     }
@@ -158,8 +164,12 @@ export class Rollbar extends Hotbar {
         // For each sampled option, update an existing button
         let i = 0;
         for (i; i < rolls.length; i++) {
-            this._items[i].onPress = new Array<Function>()
+            this._items[i].onPress = []
                 .concat(this.#initialOnPress[i], rolls[i].onPress)
+                .filter((x) => x);
+
+            this._items[i].conditions = []
+                .concat(this.#initialConditions[i], rolls[i].conditions)
                 .filter((x) => x);
 
             this._items[i].elem.style.cssText = [
@@ -180,6 +190,7 @@ export class Rollbar extends Hotbar {
         // If less samples than items, reset the remaining items
         for (i; i < this._items.length; i++) {
             this._items[i].onPress = this.#initialOnPress[i];
+            this._items[i].conditions = this.#initialConditions[i];
             this._items[i].elem.style.cssText = this.#initialCssText[i];
             this._items[i].elem.innerHTML = this.#initialInnerHTML[i];
         }
@@ -190,7 +201,8 @@ export class Rollbar extends Hotbar {
     ///////////////////
 
     // Cache of initial button settings, merged with new settings of each roll.
-    #initialOnPress: Function[][];
+    #initialOnPress: (() => void)[][];
+    #initialConditions: (() => boolean)[][];
     #initialCssText: string[];
     #initialInnerHTML: string[];
 

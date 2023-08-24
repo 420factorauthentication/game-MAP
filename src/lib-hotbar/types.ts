@@ -6,7 +6,9 @@
 /** A HotbarButton setting that can be randomly chosen when rolled. */
 export type RollbarOption = {
     /** When HotbarButton is clicked, or hotkey is pressed, these are called. */
-    onPress: Array<Function>;
+    onPress: (() => void)[];
+    /** Called before onPress. If any return false, onPress isn't called. */
+    conditions?: (() => boolean)[];
     /** Applied to HotbarButton DOM Element. */
     styleCssText?: string;
     /** Applied to HotbarButton DOM Element. */

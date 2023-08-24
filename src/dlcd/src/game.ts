@@ -14,6 +14,7 @@ import {
     SpawnMaxY,
 } from "./const/game.js";
 
+import {ResourceManager} from "./resource.js";
 import Base from "../../lib-pvz/base.js";
 import MinionSpawner from "../../lib-pvz/spawner.js";
 import Rollbar from "../../lib-hotbar/rollbar.js";
@@ -32,6 +33,7 @@ export const PlayGame = (() => {
         isLoaded?: boolean;
         base?: Base;
         minionMan?: MinionSpawner;
+        resourceMan?: ResourceManager;
         spellbar?: Rollbar;
         keyui?: KeyUI;
     } = {};
@@ -62,15 +64,23 @@ export const PlayGame = (() => {
                 SpawnMaxY
             );
 
+            cache.resourceMan = new ResourceManager(
+                GameScreen.containerElem.querySelector("#robuxCounter"),
+                GameScreen.containerElem.querySelector("#cringesCounter")
+            );
+
             cache.spellbar = new Rollbar(
                 GameScreen.containerElem.querySelector(
                     "#game-spellbar"
                 ) as HTMLElement,
                 Object.values(Spells).map((v) => {
-                    const {func, ...allButFunc} = v;
+                    const {getOnPress, getCondition, ...otherProps} = v;
                     return {
-                        ...allButFunc,
-                        onPress: [func(cache.minionMan)],
+                        ...otherProps,
+                        onPress: [getOnPress(cache.minionMan)],
+                        conditions: getCondition
+                            ? [getCondition(cache.resourceMan)]
+                            : [],
                     };
                 })
             );
@@ -79,6 +89,7 @@ export const PlayGame = (() => {
                     cache.spellbar,
                     document.createElement("button"),
                     Object.values(SpellKeys)[i].default,
+                    [],
                     [],
                     true,
                     true
