@@ -1,6 +1,10 @@
 /** @format */
 
-import {GameStyles, GameScreen} from "./const/scenes.js";
+import {
+    GameScreen,
+    GameStyleComponents,
+    GameStyleSettings,
+} from "./const/scenes.js";
 import {LvlOne} from "./const/levels.js";
 import * as Spells from "./const/spells.js";
 import {SpellKeys} from "./const/options.js";
@@ -45,7 +49,8 @@ export const PlayGame = (() => {
             cache.isLoaded = true;
 
             // Load CSS
-            GameStyles.load();
+            GameStyleComponents.load();
+            GameStyleSettings.load();
 
             // Init game components
             cache.base = new Base(
@@ -65,8 +70,8 @@ export const PlayGame = (() => {
             );
 
             cache.resourceMan = new ResourceManager(
-                GameScreen.containerElem.querySelector("#robuxCounter"),
-                GameScreen.containerElem.querySelector("#cringesCounter")
+                GameScreen.containerElem.querySelector("#robux-counter"),
+                GameScreen.containerElem.querySelector("#cringes-counter")
             );
 
             cache.spellbar = new Rollbar(

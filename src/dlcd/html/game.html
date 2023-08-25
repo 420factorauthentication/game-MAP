@@ -1,29 +1,37 @@
 <!-- @format -->
-<!-- Children of #game (applied in game.ts) (see game.less) -->
-<nav id="game-nav" class="ui-bg0 flex-row" style="grid-area: 1 / 2 / 2 / 3">
+<nav id="game-nav" class="ui-bg0 flex-row">
     <button id="game-nav-tech">Tech</button>
 </nav>
 
-<div id="game-hpbar" style="grid-area: 1 / 1 / 2 / 2"></div>
+<a id="game-hpbar"></a>
 
-<a id="game-base" class="ui-bg1" style="grid-area: 2 / 1 / 3 / 2"> </a>
-
-<div
-    id="game-resources"
-    class="ui-bg0 flex-row"
-    style="grid-area: 3 / 1 / 4 / 2"
->
-    <div class="flex-col">
-        <div class="ui-bg2">Robux</div>
-        <span id="robuxCounter">8888</span>
-    </div>
-    <div class="flex-col">
-        <div class="ui-bg2">Cringe Memories</div>
-        <span id="cringesCounter">8888</span>
-    </div>
+<div id="game-base" class="ui-bg1 grid-4x4">
+    <div class="ui-icon-narrow"></div>
+    <div class="ui-icon-narrow"></div>
+    <div class="ui-icon-narrow"></div>
+    <div class="ui-icon-narrow"></div>
+    <div class="ui-icon-narrow"></div>
+    <div class="ui-icon-narrow"></div>
+    <div class="ui-icon-narrow"></div>
+    <div class="ui-icon-narrow"></div>
+    <div class="ui-icon-narrow"></div>
+    <div class="ui-icon-narrow"></div>
+    <div class="ui-icon-narrow"></div>
+    <div class="ui-icon-narrow"></div>
+    <div class="ui-icon-narrow"></div>
+    <div class="ui-icon-narrow"></div>
+    <div class="ui-icon-narrow"></div>
+    <div class="ui-icon-narrow"></div>
 </div>
 
-<div id="game-spellbar" class="ui-bg0" style="grid-area: 3 / 2 / 4 / 3"></div>
-<div id="game-keyui" style="grid-area: 3 / 2 / 4 / 3"></div>
+<div id="game-resources" class="ui-bg0 grid-2x2">
+    <a class="ui-icon-wide">Robux</a>
+    <a class="ui-icon-wide">Cringe Memories</a>
+    <span id="robux-counter">8888</span>
+    <span id="cringes-counter">8888</span>
+</div>
 
-<div id="game-techmenu" class="ui-bg0" style="grid-area: 2 / 1 / 3 / 2"></div>
+<div id="game-spellbar" class="ui-bg0"></div>
+<div id="game-keyui"></div>
+
+<div id="game-techmenu" class="ui-bg0"></div>
