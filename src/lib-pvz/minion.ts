@@ -6,6 +6,7 @@ import {State} from "../lib-smac/types";
 import StateMachine from "../lib-smac/smac.js";
 import Stats from "../lib-statsys/stats.js";
 import ClipBar from "../lib-progbar/clipbar.js";
+import {ClassWithElem} from "../lib-utils/elem.js";
 
 import Spriteling from "../../node_modules/spriteling/dist/spriteling.js";
 import uuidv4 from "../../node_modules/uuid/dist/esm-browser/v4.js";
@@ -25,14 +26,16 @@ import uuidv4 from "../../node_modules/uuid/dist/esm-browser/v4.js";
  * 
  * All time values are in ms.
  */
-export class Minion {
+export class Minion extends ClassWithElem {
     /**
      * @param manager Contains records of all existing minions for cleanup.
      * @param type Is used to define starting stats.
      * @param target Is used to control Attack AI.
      * @param _x Is in viewport width units (vw).
      * @param _y Is in viewport height units (vh).
-     * @param elem Can be a css selector or existing DOM element or null,
+     * @param _spriteURL Path to image.
+     * Used for minion background-image and for mask-image of fx.
+     * @param elem Can be a CSS selector or existing DOM element or null,
      * in which case a new anchor element will be created.
      */
     constructor(
@@ -44,18 +47,8 @@ export class Minion {
         private _spriteURL: string,
         elem?: HTMLElement | string
     ) {
-        // Lookup element by selector
-        if (elem)
-            this._elem =
-                typeof elem === "string"
-                    ? (document.querySelector(elem) as HTMLElement)
-                    : elem;
-
-        // No element found. Create one with default settings.
-        if (!this._elem) this._elem = document.createElement("a");
-        document.body
-            .appendChild(this._elem)
-            .setAttribute("style", "width: 64px; height: 64px;");
+        // Lookup elem by selector. If not found, create one with default settings.
+        super(elem, "a", "width: 64px; height: 64px");
 
         // Init elem sprite image
         this._setBG(_spriteURL);
@@ -67,8 +60,8 @@ export class Minion {
 
         // Init components
         this.stats = new Stats(type);
-        this.moveState = this.moveStateInit;
-        this.attackState = this.attackStateInit;
+        this.moveState = this.moveStateUpdate;
+        this.attackState = this.attackStateUpdate;
         this.ai = new StateMachine(this.moveState);
         this.hpBar = new ClipBar(
             this.hpBarElemInit,
@@ -110,8 +103,8 @@ export class Minion {
 
     /**
      * Begin the JS garbage collection process.
-     * Also tells the MinionSpawner to delete it's handle to this object instance.
-     * After calling this, manually nullify/undefine all other handles to this object instance.
+     * Also tells the MinionSpawner to delete it's handle to this class object instance.
+     * After calling this, manually nullify/undefine all other handles to this class object instance.
      */
     preDestroy() {
         // Stop all AI behaviors
@@ -185,7 +178,6 @@ export class Minion {
     // COMPONENTS //
     ////////////////
     get elem() {return this._elem;}
-    protected _elem: HTMLElement;
 
     protected stats: Stats;
     protected moveState: State;
@@ -213,7 +205,7 @@ export class Minion {
     //     return new Spriteling();
     // }
 
-    private get moveStateInit() {
+    private get moveStateUpdate() {
         const moveState: State = {
             uuid: "minionMove",
             loopInterval: 1000 / this.stats.current("movSpd"),
@@ -224,7 +216,7 @@ export class Minion {
         return moveState;
     }
 
-    private get attackStateInit() {
+    private get attackStateUpdate() {
         const attackState: State = {
             uuid: "minionAttack",
             loopInterval: 1000 / this.stats.current("atkSpd"),
@@ -244,13 +236,13 @@ export class Minion {
     }
 
     private _onMovChange() {
-        this.moveState = this.moveStateInit;
+        this.moveState = this.moveStateUpdate;
         if (this.ai.state?.uuid == "minionMove")
             this.ai.set(this.moveState);
     }
 
     private _onAtkChange() {
-        this.attackState = this.attackStateInit;
+        this.attackState = this.attackStateUpdate;
         if (this.ai.state?.uuid == "minionAttack")
             this.ai.set(this.attackState);
     }

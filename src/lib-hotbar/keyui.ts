@@ -1,43 +1,39 @@
 /** @format */
 
+import {ClassWithElem} from "../lib-utils/elem.js";
+
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
- * A UI that displays the hotkeys for each button in a hotbar.
- * Automatically creates one span for each button.
- * Applies "flex: 1 1 0" to each span to align them.
- *
+ * A UI that displays the hotkeys for each button in a Hotbar. \
+ * Automatically creates one span for each button. \
+ * Applies "display: flex" to this.elem
+ * and "flex: 1 1 0" to each created child span to automatically align them. \
+ * NOTE: Doesn't automatically set size of this.elem to match a Hotbar. Manually do that.
  */
-export class KeyUI {
+export class KeyUI extends ClassWithElem {
     /**
-     * @param elem Can be a css selector or existing DOM element or null,
-     * in which case a new div element will be created. Applies "display: flex"
-     * @param buttonCount The amount of buttons to create UI for.
-     * @param hotkeys The text to show above each button.
+     * @param elem Can be a CSS selector or existing DOM element or null,
+     * in which case a new div element will be created. \
+     * Applies "display: flex" to automatically size children equally. \
+     * Methods create children spans with "flex: 1 1 0" automatically.
+     * @param _buttonCount The amount of buttons to create UI for. \
+     * Automatically creates children spans equal to this number with "flex: 1 1 0"
+     * @param _hotkeys The text to show above each button.
      */
     constructor(
         elem?: HTMLElement | string,
         protected _buttonCount: number = 0,
         protected _hotkeys: string[] = []
     ) {
-        // Lookup element by selector
-        if (elem)
-            this._elem =
-                typeof elem === "string"
-                    ? (document.querySelector(elem) as HTMLElement)
-                    : elem;
+        // Lookup elem by selector. If not found, create one with default settings.
+        super(elem, "div", "width: 25%; height: 10%");
 
-        // No element found. Create one with default settings.
-        if (!this._elem) {
-            this._elem = document.createElement("div");
-            document.body
-                .appendChild(this._elem)
-                .setAttribute("style", "width: 25%; height: 25%;");
-        }
+        // Apply "display: flex" to automatically size children equally
+        this._elem.style.display = "flex";
 
         // Init UI
-        this._elem.style.display = "flex";
         this._elem.style.pointerEvents = "none";
         this.updateCount();
         this.updateText();
@@ -47,7 +43,11 @@ export class KeyUI {
     // API //
     /////////
 
-    /** The amount of buttons to create UI for. When set, updates elems. */
+    /**
+     * The amount of buttons to create UI for. \
+     * When set, automatically creates/removes children spans. \
+     * Automatically adds "flex: 1 1 0" to created children spans to align them.
+     */
     get buttonCount() {
         return this._buttonCount;
     }
@@ -56,7 +56,10 @@ export class KeyUI {
         this.updateCount();
     }
 
-    /** The text to show above each button. When set, updates elems. */
+    /**
+     * The text to show above each button. \
+     * When set, automatically updates innerHTML of children spans.
+     */
     get hotkeys() {
         return this._hotkeys;
     }
@@ -73,7 +76,6 @@ export class KeyUI {
     get elem() {
         return this._elem;
     }
-    protected _elem: HTMLElement;
 
     //////////////////////
     // HELPER FUNCTIONS //

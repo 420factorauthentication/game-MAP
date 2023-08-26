@@ -4,6 +4,8 @@ import {ProgBarFlow} from "./types";
 
 import {Flow} from "./const.js";
 
+import {ClassWithElem} from "../lib-utils/elem.js";
+
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -15,12 +17,13 @@ import {Flow} from "./const.js";
  * Different implementations should use different CSS and HTML features to show
  * a bar graphic that changes proportionally to min, max, and current bar value.
  */
-export abstract class ProgBar {
+export abstract class ProgBar extends ClassWithElem {
     /**
      * @param elem
-     * Required. Can be a css selector or existing DOM element.
-     * A lone node or parent node with children.
-     * CSS and HTML of node(s) will change based on min, max, and current bar value.
+     * Can be a CSS selector or existing DOM element or null,
+     * in which case a new anchor element will be created. \
+     * A lone elem or parent elem with children.
+     * CSS and HTML of elem(s) will change based on min, max, and current bar value.
      * @param _value
      * Starting bar value. Can be any number.
      *  If outside min/max:
@@ -33,21 +36,14 @@ export abstract class ProgBar {
      * On set, recalcs bar graphics.
      */
     constructor(
-        elem: HTMLElement | string,
+        elem?: HTMLElement | string,
         private _value: number = 100,
         private _min: number = 0,
         private _max: number = 100,
         private _flow: ProgBarFlow = Flow.leftToRight
     ) {
-        // Lookup element by selector.
-        if (elem)
-            this._elem =
-                typeof elem === "string"
-                    ? (document.querySelector(elem) as HTMLElement)
-                    : elem;
-
-        // No element found. Error.
-        if (!this._elem) throw new Error("ClipBar elem not found!");
+        // Lookup elem by selector. If not found, create one with default settings.
+        super(elem, "a", "width: 25%; height: 10%; background: darkcyan");
     }
 
     /**
@@ -57,7 +53,6 @@ export abstract class ProgBar {
     get elem() {
         return this._elem;
     }
-    protected _elem: HTMLElement;
 
     /**
      * Current bar value, as a percent:
@@ -142,14 +137,6 @@ export abstract class ProgBar {
             case Flow.topToBtm:
                 this.calcBarGraphics();
         }
-    }
-
-    /**
-     * Begin the JS garbage collection process.
-     * After calling this, manually nullify/undefine all handles to this object instance.
-     */
-    preDestroy() {
-        this._elem?.remove();
     }
 
     /**

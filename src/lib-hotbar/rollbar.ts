@@ -15,13 +15,14 @@ import uuidv4 from "../../node_modules/uuid/dist/esm-browser/v4.js";
  * Preserves existing button settings, and merges with newly rolled settings.
  * Only removes/overwrites what was applied by previous rollOptions.
  *
- * NOTE: Existing button settings are cached when rolling is turned on with this.start().
- * While rolling, accessing this.items[i] and changing onPress, elem.style.cssText, or elem.innerHTML,
+ * NOTE: Existing button settings are cached when rolling is turned on with this.start(). \
+ * While rolling, accessing this.items[i] and changing \
+ * onPress, elem.style.cssText, or elem.innerHTML, \
  * will do nothing, as every roll will reset the items back to the initial cache.
  */
 export class Rollbar extends Hotbar {
     /**
-     * @param elem Can be a css selector or existing DOM element or null,
+     * @param elem Can be a CSS selector or existing DOM element or null,
      * in which case a new div element will be created.
      * @param rollOptions Every roll, it picks a random sample from this array.
      */
@@ -136,8 +137,8 @@ export class Rollbar extends Hotbar {
     /**
      * Uses promises to automatically start a new roll after prev roll finishes.
      * @param intervalTime Time between each new roll, in ms.
-     * @param uuid A globally unique id, used to prevent old loops from firing
-     * when a new loop is started.
+     * @param uuid A globally unique id.
+     * Used to prevent old loops from firing when a new loop is started.
      */
     private loop(intervalTime: number, uuid: string) {
         new Promise((resolve) => {
@@ -152,9 +153,6 @@ export class Rollbar extends Hotbar {
 
     /** Randomly select new settings to update existing buttons with. */
     private rollAndReplace() {
-        // If the setting is on, enable all buttons in this Hotbar
-        if (this.enableAllOnRoll) this.enableAll();
-
         // Grab a random sample from this.rollOptions
         const rolls: RollbarOption[] = sample(
             this.rollOptions,
@@ -164,12 +162,12 @@ export class Rollbar extends Hotbar {
         // For each sampled option, update an existing button
         let i = 0;
         for (i; i < rolls.length; i++) {
-            this._items[i].onPress = []
+            this._items[i].onPress = new Array<() => void>()
                 .concat(this.#initialOnPress[i], rolls[i].onPress)
                 .filter((x) => x);
 
-            this._items[i].conditions = []
-                .concat(this.#initialConditions[i], rolls[i].conditions)
+            this._items[i].conditions = new Array<() => boolean>()
+                .concat(this.#initialConditions[i], rolls[i].conditions || [])
                 .filter((x) => x);
 
             this._items[i].elem.style.cssText = [
@@ -194,6 +192,11 @@ export class Rollbar extends Hotbar {
             this._items[i].elem.style.cssText = this.#initialCssText[i];
             this._items[i].elem.innerHTML = this.#initialInnerHTML[i];
         }
+
+        // If the setting is on, enable all buttons in this Hotbar
+        // Do this after updating style,
+        // to override opacity and pointerEvents from cached button settings
+        if (this.enableAllOnRoll) this.enableAll();
     }
 
     ///////////////////

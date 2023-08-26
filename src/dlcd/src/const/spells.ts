@@ -58,7 +58,7 @@ export const Sword: Spell = {
                 },
                 {
                     backgroundColor: "white",
-                    maskImage: "url('assets/art/sprite-zombro.svg')",
+                    maskImage: `url("${target.spriteURL}")`,
                     maskRepeat: "no-repeat",
                     maskSize: "100% 100%",
                 },

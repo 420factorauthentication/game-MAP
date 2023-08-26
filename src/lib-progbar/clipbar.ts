@@ -10,7 +10,7 @@ import ProgBar from "./progbar.js";
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
- * An implementation of {@link ProgBar} \
+ * An implementation of ProgBar \
  * Uses CSS to calculate BG size:
  * - background-clip: content-box
  * - padding: 100% minus given percentage
@@ -21,11 +21,11 @@ import ProgBar from "./progbar.js";
 export class ClipBar extends ProgBar {
     /**
      * @param elem
-     * Required. Can be a css selector or existing DOM element.
-     * A lone node with no children.
-     * BG will change proportionally to min, max, and current bar value.
+     * Can be a CSS selector or existing DOM element or null,
+     * in which case a new anchor element will be created. \
+     * A lone elem. BG will change proportionally to min, max, and current bar value.
      * @param _value
-     * Starting bar value. Can be any number.
+     * Starting bar value. Can be any number. \
      *  If outside min/max:
      *  - this.percent WILL go past 0% or 100%
      *  - Bar graphics WONT go past 0% or 100%
@@ -36,13 +36,12 @@ export class ClipBar extends ProgBar {
      * On set, recalcs bar graphics.
      */
     constructor(
-        elem: HTMLElement | string,
+        elem?: HTMLElement | string,
         _value: number = 100,
         _min: number = 0,
         _max: number = 100,
         _flow: ProgBarFlow = Flow.leftToRight
     ) {
-        // Init //
         super(elem, _value, _min, _max, _flow);
         this._elem.style.boxSizing = "border-box";
         this._elem.style.backgroundClip = "content-box";

@@ -7,10 +7,10 @@
  * Contains all base stats to define one type of Base.
  * x is in viewport width units.
  */
-export interface BaseType {
-    hp: number;
-    x: number;
-}
+export type BaseType = {
+    readonly hp: number;
+    readonly x: number;
+};
 
 /**
  * Contains all base stats to define one type of Minion.

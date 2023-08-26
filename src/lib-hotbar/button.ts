@@ -2,15 +2,18 @@
 
 import type {Hotbar} from "./hotbar";
 
+import {ClassWithElem} from "../lib-utils/elem.js";
+
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
 /** A button that calls functions when clicked, or when a key is pressed. */
-export class HotbarButton {
+export class HotbarButton extends ClassWithElem {
     /**
      * @param _hotbar The parent Hotbar. Automatically adds to it's array.
-     * @param elem Can be a css selector or existing DOM element or null,
-     * in which case a new div element will be created.
+     * @param elem Can be a CSS selector or existing DOM element or null,
+     * in which case a new button element will be created. \
+     * Applies "flex: 1 1 0" to automatically size equally with siblings.
      * @param hotkey When this key is pressed, onPress functions are called.
      * Can be undefined, in which case the button can only be clicked with mouse.
      * @param onPress When hotkey is pressed, or button is clicked, these are called.
@@ -32,18 +35,11 @@ export class HotbarButton {
         public singleButtonUse: boolean = false,
         public singleBarUse: boolean = false
     ) {
-        // Lookup element by selector
-        if (elem)
-            this._elem =
-                typeof elem === "string"
-                    ? (document.querySelector(elem) as HTMLElement)
-                    : elem;
-
-        // No element found. Let's create one instead.
-        if (!this._elem) this._elem = document.createElement("button");
+        // Lookup elem by selector. If not found, create a new one.
+        super(elem, "button");
 
         // Apply "flex: 1 1 0" to automatically size equally with siblings
-        this._elem.style.flex = "1 1 0";
+        this.elem.style.flex = "1 1 0";
 
         // Add as child to given Hotbar
         this.hotbar.add(this);
@@ -75,7 +71,8 @@ export class HotbarButton {
 
     /**
      * Begin the JS garbage collection process.
-     * After calling this, manually nullify/undefine all handles to this object instance.
+     * After calling this, manually nullify/undefine
+     * all other handles to this class object instance.
      */
     preDestroy() {
         removeEventListener("keydown", this);
@@ -96,7 +93,6 @@ export class HotbarButton {
     get elem() {
         return this._elem;
     }
-    protected _elem: HTMLElement;
 
     ////////////
     // EVENTS //

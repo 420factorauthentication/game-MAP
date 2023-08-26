@@ -2,36 +2,25 @@
 
 import type {HotbarButton} from "./button";
 
+import {ClassWithElem} from "../lib-utils/elem.js";
+
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-/**
- * A row of buttons that call functions when clicked, or when a key is pressed.
- * Applies "flex: 1 1 0" to children HotbarButtons to automatically size them.
- */
-export class Hotbar {
+/** A row of buttons that call functions when clicked, or when a key is pressed. */
+export class Hotbar extends ClassWithElem {
     /**
-     * @param elem Can be a css selector or existing DOM element or null,
-     * in which case a new div element will be created. Applies "display: flex"
+     * @param elem Can be a CSS selector or existing DOM element or null,
+     * in which case a new div element will be created. \
+     * Applies "display: flex" to automatically size children equally. \
+     * Children HotbarButtons are automatically given "flex: 1 1 0" in their class.
      */
     constructor(elem?: HTMLElement | string) {
-        // Lookup element by selector
-        if (elem)
-            this._elem =
-                typeof elem === "string"
-                    ? (document.querySelector(elem) as HTMLElement)
-                    : elem;
-
-        // No element found. Create one with default settings.
-        if (!this._elem) {
-            this._elem = document.createElement("div");
-            document.body
-                .appendChild(this._elem)
-                .setAttribute("style", "width: 25%; height: 25%;");
-        }
+        // Lookup elem by selector. If not found, create one with default settings.
+        super(elem, "div", "width: 25%; height: 10%; background: gray");
 
         // Apply "display: flex" to automatically size children equally
-        this._elem.style.display = "flex";
+        this.elem.style.display = "flex";
     }
 
     /////////
@@ -93,14 +82,6 @@ export class Hotbar {
         for (const item of this._items) item.isEnabled = false;
     }
 
-    /**
-     * Begin the JS garbage collection process.
-     * After calling this, manually nullify/undefine all handles to this object instance.
-     */
-    preDestroy() {
-        this._elem?.remove();
-    }
-
     ////////////////
     // COMPONENTS //
     ////////////////
@@ -115,7 +96,6 @@ export class Hotbar {
     get elem() {
         return this._elem;
     }
-    protected _elem: HTMLElement;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
