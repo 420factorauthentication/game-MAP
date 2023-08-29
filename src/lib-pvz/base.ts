@@ -26,8 +26,8 @@ export class Base extends ClassWithElem {
         super(hpBarElem, "a", "width: 25%; height: 10%; background: red");
 
         // Init HP bar
-        this._hp = startingHP;
-        this.hpBar = new ClipBar(this._elem, this.hp, 0, this.hp);
+        this.#hp = startingHP;
+        this.#hpBar = new ClipBar(this._elem, this.hp, 0, this.hp);
     }
 
     /////////
@@ -35,13 +35,13 @@ export class Base extends ClassWithElem {
     /////////
 
     /** Current player HP. If less than or equal to 0, triggers a game over. */
-    get hp() {return this._hp}
+    get hp() {return this.#hp}
     set hp(v) {
-        this._hp = v;
-        this.hpBar.value = this._hp;
-        if (this._hp <= 0) this.die();
+        this.#hp = v;
+        this.#hpBar.value = this.#hp;
+        if (this.#hp <= 0) this.die();
     }
-    protected _hp: number;
+    #hp: number;
 
     /** Trigger a game over. */
     die() {
@@ -54,7 +54,7 @@ export class Base extends ClassWithElem {
 
     /** An element that visually shows current HP with it's background */
     get hpBarElem() {return this._elem}
-    protected hpBar: ClipBar;
+    #hpBar: ClipBar;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

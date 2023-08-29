@@ -24,8 +24,8 @@ export class KeyUI extends ClassWithElem {
      */
     constructor(
         elem?: HTMLElement | string,
-        protected _buttonCount: number = 0,
-        protected _hotkeys: string[] = []
+        private _buttonCount: number = 0,
+        private _hotkeys: string[] = []
     ) {
         // Lookup elem by selector. If not found, create one with default settings.
         super(elem, "div", "width: 25%; height: 10%");
@@ -35,8 +35,8 @@ export class KeyUI extends ClassWithElem {
 
         // Init UI
         this._elem.style.pointerEvents = "none";
-        this.updateCount();
-        this.updateText();
+        this.#updateCount();
+        this.#updateText();
     }
 
     /////////
@@ -53,7 +53,7 @@ export class KeyUI extends ClassWithElem {
     }
     set buttonCount(v) {
         this._buttonCount = v;
-        this.updateCount();
+        this.#updateCount();
     }
 
     /**
@@ -65,7 +65,7 @@ export class KeyUI extends ClassWithElem {
     }
     set hotkeys(v) {
         this._hotkeys = v;
-        this.updateText();
+        this.#updateText();
     }
 
     ////////////////
@@ -81,7 +81,7 @@ export class KeyUI extends ClassWithElem {
     // HELPER FUNCTIONS //
     //////////////////////
 
-    protected newChild() {
+    #newChild() {
         const child = this._elem.appendChild(document.createElement("span"));
         child.style.flex = "1 1 0";
         child.style.textAlign = "end";
@@ -91,14 +91,14 @@ export class KeyUI extends ClassWithElem {
         return child;
     }
 
-    protected updateCount() {
+    #updateCount() {
         for (let i = this._elem.childElementCount; i < this._buttonCount; i++)
-            this.newChild();
+            this.#newChild();
         for (let i = this.elem.childElementCount; i > this._buttonCount; i--)
             this.elem.lastChild?.remove();
     }
 
-    protected updateText() {
+    #updateText() {
         let i = 0;
         for (const elem of this._elem.children) {
             let child = elem as HTMLElement;

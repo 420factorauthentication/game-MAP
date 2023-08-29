@@ -20,7 +20,7 @@ import uuidv4 from "../../node_modules/uuid/dist/esm-browser/v4.js";
  * Spawns on the right and moves left until it reaches a target Base,
  * then automatically attacks it.
  *
- * Each Minion has it's own current stats that can change in real time. \
+ * Each Minion has it's own current #stats that can change in real time. \
  * Stats start out as the base number from MinionType. \
  * modStat() adjusts a stat for a set time. \
  * changeStat() adjusts a stat permanently.
@@ -30,7 +30,7 @@ import uuidv4 from "../../node_modules/uuid/dist/esm-browser/v4.js";
 export class Minion extends ClassWithElem {
     /**
      * @param manager Contains records of all existing minions for cleanup.
-     * @param type Is used to define starting stats.
+     * @param type Is used to define starting #stats.
      * @param target Is used to control Attack AI.
      * @param _x Is in viewport width units (vw).
      * @param _y Is in viewport height units (vh).
@@ -55,14 +55,14 @@ export class Minion extends ClassWithElem {
         this.uuid = uuidv4();
 
         // Init components
-        this.stats = new Stats(type);
-        this.moveState = this._moveStateUpdate;
-        this.attackState = this._attackStateUpdate;
-        this.ai = new StateMachine(this.moveState);
-        this.hpBar = new ClipBar(
+        this.#stats = new Stats(type);
+        this.#moveState = this._moveStateUpdate;
+        this.#attackState = this._attackStateUpdate;
+        this.#ai = new StateMachine(this.#moveState);
+        this.#hpBar = new ClipBar(
             this.hpBarElemInit,
-            this.stats.current("hp"),
-            0, this.stats.base["hp"]
+            this.#stats.current("hp"),
+            0, this.#stats.base["hp"]
         );
         
         // Init position
@@ -106,10 +106,10 @@ export class Minion extends ClassWithElem {
      */
     preDestroy() {
         // Stop all AI behaviors
-        this.ai.set(undefined);
+        this.#ai.set(undefined);
 
         // Destroy DOM Elements
-        this.hpBar.preDestroy();
+        this.#hpBar.preDestroy();
         this._elem?.remove();
 
         // Tell the MinionSpawner to delete it's handle to this Minion object instance.
@@ -123,22 +123,22 @@ export class Minion extends ClassWithElem {
     set x (v) {this._x = v; this._setElemX(v);}
     set y (v) {this._y = v; this._setElemY(v);}
 
-    get hp()     {return this.stats.current("hp");}
-    get movSpd() {return this.stats.current("movSpd");}
-    get atkSpd() {return this.stats.current("atkSpd");}
-    get atkDmg() {return this.stats.current("atkDmg");}
+    get hp()     {return this.#stats.current("hp");}
+    get movSpd() {return this.#stats.current("movSpd");}
+    get atkSpd() {return this.#stats.current("atkSpd");}
+    get atkDmg() {return this.#stats.current("atkDmg");}
 
     /** Adjust a stat for a set time, in ms. */
     mod(stat: MinionStat, amount: number, time: number) {
         if (time <= 0) return;
-        this.stats.addMod(stat, amount, time)[1].then(() => {
+        this.#stats.addMod(stat, amount, time)[1].then(() => {
             this._onStatAdjust(stat);
         }); this._onStatAdjust(stat);
     }
 
     /** Adjust a stat permanently. */
     change(stat: MinionStat, amount: number) {
-        this.stats.change(stat, amount);
+        this.#stats.change(stat, amount);
         this._onStatAdjust(stat);
     }
 
@@ -147,12 +147,12 @@ export class Minion extends ClassWithElem {
     ////////////////
     get elem() {return this._elem;}
 
-    protected stats: Stats;
-    protected moveState: State;
-    protected attackState: State;
-    protected ai: StateMachine;
-    protected hpBar: ClipBar;
-    // protected anim: Spriteling; // TODO: 2D sprite animation with Spriteling
+    #stats: Stats;
+    #moveState: State;
+    #attackState: State;
+    #ai: StateMachine;
+    #hpBar: ClipBar;
+    // #anim: Spriteling; // TODO: 2D sprite animation with Spriteling
 
     //////////
     // INIT //
@@ -194,23 +194,23 @@ export class Minion extends ClassWithElem {
 
             // update HP Bar and check if Minion is dead
             case "hp":
-                this.hpBar.value = this.stats.current("hp");
+                this.#hpBar.value = this.#stats.current("hp");
                 if (this.hp <= 0) this.die();
                 break;
 
-            // attackState is used in moveState, so update both if attackState changes
+            // #attackState is used in #moveState, so update both if #attackState changes
             case "atkSpd":
             case "atkDmg":
-                this.attackState = this._attackStateUpdate;
+                this.#attackState = this._attackStateUpdate;
             case "movSpd":
-                this.moveState = this._moveStateUpdate;
+                this.#moveState = this._moveStateUpdate;
 
                 // if smac currently set to a state, refresh it with updated state
-                switch (this.ai.state?.uuid) {
+                switch (this.#ai.state?.uuid) {
                     case "minionMove":
-                        this.ai.set(this.moveState);
+                        this.#ai.set(this.#moveState);
                     case "minionAttack":
-                        this.ai.set(this.attackState);
+                        this.#ai.set(this.#attackState);
                 }
         }
     }
@@ -219,9 +219,9 @@ export class Minion extends ClassWithElem {
     private get _moveStateUpdate(): State {
         return {
             uuid: "minionMove",
-            loopInterval: 1000 / this.stats.current("movSpd"),
+            loopInterval: 1000 / this.#stats.current("movSpd"),
             onLoop: () => {
-                if (--this.x <= this.target.x) this.ai.set(this.attackState);
+                if (--this.x <= this.target.x) this.#ai.set(this.#attackState);
             },
         };
     }
@@ -230,9 +230,9 @@ export class Minion extends ClassWithElem {
     private get _attackStateUpdate(): State {
         return {
             uuid: "minionAttack",
-            loopInterval: 1000 / this.stats.current("atkSpd"),
+            loopInterval: 1000 / this.#stats.current("atkSpd"),
             onLoop: () => {
-                this.target.hp -= this.stats.current("atkDmg");
+                this.target.hp -= this.#stats.current("atkDmg");
             },
         };
     }

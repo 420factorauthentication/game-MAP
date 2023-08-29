@@ -6,27 +6,27 @@
 /** Manages player resources. */
 export class ResourceManager {
     constructor(
-        protected _robuxCounter: HTMLSpanElement,
-        protected _cringesCounter: HTMLSpanElement
+        private _robuxCounter: HTMLSpanElement,
+        private _cringesCounter: HTMLSpanElement
     ) {}
 
     /** Robux = Gold */
     get robux() {
-        return this._robux;
+        return this.#robux;
     }
     set robux(v) {
-        this._robux = v;
+        this.#robux = v;
         this._robuxCounter.innerText = v.toString();
     }
-    protected _robux: number = 0;
+    #robux: number = 0;
 
     /** Cringe Memories = Tech */
     get cringes() {
-        return this._cringes;
+        return this.#cringes;
     }
     set cringes(v) {
-        this._cringes = v;
+        this.#cringes = v;
         this._cringesCounter.innerText = v.toString();
     }
-    protected _cringes: number = 0;
+    #cringes: number = 0;
 }

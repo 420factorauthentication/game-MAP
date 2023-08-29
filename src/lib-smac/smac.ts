@@ -18,9 +18,9 @@ export class StateMachine {
 
     /** The current State this StateMachine is set to. */
     get state() {
-        return this._state;
+        return this.#state;
     }
-    protected _state: State | undefined;
+    #state: State | undefined;
 
     /**
      * Set to a new State.
@@ -49,7 +49,7 @@ export class StateMachine {
             );
 
         // Assign new State to StateMachine
-        this._state = newState;
+        this.#state = newState;
 
         // If not transition, return insta-resolving Promise
         if (!isTransition(newState)) return new Promise<boolean>(() => true);

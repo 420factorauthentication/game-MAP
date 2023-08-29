@@ -52,7 +52,7 @@ export class Rollbar extends Hotbar {
      * @param intervalTime Time between each new roll, in ms.
      */
     start(intervalTime: number) {
-        this._isOn = true;
+        this.#isOn = true;
 
         // Cache initial button settings
         for (let i = 0; i < this._items.length; i++) {
@@ -70,7 +70,7 @@ export class Rollbar extends Hotbar {
 
     /** Turn it off. It will stop rolling new button settings periodically. */
     stop() {
-        this._isOn = false;
+        this.#isOn = false;
         // Reset cache //
         this.#initialOnPress = [];
         this.#initialConditions = [];
@@ -80,9 +80,9 @@ export class Rollbar extends Hotbar {
 
     /** Check if this is currently on. */
     get isOn() {
-        return this._isOn;
+        return this.#isOn;
     }
-    protected _isOn: boolean = false;
+    #isOn: boolean = false;
 
     /////////////////////////////
     // PARENT CLASS EXTENSIONS //
@@ -92,7 +92,7 @@ export class Rollbar extends Hotbar {
     add(item: HotbarButton) {
         if (super.add(item) === undefined) return;
         // Update cache if on //
-        if (!this._isOn) return item;
+        if (!this.#isOn) return item;
         this.#initialOnPress.push(item.onPress);
         this.#initialConditions.push(item.conditions);
         this.#initialCssText.push(item.elem.style.cssText);
@@ -110,7 +110,7 @@ export class Rollbar extends Hotbar {
     remove(v: number | HotbarButton): boolean {
         if (super.remove(v) === false) return false;
         // Update cache if on //
-        if (!this._isOn) return true;
+        if (!this.#isOn) return true;
         let index = typeof v === "number" ? v : this._items.indexOf(v);
         this.#initialOnPress.splice(index, 1);
         this.#initialConditions.splice(index, 1);

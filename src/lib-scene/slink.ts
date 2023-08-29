@@ -17,9 +17,9 @@ export class SceneLink {
 
     /** Is this Scene currently loaded? */
     get isLoaded() {
-        return this._isLoaded;
+        return this.#isLoaded;
     }
-    protected _isLoaded: boolean = false;
+    #isLoaded: boolean = false;
 
     /**
      * Checks if this.cssFile exists with an XMLHttpRequest.
@@ -30,7 +30,7 @@ export class SceneLink {
      * of the XMLHttpRequest when it's readyState is 4 (DONE).
      */
     async load(): Promise<number | void> {
-        if (this._isLoaded) return;
+        if (this.#isLoaded) return;
 
         return new Promise<XMLHttpRequest>((resolve) => {
             let xhr = new XMLHttpRequest();
@@ -39,17 +39,17 @@ export class SceneLink {
             xhr.open("HEAD", this.cssFile);
             xhr.send();
         }).then<number | void>((result) => {
-            if (this._isLoaded) return;
-            this._isLoaded = true;
+            if (this.#isLoaded) return;
+            this.#isLoaded = true;
 
             // Failure: Return status code
             if (result.status != 200) return result.status;
 
             // Create a new link elem and apply the stylesheet href
-            this._linkElem = document.createElement("link");
-            document.head.append(this._linkElem);
-            this._linkElem.setAttribute("rel", "stylesheet");
-            this._linkElem.setAttribute("href", this.cssFile);
+            this.#linkElem = document.createElement("link");
+            document.head.append(this.#linkElem);
+            this.#linkElem.setAttribute("rel", "stylesheet");
+            this.#linkElem.setAttribute("href", this.cssFile);
 
             // Success: Return status code
             return result.status;
@@ -58,10 +58,10 @@ export class SceneLink {
 
     /** Destroy this.linkElem. */
     unload() {
-        if (!this._isLoaded) return;
-        this._isLoaded = false;
-        this._linkElem?.remove();
-        this._linkElem = null;
+        if (!this.#isLoaded) return;
+        this.#isLoaded = false;
+        this.#linkElem?.remove();
+        this.#linkElem = null;
     }
 
     ////////////////
@@ -76,9 +76,9 @@ export class SceneLink {
      * Returns null if this element was destroyed during an unload.
      */
     get linkElem() {
-        return this._linkElem;
+        return this.#linkElem;
     }
-    protected _linkElem: HTMLElement | undefined | null;
+    #linkElem: HTMLElement | undefined | null;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

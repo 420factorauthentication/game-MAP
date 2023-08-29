@@ -55,10 +55,10 @@ export class HotbarButton extends ClassWithElem {
 
     /** If false, this button is hidden and stops doing anything on click/press. */
     get isEnabled() {
-        return this._isEnabled;
+        return this.#isEnabled;
     }
     set isEnabled(v) {
-        this._isEnabled = v;
+        this.#isEnabled = v;
         if (v) {
             this._elem.style.opacity = "1";
             this._elem.style.pointerEvents = "auto";
@@ -67,7 +67,7 @@ export class HotbarButton extends ClassWithElem {
             this._elem.style.pointerEvents = "none";
         }
     }
-    protected _isEnabled: boolean = true;
+    #isEnabled: boolean = true;
 
     /**
      * Begin the JS garbage collection process.
