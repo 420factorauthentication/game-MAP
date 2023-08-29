@@ -28,25 +28,33 @@ export class MinionSpawner {
         public maxY: number = 50
     ) {}
 
-    /** Get an array of all existing Minions tracked by this MinionSpawner. */
+    /**
+     * Get a readonly array of all Minions currently tracked by this MinionSpawner.
+     * Returns a new object that doesn't update
+     * if the original MinionSpawner object asynchronously changes.
+     */
     get minions(): readonly Minion[] {
-        return this.#minions;
+        return Object.freeze(Object.assign({}, this.#minions));
     }
     #minions: Minion[] = [];
 
-    /** Get minions array, sorted from lowest x to highest x. */
+    /**
+     * Get readonly minions array, sorted from lowest x to highest x.
+     * Returns a new object that doesn't update
+     * if the original MinionSpawner object asynchronously changes.
+     */
     get minionsSortX(): readonly Minion[] {
-        const minionsCopy = [...this.minions];
+        const minionsCopy: Minion[] = Object.assign([], [...this.#minions]);
         minionsCopy.sort((a, b) => {
             if (a.x < b.x) return -1;
             if (a.x > b.x) return 1;
             return 0;
         });
-        return minionsCopy;
+        return Object.freeze(minionsCopy);
     }
 
     /** Get info about what this MinionSpawner is currently spawning. */
-    get currentLevel(): Readonly<SpawnLevel> | undefined {
+    get currentLevel(): SpawnLevel | undefined {
         return this.#currentLevel;
     }
     #currentLevel: SpawnLevel | undefined;
@@ -130,7 +138,7 @@ export class MinionSpawner {
      * Also begin JS garbage cleanup.
      */
     killAll() {
-        while (this.minions.length > 0) this.minions[0].die();
+        while (this.#minions.length > 0) this.#minions[0].die();
     }
 
     /**
@@ -139,13 +147,13 @@ export class MinionSpawner {
      * Also begin JS garbage cleanup.
      */
     destroyAll() {
-        while (this.minions.length > 0) this.minions[0].preDestroy();
+        while (this.#minions.length > 0) this.#minions[0].preDestroy();
     }
 
     /** Add an existing Minion to this MinionSpawner's array of Minions. */
     trackMinion(minion: Minion) {
         // If this MinionSpawner already has a Minion with a matching uuid, return
-        if (this.minions.some((e) => e.uuid === minion.uuid)) return;
+        if (this.#minions.some((e) => e.uuid === minion.uuid)) return;
 
         // Add the existing Minion to the array
         this.#minions.push(minion);
@@ -154,7 +162,7 @@ export class MinionSpawner {
     /** Remove an existing Minion from this MinionSpawner's array of Minions. */
     stopTrackingMinion(minion: Minion) {
         // If this MinionSpawner doesnt have a Minion with a matching uuid, return
-        if (!this.minions.some((e) => e.uuid === minion.uuid)) return;
+        if (!this.#minions.some((e) => e.uuid === minion.uuid)) return;
 
         // Remove the existing Minion from the array
         this.#minions.splice(this.#minions.indexOf(minion), 1);

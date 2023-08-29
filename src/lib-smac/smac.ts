@@ -16,9 +16,9 @@ export class StateMachine {
         this.set(state);
     }
 
-    /** Look at current State. */
-    get state(): Readonly<State> {
-        return Object.freeze(Object.assign({}, this._state));
+    /** The current State this StateMachine is set to. */
+    get state() {
+        return this._state;
     }
     protected _state: State | undefined;
 

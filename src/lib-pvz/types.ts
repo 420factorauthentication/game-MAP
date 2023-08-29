@@ -45,10 +45,7 @@ export type SpawnGroup = {
     readonly timeStep: number;
 };
 
-/**
- * Used to track what a MinionManager is currently spawning,
- * and to stop a spawning in progress.
- */
+/** A SpawnGroup that is currently being spawned by a MinionSpawner. */
 export type SpawnLevel = SpawnGroup & {
     /** A globally unique id, different from all existing SpawnLevels. */
     readonly uuid: string;

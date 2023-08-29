@@ -67,7 +67,11 @@ export class Stats {
         for (const key in this.#changes) this.#changes[key] = undefined;
     }
 
-    /** Get a readonly list of all Changes. */
+    /**
+     * Get a readonly key-value object of all currently active Changes.
+     * Returns a new object that doesn't update
+     * if the original Stats object asynchronously changes.
+     */
     get changes(): Readonly<{}> {
         return Object.freeze(Object.assign({}, this.#changes));
     }
@@ -147,7 +151,11 @@ export class Stats {
         for (const key in this.#mods) this.removeMod(this.mods[key].uuid);
     }
 
-    /** Get a readonly list of all StatMods. */
+    /**
+     * Get a readonly array of all currently active StatMods.
+     * Returns a new object that doesn't update
+     * if the original Stats object asynchronously changes.
+     */
     get mods(): readonly StatMod[] {
         return Object.freeze(Object.assign({}, this.#mods));
     }
