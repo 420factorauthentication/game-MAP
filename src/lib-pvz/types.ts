@@ -1,10 +1,12 @@
 /** @format */
 
+import {MinionStats} from "./const.js";
+
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
- * Contains all base stats to define one type of Base.
+ * A template for upgrade levels for Bases.
  * x is in viewport width units.
  */
 export type BaseType = {
@@ -12,18 +14,18 @@ export type BaseType = {
     readonly x: number;
 };
 
+/** An enum describing all Minion gameplay stats with getters. */
+export type MinionStat = (typeof MinionStats)[keyof typeof MinionStats];
+
 /**
- * Contains all base stats to define one type of Minion.
+ * A template for creating new Minions.
+ * Initializes base stats and other settings.
  *
  * movSpd is in viewport width units per second (vw/s).
  * atkSpd is in attacks per second (Hz).
  * atkDmg is how much hp is subtracted per attack.
  */
-export type MinionType = {
-    readonly hp: number;
-    readonly movSpd: number;
-    readonly atkSpd: number;
-    readonly atkDmg: number;
+export type MinionType = {[key in keyof typeof MinionStats]: number} & {
     readonly spriteURL: string;
 };
 

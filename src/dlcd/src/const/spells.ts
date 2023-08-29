@@ -66,7 +66,7 @@ export const Sword: Spell = {
             );
 
             // Damage
-            target.changeHp(-1);
+            target.change("hp", -1);
         };
     },
     styleCssText: "background-color: rgba(169, 69, 42, 169);",

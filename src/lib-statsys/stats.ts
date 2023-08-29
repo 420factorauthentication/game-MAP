@@ -38,7 +38,7 @@ export class Stats {
 
     /**
      * Adjust a number permanently, without tracking it through a StatMod.
-     * Useful when you want to permanently change numbers with no extra overhead.
+     * Useful when you want to permanently change numbers with less overhead.
      *
      * @param key The key of the Base property being adjusted.
      * The Base property is not mutated; this adjustment is tracked separately.
@@ -61,17 +61,13 @@ export class Stats {
         if (this.#changes[key] == 0) this.#changes[key] = undefined;
     }
 
-    /**
-     * Remove all Changes and revert their number adjustments.
-     */
+    /** Remove all Changes and revert their number adjustments. */
     removeAllChanges() {
         for (const key in this.#changes) this.#diffs[key] -= this.#changes[key];
         for (const key in this.#changes) this.#changes[key] = undefined;
     }
 
-    /**
-     * Get a readonly list of all Changes.
-     */
+    /** Get a readonly list of all Changes. */
     get changes(): Readonly<{}> {
         return Object.freeze(Object.assign({}, this.#changes));
     }
@@ -146,16 +142,12 @@ export class Stats {
         return true;
     }
 
-    /**
-     * Remove all StatMods prematurely and revert their number adjustments.
-     */
+    /** Remove all StatMods prematurely and revert their number adjustments. */
     removeAllMods() {
         for (const key in this.#mods) this.removeMod(this.mods[key].uuid);
     }
 
-    /**
-     * Get a readonly list of all StatMods.
-     */
+    /** Get a readonly list of all StatMods. */
     get mods(): readonly StatMod[] {
         return Object.freeze(Object.assign({}, this.#mods));
     }
@@ -176,9 +168,11 @@ export class Stats {
         return this.#mods.find((mod) => mod.uuid === uuid);
     }
 
-    /**
-     * A private cache of Changes + StatMods to calculate current numbers faster.
-     */
+    ///////////////////
+    // PRIVATE CACHE //
+    ///////////////////
+
+    /** A private cache of Changes + StatMods to calculate current numbers faster. */
     #diffs = {};
 }
 
