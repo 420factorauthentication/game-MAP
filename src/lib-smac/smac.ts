@@ -9,9 +9,7 @@ import {isTransition} from "./const.js";
 
 /** A state machine model for asynchronous function execution. */
 export class StateMachine {
-    /**
-     * @param state Initial State. Can be undefined.
-     */
+    /** @param state Initial State. Can be undefined. */
     constructor(state?: State) {
         this.set(state);
     }
@@ -23,8 +21,7 @@ export class StateMachine {
     #state: State | undefined;
 
     /**
-     * Set to a new State.
-     *
+     * Set to a new State. \
      * Returns a Promise that resolves to:
      * - ANOTHER PROMISE if destination is another transition
      * - TRUE if transitionTime finishes naturally, or the state is not a transition
@@ -36,7 +33,7 @@ export class StateMachine {
      */
     async set(newState: State | undefined, ...args): Promise<boolean> {
         // Run onExit and onEnter
-        if (this.state?.onExit) this.state.onExit(...args);
+        if (this.#state?.onExit) this.#state.onExit(...args);
         if (newState?.onEnter) newState.onEnter(...args);
 
         // Cleanup old onLoop and setup new onLoop
@@ -58,7 +55,7 @@ export class StateMachine {
         return new Promise<boolean>((resolve) => {
             setTimeout(resolve, newState.transitionTime);
         }).then(() => {
-            if (this.state?.uuid != newState.uuid) return false;
+            if (this.#state?.uuid != newState.uuid) return false;
             return this.set(newState.destination, ...args);
         });
     }
@@ -66,12 +63,11 @@ export class StateMachine {
     /**
      * If current State is a transition, stops it.
      * Sets StateMachine to the transition's origin State, even if undefined.
-     *
      * @param args Will be passed to State funcs (onExit, onEnter, onLoop).
      */
     stopTransition(...args) {
-        if (!isTransition(this.state)) return;
-        return this.set(this.state.origin, ...args);
+        if (!isTransition(this.#state)) return;
+        return this.set(this.#state.origin, ...args);
     }
 
     /** Used for onLoop garbage collection. */

@@ -29,9 +29,8 @@ export class MinionSpawner {
     ) {}
 
     /**
-     * Get a readonly array of all Minions currently tracked by this MinionSpawner.
-     * Returns a new object that doesn't update
-     * if the original MinionSpawner object asynchronously changes.
+     * Get an array of all Minions currently tracked by this MinionSpawner.
+     * Returns a frozen non-live copy.
      */
     get minions(): readonly Minion[] {
         return Object.freeze(Object.assign({}, this.#minions));
@@ -39,9 +38,8 @@ export class MinionSpawner {
     #minions: Minion[] = [];
 
     /**
-     * Get readonly minions array, sorted from lowest x to highest x.
-     * Returns a new object that doesn't update
-     * if the original MinionSpawner object asynchronously changes.
+     * Get an array of all Minions, sorted from lowest x to highest x.
+     * Returns a frozen non-live copy.
      */
     get minionsSortX(): readonly Minion[] {
         const minionsCopy: Minion[] = Object.assign([], [...this.#minions]);

@@ -13,33 +13,23 @@ export class Stats {
      * @param base Can be any object.
      * All of it's accessible properties serve as starting numbers.
      */
-    constructor(public base: object) {
-        Object.preventExtensions(this);
-    }
+    constructor(public base: object) {}
 
     /**
      * Get the current number of a Base property: Base Number + StatMods + Changes.
      * If Base property isn't a number, returns the Base property.
-     *
      * @param key The key of the Base property.
      */
     current(key: string): number | any {
         if (typeof this.base[key] !== "number") return this.base[key];
-
-        // Start with base number
-        let value = this.base[key];
-
-        // Add Changes and StatMods
-        if (this.#diffs[key]) value += this.#diffs[key];
-
-        // Return total
-        return value;
+        return this.#diffs[key]
+            ? this.base[key] + this.#diffs[key]
+            : this.base[key];
     }
 
     /**
      * Adjust a number permanently, without tracking it through a StatMod.
      * Useful when you want to permanently change numbers with less overhead.
-     *
      * @param key The key of the Base property being adjusted.
      * The Base property is not mutated; this adjustment is tracked separately.
      * @param amount The number adjustment.
@@ -52,7 +42,7 @@ export class Stats {
         if (!this.#diffs[key]) this.#diffs[key] = 0;
         if (!this.#changes[key]) this.#changes[key] = 0;
 
-        // Write down number adjustment
+        // Adjust number
         this.#diffs[key] += amount;
         this.#changes[key] += amount;
 
@@ -68,9 +58,8 @@ export class Stats {
     }
 
     /**
-     * Get a readonly key-value object of all currently active Changes.
-     * Returns a new object that doesn't update
-     * if the original Stats object asynchronously changes.
+     * Get a key-value object of all currently active Changes.
+     * Returns a frozen non-live copy.
      */
     get changes(): Readonly<{}> {
         return Object.freeze(Object.assign({}, this.#changes));
@@ -78,11 +67,10 @@ export class Stats {
     #changes = {};
 
     /**
-     * Add a timed (or sometimes permanent) effect that adjusts a number.
+     * Add a timed (or sometimes permanent) effect that adjusts a number. \
+     * Returns Tuple [Uuid, Promise].
      *
-     * Returns Tuple [Uuid, Promise]. \
-     * After StatMod Time, Promise resolves to:
-     *
+     * After StatMod Time, Promise resolves to: \
      * TRUE if StatMod ended naturally or StatMod Time is 0 (permanent). \
      * FALSE if StatMod was manually removed before the full StatMod Time elapsed.
      *
@@ -151,11 +139,7 @@ export class Stats {
         for (const key in this.#mods) this.removeMod(this.mods[key].uuid);
     }
 
-    /**
-     * Get a readonly array of all currently active StatMods.
-     * Returns a new object that doesn't update
-     * if the original Stats object asynchronously changes.
-     */
+    /** Get an array of all currently active StatMods. Returns a frozen non-live copy. */
     get mods(): readonly StatMod[] {
         return Object.freeze(Object.assign({}, this.#mods));
     }
@@ -167,11 +151,9 @@ export class Stats {
     containsMod(uuid: string) {
         return this.#mods.some((mod) => mod.uuid === uuid);
     }
-
     getModIndex(uuid: string) {
         return this.#mods.findIndex((mod) => mod.uuid === uuid);
     }
-
     getMod(uuid: string) {
         return this.#mods.find((mod) => mod.uuid === uuid);
     }

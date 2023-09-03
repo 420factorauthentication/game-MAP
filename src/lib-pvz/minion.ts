@@ -87,8 +87,8 @@ export class Minion extends ClassWithElem {
     readonly uuid: string;
 
     /** Path to image. Used for minion background-image and for mask-image of fx. */
-    get spriteURL() {return this._spriteURL;}
-    set spriteURL(v) {this._spriteURL = v; this._setBG(v);}
+    get spriteURL() {return this._spriteURL}
+    set spriteURL(v) {this._spriteURL = v; this._setBG(v)}
 
     /**
      * TODO: Handle all game systems related to this minion's death here.
@@ -117,16 +117,16 @@ export class Minion extends ClassWithElem {
     }
 
     // Stats //
-    get x() {return this._x;}
-    get y() {return this._y;}
+    get x() {return this._x}
+    get y() {return this._y}
 
-    set x (v) {this._x = v; this._setElemX(v);}
-    set y (v) {this._y = v; this._setElemY(v);}
+    set x (v) {this._x = v; this._setElemX(v)}
+    set y (v) {this._y = v; this._setElemY(v)}
 
-    get hp()     {return this.#stats.current("hp");}
-    get movSpd() {return this.#stats.current("movSpd");}
-    get atkSpd() {return this.#stats.current("atkSpd");}
-    get atkDmg() {return this.#stats.current("atkDmg");}
+    get hp()     {return this.#stats.current("hp")}
+    get movSpd() {return this.#stats.current("movSpd")}
+    get atkSpd() {return this.#stats.current("atkSpd")}
+    get atkDmg() {return this.#stats.current("atkDmg")}
 
     /** Adjust a stat for a set time, in ms. */
     mod(stat: MinionStat, amount: number, time: number) {
@@ -145,14 +145,14 @@ export class Minion extends ClassWithElem {
     ////////////////
     // COMPONENTS //
     ////////////////
-    get elem() {return this._elem;}
+    get elem() {return this._elem}
 
     #stats: Stats;
     #moveState: State;
     #attackState: State;
     #ai: StateMachine;
     #hpBar: ClipBar;
-    // #anim: Spriteling; // TODO: 2D sprite animation with Spriteling
+    // #anim: Spriteling; // TODO: 2D sprite animation with Spriteling //
 
     //////////
     // INIT //
@@ -174,19 +174,11 @@ export class Minion extends ClassWithElem {
     //////////////////////
 
     /** Set elem left position, in viewport width (vw) units. */
-    private _setElemX(left: number) {
-        this._elem.style.left = "" + left + "vw";
-    }
-
+    private _setElemX(left: number) {this._elem.style.left = "" + left + "vw"}
     /** Set elem top position, in viewport height (vh) units. */
-    private _setElemY(top: number) {
-        this._elem.style.top = "" + top + "vh";
-    }
-
+    private _setElemY(top: number) {this._elem.style.top = "" + top + "vh"}
     /** Set elem background-image to url. */
-    private _setBG(path: string) {
-        this._elem.style.backgroundImage = "url('" + path + "')";
-    }
+    private _setBG(path: string) {this._elem.style.backgroundImage = `url("${path}")`}
 
     /** Update gameplay systems after adjusting Stats component. */
     private _onStatAdjust(stat: MinionStat) {
@@ -209,8 +201,10 @@ export class Minion extends ClassWithElem {
                 switch (this.#ai.state?.uuid) {
                     case "minionMove":
                         this.#ai.set(this.#moveState);
+                        break;
                     case "minionAttack":
                         this.#ai.set(this.#attackState);
+                        break;
                 }
         }
     }

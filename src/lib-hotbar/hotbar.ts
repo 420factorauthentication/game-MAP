@@ -88,8 +88,7 @@ export class Hotbar extends ClassWithElem {
 
     /**
      * Get an array of all HotbarButtons currently in this Hotbar.
-     * Returns a new object that doesn't update
-     * if the original Hotbar object asynchronously changes.
+     * Returns a frozen non-live copy.
      */
     get items(): readonly HotbarButton[] {
         return Object.freeze(Object.assign({}, this._items));

@@ -127,7 +127,8 @@ export abstract class ProgBar extends ClassWithElem {
     /**
      * Set elem height (CSS Style Text).
      * Set it this way instead of setting this.elem.style.height directly,
-     * because this way should also recalc bar graphics on set. */
+     * because this way should also recalc bar graphics on set.
+     */
     set height(cssStyleText: string) {
         this._elem.style.height = cssStyleText;
         switch (this.flow) {
