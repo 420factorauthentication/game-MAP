@@ -1,7 +1,7 @@
 import type {Base} from "./base"
 import type {MinionSpawner} from "./spawner";
 import {MinionType} from "./types";
-import {State} from "../lib-smac/types";
+import {State, Transition} from "../lib-smac/types";
 import {MinionStat} from "./types";
 
 import StateMachine from "../lib-smac/smac.js";
@@ -116,6 +116,34 @@ export class Minion extends ClassWithElem {
         this.manager.stopTrackingMinion(this);
     }
 
+    /**
+     * Set this to pause/unpause the minion. \
+     * While paused, a minion will stop moving/attacking. \
+     * Pausing doesn't reset onLoop timer of moveState/attackState.
+     */
+    get isPaused() {return this.#isPaused}
+    set isPaused(v) {
+        if (v) {
+            if (this.#isPaused) return;
+            this.#ai.set({uuid: "minionPause"});
+            this.#msLastPause = Date.now();
+            this.#aiBeforePause = this.#ai.state;
+        } else {
+            if (!this.#isPaused) return;
+            if (!this.#aiBeforePause) return;
+            if (!this.#aiBeforePause.loopInterval) return;
+            this.#ai.set({
+                uuid: "minionUnpauseTransition",
+                onExit: this.#aiBeforePause.onLoop,
+                destination: this.#aiBeforePause,
+                transitionTime: this.#aiBeforePause.loopInterval
+                    - (this.#msLastPause - this.#msLastAiLoop)
+            } as Transition);
+        }
+        this.#isPaused = v;
+    }
+    #isPaused: boolean = false;
+
     // Stats //
     get x() {return this._x}
     get y() {return this._y}
@@ -215,6 +243,7 @@ export class Minion extends ClassWithElem {
             uuid: "minionMove",
             loopInterval: 1000 / this.#stats.current("movSpd"),
             onLoop: () => {
+                this.#msLastAiLoop = Date.now();
                 if (--this.x <= this.target.x) this.#ai.set(this.#attackState);
             },
         };
@@ -226,10 +255,19 @@ export class Minion extends ClassWithElem {
             uuid: "minionAttack",
             loopInterval: 1000 / this.#stats.current("atkSpd"),
             onLoop: () => {
+                this.#msLastAiLoop = Date.now();
                 this.target.hp -= this.#stats.current("atkDmg");
             },
         };
     }
+
+    ///////////////////
+    // PRIVATE CACHE //
+    ///////////////////
+    
+    /** this.#ai.state on minion pause. */ #aiBeforePause: State | undefined;
+    /** Date.now() when onLoop runs. */ #msLastAiLoop: number;
+    /** Date.now() on minion pause. */ #msLastPause: number;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

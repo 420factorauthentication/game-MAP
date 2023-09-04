@@ -42,7 +42,7 @@ export class MinionSpawner {
      * Returns a frozen non-live copy.
      */
     get minionsSortX(): readonly Minion[] {
-        const minionsCopy: Minion[] = Object.assign([], [...this.#minions]);
+        const minionsCopy: Minion[] = Object.assign([], this.#minions);
         minionsCopy.sort((a, b) => {
             if (a.x < b.x) return -1;
             if (a.x > b.x) return 1;
@@ -114,7 +114,7 @@ export class MinionSpawner {
     }
 
     /**
-     * Spawns a Minion. Returns the new Minion.
+     * Spawns and tracks a Minion. Returns the new Minion.
      * @param elem Can be a css selector or existing DOM element or null,
      * in which case a new anchor element will be created.
      */
@@ -130,21 +130,26 @@ export class MinionSpawner {
         );
     }
 
+    /** Pause all Minions tracked by this MinionSpawner. */
+    pauseAll() {
+        for (const minion of this.#minions) minion.isPaused = true;
+    }
+
+    /** Unpause all Minions tracked by this MinionSpawner. */
+    unpauseAll() {
+        for (const minion of this.#minions) minion.isPaused = false;
+    }
+
     /**
-     * Kill all Minions tracked by this MinionSpawner.
-     * Triggers things like death animations before destruction.
-     * Also begin JS garbage cleanup.
+     * Trigger death animations and begin JS garbage cleanup
+     * for all Minions tracked by this MinionSpawner.
      */
     killAll() {
         while (this.#minions.length > 0) this.#minions[0].die();
     }
 
-    /**
-     * Instantly destroy all Minions tracked by this MinionSpawner.
-     * Doesn't trigger things like death animations.
-     * Also begin JS garbage cleanup.
-     */
-    destroyAll() {
+    /** Begin JS garbage cleanup for all Minions tracked by this MinionSpawner. */
+    preDestroyAll() {
         while (this.#minions.length > 0) this.#minions[0].preDestroy();
     }
 
@@ -152,7 +157,6 @@ export class MinionSpawner {
     trackMinion(minion: Minion) {
         // If this MinionSpawner already has a Minion with a matching uuid, return
         if (this.#minions.some((e) => e.uuid === minion.uuid)) return;
-
         // Add the existing Minion to the array
         this.#minions.push(minion);
     }
@@ -161,7 +165,6 @@ export class MinionSpawner {
     stopTrackingMinion(minion: Minion) {
         // If this MinionSpawner doesnt have a Minion with a matching uuid, return
         if (!this.#minions.some((e) => e.uuid === minion.uuid)) return;
-
         // Remove the existing Minion from the array
         this.#minions.splice(this.#minions.indexOf(minion), 1);
     }

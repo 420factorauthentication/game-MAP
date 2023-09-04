@@ -1,3 +1,5 @@
+/** @format */
+
 import ClipBar from "../lib-progbar/clipbar.js";
 import {ClassWithElem} from "../lib-utils/elem.js";
 
@@ -35,7 +37,9 @@ export class Base extends ClassWithElem {
     /////////
 
     /** Current player HP. If less than or equal to 0, triggers a game over. */
-    get hp() {return this.#hp}
+    get hp() {
+        return this.#hp;
+    }
     set hp(v) {
         this.#hp = v;
         this.#hpBar.value = this.#hp;
@@ -45,7 +49,7 @@ export class Base extends ClassWithElem {
 
     /** Trigger a game over. */
     die() {
-        console.log("GAME OVER")
+        console.log("GAME OVER");
     }
 
     ////////////////
@@ -53,7 +57,9 @@ export class Base extends ClassWithElem {
     ////////////////
 
     /** An element that visually shows current HP with it's background */
-    get hpBarElem() {return this._elem}
+    get hpBarElem() {
+        return this._elem;
+    }
     #hpBar: ClipBar;
 }
 
