@@ -125,9 +125,9 @@ export class Minion extends ClassWithElem {
     set isPaused(v) {
         if (v) {
             if (this.#isPaused) return;
-            this.#ai.set({uuid: "minionPause"});
             this.#msLastPause = Date.now();
             this.#aiBeforePause = this.#ai.state;
+            this.#ai.set({uuid: "minionPause"});
         } else {
             if (!this.#isPaused) return;
             if (!this.#aiBeforePause) return;

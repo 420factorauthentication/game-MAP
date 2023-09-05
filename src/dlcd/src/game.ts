@@ -28,25 +28,29 @@ import KeyUI from "../../lib-hotbar/keyui.js";
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-/** All global game components to cache when the game is loaded. */
-export type GameCache = {
+/** All global game variables to cache when the game is loaded. */
+export type GameCache = GameFlags & GameEngines & GameMenus;
+export type GameFlags = {
     isLoaded?: boolean;
-
+    isPaused?: boolean;
+};
+export type GameEngines = {
     base?: Base;
     minionMan?: MinionSpawner;
     resourceMan?: ResourceManager;
     spellbar?: Rollbar;
     keyui?: KeyUI;
-
-    techmenu?: HTMLDivElement;
+};
+export type GameMenus = {
+    menuTech?: HTMLDivElement;
 };
 
-/** A function that needs access to a global game component. */
+/** A function that needs access to a global game variable. */
 export type GameFunc<Return> = (cache: GameCache) => Return;
 
 /**
  * A decorator factory.
- * Manages one global GameCache object and passes it to functions.
+ * Manages one global {@link GameCache} object and passes it to functions.
  */
 const GAME: <Return>(func: GameFunc<Return>) => () => Return = (() => {
     const globalGameCache: GameCache = {};
@@ -74,9 +78,9 @@ export const StartGame: () => void = GAME((cache) => {
 
 ////////////////////////////////////////////////////////////////////////////////
 /**
- * Creates all game components.
- * Queries DOM for elements needed by game.
- * Saves handles to the global GameCache object.
+ * Initializes the global {@link GameCache} \
+ * Creates all {@link GameEngines} \
+ * Queries DOM for {@link GameMenus}
  */
 export const LoadGame: () => Promise<number | void> = GAME((cache) => {
     if (cache.isLoaded) return;
@@ -89,9 +93,9 @@ export const LoadGame: () => Promise<number | void> = GAME((cache) => {
         GameStyleSettings.load();
 
         // Query elements
-        if (!cache.techmenu) {
-            cache.techmenu = document.querySelector("#game-techmenu");
-            if (!cache.techmenu) throw new Error("#game-techmenu not found");
+        if (!cache.menuTech) {
+            cache.menuTech = document.querySelector("#game-techmenu");
+            if (!cache.menuTech) throw new Error("#game-techmenu not found");
         }
 
         // Setup button onclicks
@@ -160,29 +164,57 @@ export const LoadGame: () => Promise<number | void> = GAME((cache) => {
 
 ////////////////////////////////////////////////////////////////////////////////
 /**
- * Toggles visibility of #game-techmenu div.
+ * Toggles visibility of #game-menuTech div.
  * Called when #game-nav-tech button is clicked.
  */
 export const ToggleTechMenu: () => void = GAME((cache) => {
-    if (!cache.techmenu) throw new Error("Tech menu not loaded");
-    switch (cache.techmenu.style.opacity) {
+    if (!cache.menuTech) throw new Error("Tech menu not loaded");
+    switch (cache.menuTech.style.opacity) {
         default:
         case "":
         case "1":
-            cache.techmenu.style.opacity = "0";
-            cache.techmenu.style.pointerEvents = "none";
+            cache.menuTech.style.opacity = "0";
+            cache.menuTech.style.pointerEvents = "none";
+            PauseIfMenu();
             break;
         case "0":
-            cache.techmenu.style.opacity = "1";
-            cache.techmenu.style.pointerEvents = "all";
+            cache.menuTech.style.opacity = "1";
+            cache.menuTech.style.pointerEvents = "all";
+            Pause();
             break;
     }
 });
 
 ////////////////////////////////////////////////////////////////////////////////
 /**
- * Checks if any of these full-screen game menus are visible:
- * - Tech Menu (#game-techmenu div)
- * If any are visible, pauses the Spellbar and all Minions.
- * If none are visible, unpauses the Spellbar and all Minions.
+ * Checks if any {@link GameMenus} are at full opacity. \
+ * If any are at full opacity, pauses the Spellbar and all Minions. \
+ * If none are at full opacity, unpauses the Spellbar and all Minions.
  */
+export const PauseIfMenu: () => void = GAME((cache) => {
+    for (const key in cache) {
+        if (key.slice(0, 4) !== "menu") continue;
+        switch ((cache[key] as HTMLElement).style.opacity) {
+            case "":
+            case "1":
+                Pause();
+                return;
+            default:
+        }
+    }
+    Unpause();
+});
+
+/** Pause the Spellbar and all Minions. */
+export const Pause: () => void = GAME((cache) => {
+    if (cache.isPaused) return;
+    cache.isPaused = true;
+    cache.minionMan?.pauseAll();
+});
+
+/** Unpause the Spellbar and all Minions. */
+export const Unpause: () => void = GAME((cache) => {
+    if (cache.isPaused === false) return;
+    cache.isPaused = false;
+    cache.minionMan?.unpauseAll();
+});
