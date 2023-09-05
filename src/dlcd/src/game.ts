@@ -209,6 +209,7 @@ export const PauseIfMenu: () => void = GAME((cache) => {
 export const Pause: () => void = GAME((cache) => {
     if (cache.isPaused) return;
     cache.isPaused = true;
+    cache.spellbar?.pause();
     cache.minionMan?.pauseAll();
 });
 
@@ -216,5 +217,6 @@ export const Pause: () => void = GAME((cache) => {
 export const Unpause: () => void = GAME((cache) => {
     if (cache.isPaused === false) return;
     cache.isPaused = false;
+    cache.spellbar?.unpause();
     cache.minionMan?.unpauseAll();
 });

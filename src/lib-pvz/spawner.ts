@@ -132,12 +132,12 @@ export class MinionSpawner {
 
     /** Pause all Minions tracked by this MinionSpawner. */
     pauseAll() {
-        for (const minion of this.#minions) minion.isPaused = true;
+        for (const minion of this.#minions) minion.pause();
     }
 
     /** Unpause all Minions tracked by this MinionSpawner. */
     unpauseAll() {
-        for (const minion of this.#minions) minion.isPaused = false;
+        for (const minion of this.#minions) minion.unpause();
     }
 
     /**

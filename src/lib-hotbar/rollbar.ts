@@ -33,7 +33,7 @@ export class Rollbar extends Hotbar {
         super(elem);
         // Init cache //
         this.#initialOnPress = [];
-        this.#initialConditions = [];
+        this.#initialConds = [];
         this.#initialCssText = [];
         this.#initialInnerHTML = [];
     }
@@ -46,43 +46,116 @@ export class Rollbar extends Hotbar {
     enableAllOnRoll: boolean = true;
 
     /**
-     * Turn it on. It will roll new button settings periodically.
-     * If called while already on, it will just update intervalTime,
-     * and reset current roll timer to 0.
+     * Turn it on. It will roll new button settings periodically. \
+     * If called while paused or already on, it will:
+     * - Update intervalTime
+     * - Reset current roll timer to 0
+     * - Unpause
+     *
      * @param intervalTime Time between each new roll, in ms.
      */
     start(intervalTime: number) {
         this.#isOn = true;
+        this.#isPaused = false;
+        this.#intervalLastStart = intervalTime;
 
-        // Cache initial button settings
+        // Reset buttons to cached initial settings if they exist. If not, cache them.
         for (let i = 0; i < this._items.length; i++) {
-            this.#initialOnPress[i] = this._items[i].onPress;
-            this.#initialConditions[i] = this._items[i].conditions;
-            this.#initialCssText[i] = this._items[i].elem.style.cssText;
-            this.#initialInnerHTML[i] = this._items[i].elem.innerHTML;
+            if (this.#initialOnPress[i])
+                this._items[i].onPress = this.#initialOnPress[i];
+            else this.#initialOnPress[i] = this._items[i].onPress;
+
+            if (this.#initialConds[i])
+                this._items[i].conditions = this.#initialConds[i];
+            else this.#initialConds[i] = this._items[i].conditions;
+
+            if (this.#initialCssText[i])
+                this._items[i].elem.style.cssText = this.#initialCssText[i];
+            else this.#initialCssText[i] = this._items[i].elem.style.cssText;
+
+            if (this.#initialInnerHTML[i])
+                this._items[i].elem.innerHTML = this.#initialInnerHTML[i];
+            else this.#initialInnerHTML[i] = this._items[i].elem.innerHTML;
         }
 
         // Start new loop with new UUID to stop old loops
-        let newUUID = uuidv4();
+        const newUUID = uuidv4();
         this.#loopUUID = newUUID;
         this.loop(intervalTime, newUUID);
     }
 
-    /** Turn it off. It will stop rolling new button settings periodically. */
+    /**
+     * Turn it off. It will stop rolling new button settings periodically.
+     * Resets buttons to initial settings cached when it was turned on.
+     * Resets roll timer and pause status to false.
+     */
     stop() {
         this.#isOn = false;
-        // Reset cache //
+        this.#isPaused = false;
+
+        // Reset buttons to initial cached settings
+        for (let i = 0; i < this._items.length; i++) {
+            this._items[i].onPress = this.#initialOnPress[i];
+            this._items[i].conditions = this.#initialConds[i];
+            this._items[i].elem.style.cssText = this.#initialCssText[i];
+            this._items[i].elem.innerHTML = this.#initialInnerHTML[i];
+        }
+
+        // Reset cache
         this.#initialOnPress = [];
-        this.#initialConditions = [];
+        this.#initialConds = [];
         this.#initialCssText = [];
         this.#initialInnerHTML = [];
     }
 
-    /** Check if this is currently on. */
+    /** Check if this is currently on. If false, isPaused must be false. */
     get isOn() {
         return this.#isOn;
     }
     #isOn: boolean = false;
+
+    /**
+     * Check if this Rollbar is paused.
+     * While paused, it will stop rolling.
+     * If true, isOn must be true.
+     */
+    get isPaused() {
+        return this.#isPaused;
+    }
+    #isPaused: boolean = false;
+
+    /**
+     * Pause this Rollbar. \
+     * While paused, it will stop rolling. \
+     * Pausing doesn't reset roll timer. \
+     * Pausing doesn't reset buttons to initial cached settings. \
+     * Does nothing if already paused. \
+     * Does nothing if not on.
+     */
+    pause() {
+        if (!this.#isOn) return;
+        if (this.#isPaused) return;
+        this.#msLastPause = Date.now();
+        this.#isPaused = true;
+    }
+
+    /**
+     * Unapuse this Rollbar. It will resume rolling. \
+     * Does nothing if already not paused.
+     */
+    unpause() {
+        if (!this.#isPaused) return;
+        this.#isPaused = false;
+
+        // Start new loop with new UUID to stop old loops and saved roll timer.
+        const newUUID = uuidv4();
+        this.#loopUUID = newUUID;
+        this.loop(
+            this.#intervalLastStart,
+            newUUID,
+            -(this.#msLastPause - this.#msLastLoop)
+        );
+    }
 
     /////////////////////////////
     // PARENT CLASS EXTENSIONS //
@@ -94,7 +167,7 @@ export class Rollbar extends Hotbar {
         // Update cache if on //
         if (!this.#isOn) return item;
         this.#initialOnPress.push(item.onPress);
-        this.#initialConditions.push(item.conditions);
+        this.#initialConds.push(item.conditions);
         this.#initialCssText.push(item.elem.style.cssText);
         this.#initialInnerHTML.push(item.elem.innerHTML);
         return item;
@@ -113,7 +186,7 @@ export class Rollbar extends Hotbar {
         if (!this.#isOn) return true;
         let index = typeof v === "number" ? v : this._items.indexOf(v);
         this.#initialOnPress.splice(index, 1);
-        this.#initialConditions.splice(index, 1);
+        this.#initialConds.splice(index, 1);
         this.#initialCssText.splice(index, 1);
         this.#initialInnerHTML.splice(index, 1);
         return true;
@@ -123,9 +196,9 @@ export class Rollbar extends Hotbar {
     removeAll() {
         super.removeAll();
         // Reset cache if on //
-        if (!this.isOn) return;
+        if (!this.#isOn) return;
         this.#initialOnPress = [];
-        this.#initialConditions = [];
+        this.#initialConds = [];
         this.#initialCssText = [];
         this.#initialInnerHTML = [];
     }
@@ -139,13 +212,17 @@ export class Rollbar extends Hotbar {
      * @param intervalTime Time between each new roll, in ms.
      * @param uuid A globally unique id.
      * Used to prevent old loops from firing when a new loop is started.
+     * @param firstLoopDelay Optional. An increase in time taken for first loop.
+     * Can be negative to reduce the time taken for the first loop.
      */
-    private loop(intervalTime: number, uuid: string) {
+    private loop(intervalTime: number, uuid: string, firstLoopDelay = 0) {
         new Promise((resolve) => {
-            setTimeout(resolve, intervalTime);
+            setTimeout(resolve, Math.max(intervalTime + firstLoopDelay, 0));
         }).then(() => {
-            if (!this.isOn) return;
+            if (!this.#isOn) return;
+            if (this.#isPaused) return;
             if (this.#loopUUID != uuid) return;
+            this.#msLastLoop = Date.now();
             this.rollAndReplace();
             this.loop(intervalTime, uuid);
         });
@@ -167,7 +244,7 @@ export class Rollbar extends Hotbar {
                 .filter((x) => x);
 
             this._items[i].conditions = new Array<() => boolean>()
-                .concat(this.#initialConditions[i], rolls[i].conditions || [])
+                .concat(this.#initialConds[i], rolls[i].conditions || [])
                 .filter((x) => x);
 
             this._items[i].elem.style.cssText = [
@@ -188,7 +265,7 @@ export class Rollbar extends Hotbar {
         // If less samples than items, reset the remaining items
         for (i; i < this._items.length; i++) {
             this._items[i].onPress = this.#initialOnPress[i];
-            this._items[i].conditions = this.#initialConditions[i];
+            this._items[i].conditions = this.#initialConds[i];
             this._items[i].elem.style.cssText = this.#initialCssText[i];
             this._items[i].elem.innerHTML = this.#initialInnerHTML[i];
         }
@@ -205,9 +282,13 @@ export class Rollbar extends Hotbar {
 
     // Cache of initial button settings, merged with new settings of each roll.
     #initialOnPress: (() => void)[][];
-    #initialConditions: (() => boolean)[][];
+    #initialConds: (() => boolean)[][];
     #initialCssText: string[];
     #initialInnerHTML: string[];
+
+    /** Date.now() when loop runs. */ #msLastLoop: number;
+    /** Date.now() when paused. */ #msLastPause: number;
+    /** loopInterval when started. */ #intervalLastStart: number;
 
     /**
      * UUID of current loop.

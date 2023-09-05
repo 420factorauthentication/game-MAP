@@ -117,32 +117,45 @@ export class Minion extends ClassWithElem {
     }
 
     /**
-     * Set this to pause/unpause the minion. \
-     * While paused, a minion will stop moving/attacking. \
+     * Check if this Minion is paused. \
+     * While paused, a Minion will stop moving/attacking. \
      * Pausing doesn't reset onLoop timer of moveState/attackState.
      */
     get isPaused() {return this.#isPaused}
-    set isPaused(v) {
-        if (v) {
-            if (this.#isPaused) return;
-            this.#msLastPause = Date.now();
-            this.#aiBeforePause = this.#ai.state;
-            this.#ai.set({uuid: "minionPause"});
-        } else {
-            if (!this.#isPaused) return;
-            if (!this.#aiBeforePause) return;
-            if (!this.#aiBeforePause.loopInterval) return;
-            this.#ai.set({
-                uuid: "minionUnpauseTransition",
-                onExit: this.#aiBeforePause.onLoop,
-                destination: this.#aiBeforePause,
-                transitionTime: this.#aiBeforePause.loopInterval
-                    - (this.#msLastPause - this.#msLastAiLoop)
-            } as Transition);
-        }
-        this.#isPaused = v;
-    }
     #isPaused: boolean = false;
+
+    /**
+     * Pause this Minion. \
+     * While paused, a Minion will stop moving/attacking. \
+     * Pausing doesn't reset onLoop timer of moveState/attackState.
+     * 
+     * Does nothing if already paused.
+     */
+    pause() {
+        if (this.#isPaused) return;
+        this.#msLastPause = Date.now();
+        this.#aiBeforePause = this.#ai.state;
+        this.#ai.set({uuid: "minionPause"});
+        this.#isPaused = true;
+    }
+
+    /**
+     * Unpause this Minion. The Minion will resume moving/attacking.
+     * Does nothing if already not paused.
+     */
+    unpause() {
+        if (!this.#isPaused) return;
+        if (!this.#aiBeforePause) return;
+        if (!this.#aiBeforePause.loopInterval) return;
+        this.#ai.set({
+            uuid: "minionUnpauseTransition",
+            onExit: this.#aiBeforePause.onLoop,
+            destination: this.#aiBeforePause,
+            transitionTime: this.#aiBeforePause.loopInterval
+                - (this.#msLastPause - this.#msLastAiLoop)
+        } as Transition);
+        this.#isPaused = false;
+    }
 
     // Stats //
     get x() {return this._x}

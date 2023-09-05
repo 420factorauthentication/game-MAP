@@ -2,6 +2,8 @@
 
 import type {Hotbar} from "./hotbar";
 
+import {isRollbar} from "./const.js";
+
 import {ClassWithElem} from "../lib-utils/elem.js";
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -97,10 +99,10 @@ export class HotbarButton extends ClassWithElem {
     ////////////
     // EVENTS //
     ////////////
-    handleEvent(e: KeyboardEvent) {
+    handleEvent(e) {
         if (!this.isEnabled) return;
 
-        // Handle exceptions
+        // If wrong events, do nothing
         switch (e.type) {
             default:
                 return;
@@ -109,7 +111,10 @@ export class HotbarButton extends ClassWithElem {
             case "click":
         }
 
-        // Check conditions
+        // If paused Rollbar, do nothing
+        if (isRollbar(this._hotbar) && this._hotbar.isPaused) return;
+
+        // If conditions not met, do nothing
         for (const cond of this.conditions) if (!cond()) return;
 
         // Call onPress functions
