@@ -21,7 +21,7 @@ import {
 import {ResourceManager} from "./resource.js";
 import Base from "../../lib-pvz/base.js";
 import MinionSpawner from "../../lib-pvz/spawner.js";
-import Rollbar from "../../lib-hotbar/rollbar.js";
+import Loopbar from "../../lib-hotbar/loopbar.js";
 import HotbarButton from "../../lib-hotbar/button.js";
 import KeyUI from "../../lib-hotbar/keyui.js";
 
@@ -38,7 +38,7 @@ export type GameEngines = {
     base?: Base;
     minionMan?: MinionSpawner;
     resourceMan?: ResourceManager;
-    spellbar?: Rollbar;
+    spellbar?: Loopbar;
     keyui?: KeyUI;
 };
 export type GameMenus = {
@@ -69,7 +69,7 @@ export const StartGame: () => void = GAME((cache) => {
             throw new Error(`Error loading game. HTTP Status: ${httpStatus}`);
 
         // Init game systems
-        cache.spellbar.start(SpellbarSpeed);
+        cache.spellbar.start();
         cache.minionMan.startLevel(LvlOne);
         // Hide all menus
         ToggleTechMenu();
@@ -123,7 +123,8 @@ export const LoadGame: () => Promise<number | void> = GAME((cache) => {
             GameScreen.containerElem.querySelector("#cringes-counter")
         );
 
-        cache.spellbar = new Rollbar(
+        cache.spellbar = new Loopbar(
+            SpellbarSpeed,
             GameScreen.containerElem.querySelector(
                 "#game-spellbar"
             ) as HTMLElement,

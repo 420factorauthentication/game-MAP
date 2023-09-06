@@ -48,11 +48,11 @@ export class KeyUI extends ClassWithElem {
      * When set, automatically creates/removes children spans. \
      * Automatically adds "flex: 1 1 0" to created children spans to align them.
      */
-    get buttonCount() {
+    get buttonCount(): number {
         return this._buttonCount;
     }
-    set buttonCount(v) {
-        this._buttonCount = v;
+    set buttonCount(newAmount) {
+        this._buttonCount = newAmount;
         this.#updateCount();
     }
 
@@ -60,11 +60,11 @@ export class KeyUI extends ClassWithElem {
      * The text to show above each button. \
      * When set, automatically updates innerHTML of children spans.
      */
-    get hotkeys() {
+    get hotkeys(): string[] {
         return this._hotkeys;
     }
-    set hotkeys(v) {
-        this._hotkeys = v;
+    set hotkeys(charArray) {
+        this._hotkeys = charArray;
         this.#updateText();
     }
 

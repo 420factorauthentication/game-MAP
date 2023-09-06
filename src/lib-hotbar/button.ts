@@ -2,7 +2,7 @@
 
 import type {Hotbar} from "./hotbar";
 
-import {isRollbar} from "./const.js";
+import {isLoopbar} from "./const.js";
 
 import {ClassWithElem} from "../lib-utils/elem.js";
 
@@ -59,9 +59,9 @@ export class HotbarButton extends ClassWithElem {
     get isEnabled() {
         return this.#isEnabled;
     }
-    set isEnabled(v) {
-        this.#isEnabled = v;
-        if (v) {
+    set isEnabled(newSetting) {
+        this.#isEnabled = newSetting;
+        if (newSetting == true) {
             this._elem.style.opacity = "1";
             this._elem.style.pointerEvents = "auto";
         } else {
@@ -112,7 +112,7 @@ export class HotbarButton extends ClassWithElem {
         }
 
         // If paused Rollbar, do nothing
-        if (isRollbar(this._hotbar) && this._hotbar.isPaused) return;
+        if (isLoopbar(this._hotbar) && this._hotbar.isPaused) return;
 
         // If conditions not met, do nothing
         for (const cond of this.conditions) if (!cond()) return;

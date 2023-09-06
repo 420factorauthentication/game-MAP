@@ -14,9 +14,9 @@ export class ResourceManager {
     get robux() {
         return this.#robux;
     }
-    set robux(v) {
-        this.#robux = v;
-        this._robuxCounter.innerText = v.toString();
+    set robux(newAmount) {
+        this.#robux = newAmount;
+        this._robuxCounter.innerText = newAmount.toString();
     }
     #robux: number = 0;
 
@@ -24,9 +24,9 @@ export class ResourceManager {
     get cringes() {
         return this.#cringes;
     }
-    set cringes(v) {
-        this.#cringes = v;
-        this._cringesCounter.innerText = v.toString();
+    set cringes(newAmount) {
+        this.#cringes = newAmount;
+        this._cringesCounter.innerText = newAmount.toString();
     }
     #cringes: number = 0;
 }

@@ -73,8 +73,8 @@ export abstract class ProgBar extends ClassWithElem {
     get value(): number {
         return this._value;
     }
-    set value(v) {
-        this._value = v;
+    set value(newNumber) {
+        this._value = newNumber;
         this.calcBarGraphics();
     }
 
@@ -82,8 +82,8 @@ export abstract class ProgBar extends ClassWithElem {
     get min(): number {
         return this._min;
     }
-    set min(v) {
-        this._min = v;
+    set min(newNumber) {
+        this._min = newNumber;
         this.calcBarGraphics();
     }
 
@@ -91,8 +91,8 @@ export abstract class ProgBar extends ClassWithElem {
     get max(): number {
         return this._max;
     }
-    set max(v) {
-        this._max = v;
+    set max(newNumber) {
+        this._max = newNumber;
         this.calcBarGraphics();
     }
 
@@ -103,8 +103,8 @@ export abstract class ProgBar extends ClassWithElem {
     get flow(): ProgBarFlow {
         return this._flow;
     }
-    set flow(v) {
-        this._flow = v;
+    set flow(newFlowSetting) {
+        this._flow = newFlowSetting;
         this.calcBarGraphics();
     }
 

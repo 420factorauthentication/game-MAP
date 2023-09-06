@@ -40,8 +40,8 @@ export class Base extends ClassWithElem {
     get hp() {
         return this.#hp;
     }
-    set hp(v) {
-        this.#hp = v;
+    set hp(newAmount) {
+        this.#hp = newAmount;
         this.#hpBar.value = this.#hp;
         if (this.#hp <= 0) this.die();
     }

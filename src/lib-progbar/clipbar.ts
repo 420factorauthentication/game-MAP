@@ -24,16 +24,6 @@ export class ClipBar extends ProgBar {
      * Can be a CSS selector or existing DOM element or null,
      * in which case a new anchor element will be created. \
      * A lone elem. BG will change proportionally to min, max, and current bar value.
-     * @param _value
-     * Starting bar value. Can be any number. \
-     *  If outside min/max:
-     *  - this.percent WILL go past 0% or 100%
-     *  - Bar graphics WONT go past 0% or 100%
-     * @param _min Minimum bar value. Can be any number.
-     * @param _max Maximum bar value. Can be any number.
-     * @param _flow
-     * Bar graphic orientation setting (See const.ts and types.ts).
-     * On set, recalcs bar graphics.
      */
     constructor(
         elem?: HTMLElement | string,

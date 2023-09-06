@@ -87,8 +87,11 @@ export class Minion extends ClassWithElem {
     readonly uuid: string;
 
     /** Path to image. Used for minion background-image and for mask-image of fx. */
-    get spriteURL() {return this._spriteURL}
-    set spriteURL(v) {this._spriteURL = v; this._setBG(v)}
+    get spriteURL(): string {return this._spriteURL}
+    set spriteURL(pathToFile) {
+        this._spriteURL = pathToFile;
+        this._setBG(pathToFile);
+    }
 
     /**
      * TODO: Handle all game systems related to this minion's death here.
@@ -158,11 +161,11 @@ export class Minion extends ClassWithElem {
     }
 
     // Stats //
-    get x() {return this._x}
-    get y() {return this._y}
+    get x (): number {return this._x}
+    get y (): number {return this._y}
 
-    set x (v) {this._x = v; this._setElemX(v)}
-    set y (v) {this._y = v; this._setElemY(v)}
+    set x (vwNumber) {this._x = vwNumber; this._setElemX(vwNumber)}
+    set y (vhNumber) {this._y = vhNumber; this._setElemY(vhNumber)}
 
     get hp()     {return this.#stats.current("hp")}
     get movSpd() {return this.#stats.current("movSpd")}
