@@ -80,7 +80,7 @@ export class Rollbar extends Hotbar {
         }
 
         // If the setting is on, enable all buttons in this Hotbar
-        // Overrides cached opacity and pointerEvents
+        // Overrides cached style.opacity and style.pointerEvents
         if (this.enableAllOnRoll) this.enableAll();
     }
 
