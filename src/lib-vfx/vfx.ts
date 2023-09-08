@@ -36,13 +36,14 @@ export function vfx(
             ? getComputedStyle(target).zIndex
             : (target.zIndex + 1).toString();
 
-    // Apply style and src
-    tempElem.alt = " ";
-    if (vfxImgSrc) tempElem.src = vfxImgSrc;
-    if (vfxStyle)
-        for (const [k, v] of Object.entries(vfxStyle)) tempElem.style[k] = v;
-    tempElem.style.zIndex = zIndex;
+    // Apply style
     absPos(tempElem, rect);
+    tempElem.style.zIndex = zIndex;
+    for (const [k, v] of Object.entries(vfxStyle || [])) tempElem.style[k] = v;
+
+    // Apply image
+    tempElem.src = vfxImgSrc ? vfxImgSrc : "";
+    tempElem.alt = " ";
 
     // Return tuple
     return [

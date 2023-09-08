@@ -1,6 +1,6 @@
 /** @format */
 
-import {ClassWithElem} from "../lib-utils/elem.js";
+import ElemQuery from "../lib-elem/query.js";
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -12,7 +12,7 @@ import {ClassWithElem} from "../lib-utils/elem.js";
  * and "flex: 1 1 0" to each created child span to automatically align them. \
  * NOTE: Doesn't automatically set size of this.elem to match a Hotbar. Manually do that.
  */
-export class KeyUI extends ClassWithElem {
+export class KeyUI extends ElemQuery {
     /**
      * @param elem Can be a CSS selector or existing DOM element or null,
      * in which case a new div element will be created. \

@@ -1,14 +1,16 @@
 /** @format */
 
+import {LvlOne} from "./const/levels.js";
+import * as Spells from "./const/spells.js";
+import {SpellKeys} from "./const/options.js";
+import {Wood as WoodBase} from "./const/bases.js";
+
 import {
     GameScreen,
     GameStyleComponents,
     GameStyleSettings,
 } from "./const/scenes.js";
-import {LvlOne} from "./const/levels.js";
-import * as Spells from "./const/spells.js";
-import {SpellKeys} from "./const/options.js";
-import {Wood as WoodBase} from "./const/bases.js";
+
 import {
     SpellbarMax,
     SpellbarSpeed,

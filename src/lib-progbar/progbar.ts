@@ -4,7 +4,7 @@ import {ProgBarFlow} from "./types";
 
 import {Flow} from "./const.js";
 
-import {ClassWithElem} from "../lib-utils/elem.js";
+import ElemQuery from "../lib-elem/query.js";
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -17,7 +17,7 @@ import {ClassWithElem} from "../lib-utils/elem.js";
  * Different implementations should use different CSS and HTML features to show
  * a bar graphic that changes proportionally to min, max, and current bar value.
  */
-export abstract class ProgBar extends ClassWithElem {
+export abstract class ProgBar extends ElemQuery {
     /**
      * @param elem
      * Can be a CSS selector or existing DOM element or null,
@@ -43,7 +43,7 @@ export abstract class ProgBar extends ClassWithElem {
         private _flow: ProgBarFlow = Flow.leftToRight
     ) {
         // Lookup elem by selector. If not found, create one with default settings.
-        super(elem, "a", "width: 25%; height: 10%; background: darkcyan");
+        super(elem, "a", "width: 100%; height: 25%; background: darkred");
     }
 
     /**

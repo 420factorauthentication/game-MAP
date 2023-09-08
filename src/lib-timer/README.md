@@ -2,4 +2,4 @@
 
 # Pausable Timer Library
 
-Runs functions after oneshot timers or looped timers.
+Runs a function after a pausable and loopable timer.

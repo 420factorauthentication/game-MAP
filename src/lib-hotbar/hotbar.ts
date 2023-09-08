@@ -2,13 +2,13 @@
 
 import type {HotbarButton} from "./button";
 
-import {ClassWithElem} from "../lib-utils/elem.js";
+import ElemQuery from "../lib-elem/query.js";
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
 /** A row of buttons that call functions when clicked, or when a key is pressed. */
-export class Hotbar extends ClassWithElem {
+export class Hotbar extends ElemQuery {
     /**
      * @param elem Can be a CSS selector or existing DOM element or null,
      * in which case a new div element will be created. \

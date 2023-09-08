@@ -42,7 +42,7 @@ export const Sword: Spell = {
             vfx(
                 550,
                 {
-                    rect: target.elem.getBoundingClientRect(),
+                    rect: target.minionElem.getBoundingClientRect(),
                     zIndex: ZLayerFxParticles,
                 },
                 {},
@@ -53,7 +53,7 @@ export const Sword: Spell = {
             transitionVFX(
                 400,
                 {
-                    rect: target.elem.getBoundingClientRect(),
+                    rect: target.minionElem.getBoundingClientRect(),
                     zIndex: ZLayerFxFlash,
                 },
                 {

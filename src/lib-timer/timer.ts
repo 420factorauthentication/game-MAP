@@ -10,37 +10,38 @@ export class Timer {
     /**
      * @param func The function to run after given time.
      * @param time Time (ms) before the function runs.
+     * @param isLoop If true, timer will loop and run func() after every loop.
      * @param args Args to pass to func() when it runs.
      */
     constructor(
         readonly func: (...args: any[]) => any,
         readonly time: number,
+        readonly isLoop: boolean = false,
         readonly args: any[] = []
     ) {}
 
     start() {
-        if (this.#isOn) return false;
+        if (this.#isOn) return;
         this.#isOn = true;
         this.#isPaused = false;
-        return this.#newLaunch();
+        this.#elapsed = 0;
+        this.#newLaunch();
     }
     stop() {
-        if (!this.#isOn) return false;
+        if (!this.#isOn) return;
         this.#isOn = false;
         this.#isPaused = false;
-        return true;
     }
     pause() {
-        if (!this.#isOn) return false;
-        if (this.#isPaused) return false;
+        if (!this.#isOn) return;
+        if (this.#isPaused) return;
         this.#isPaused = true;
-        this.#lastPauseAt = Date.now();
-        return true;
+        this.#elapsed += Date.now() - this.#lastLaunchAt;
     }
     unpause() {
-        if (!this.#isPaused) return false;
+        if (!this.#isPaused) return;
         this.#isPaused = false;
-        return this.#newLaunch(-(this.#lastPauseAt - this.#lastLaunchAt));
+        this.#newLaunch(-this.#elapsed);
     }
 
     get isOn() {
@@ -55,24 +56,26 @@ export class Timer {
 
     #launchUUID: string;
     #lastLaunchAt: number;
-    #lastPauseAt: number;
+    #elapsed: number = 0;
 
-    protected async _launch(uuidAtStart: string, delay = 0) {
+    #launch(uuidAtStart: string, delay = 0) {
         this.#lastLaunchAt = Date.now();
-        return new Promise((resolve) => {
+        new Promise((resolve) => {
             setTimeout(resolve, Math.max(this.time + delay, 0));
         }).then(() => {
-            if (!this.#isOn) return false;
-            if (this.#isPaused) return false;
-            if (this.#launchUUID != uuidAtStart) return false;
-            return this.func(...this.args);
+            if (!this.#isOn) return;
+            if (this.#isPaused) return;
+            if (this.#launchUUID != uuidAtStart) return;
+            this.#elapsed = 0;
+            this.func(...this.args);
+            if (this.isLoop) this.#launch(uuidAtStart);
         });
     }
 
     #newLaunch(delay = 0) {
         const newUUID = uuidv4();
         this.#launchUUID = newUUID;
-        return this._launch(newUUID, delay);
+        this.#launch(newUUID, delay);
     }
 }
 

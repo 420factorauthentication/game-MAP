@@ -4,13 +4,13 @@ import type {Hotbar} from "./hotbar";
 
 import {isLoopbar} from "./const.js";
 
-import {ClassWithElem} from "../lib-utils/elem.js";
+import ElemQuery from "../lib-elem/query.js";
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
 /** A button that calls functions when clicked, or when a key is pressed. */
-export class HotbarButton extends ClassWithElem {
+export class HotbarButton extends ElemQuery {
     /**
      * @param _hotbar The parent Hotbar. Automatically adds to it's array.
      * @param elem Can be a CSS selector or existing DOM element or null,

@@ -1,7 +1,7 @@
 /** @format */
 
 import ClipBar from "../lib-progbar/clipbar.js";
-import {ClassWithElem} from "../lib-utils/elem.js";
+import ElemQuery from "../lib-elem/query.js";
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -11,7 +11,7 @@ import {ClassWithElem} from "../lib-utils/elem.js";
  * Minions spawn on the right and move left.
  * When they reach the given x, they begin damaging player HP.
  */
-export class Base extends ClassWithElem {
+export class Base extends ElemQuery {
     /**
      * @param startingHP How much HP the player starts with.
      * @param x Minions stop here and begin attacking. Viewport width units (vw).

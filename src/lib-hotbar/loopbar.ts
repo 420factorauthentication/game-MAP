@@ -1,9 +1,7 @@
-/** @format */
-
 import {RollbarOption} from "./types";
 
 import Rollbar from "./rollbar.js";
-import Looper from "../lib-timer/looper.js";
+import Timer from "../lib-timer/timer.js";
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -21,29 +19,22 @@ export class Loopbar extends Rollbar {
         public enableAllOnRoll: boolean = true
     ) {
         super(elem, rollOptions, enableAllOnRoll);
-        this.#looper = new Looper(() => this.roll(), loopPeriod);
+        this.#timer = new Timer(() => this.roll(), loopPeriod, true);
     }
 
-    #looper: Looper;
+    #timer: Timer;
 
-    start() {
-        this.#looper.start();
-    }
-    stop() {
-        this.#looper.stop();
-    }
-    pause() {
-        this.#looper.pause();
-    }
-    unpause() {
-        this.#looper.unpause();
-    }
+    start() {this.#timer.start()}
+    stop() {this.#timer.stop()}
+    pause() {this.#timer.pause()}
+    unpause() {this.#timer.unpause()}
 
-    get isOn() {
-        return this.#looper.isOn;
-    }
-    get isPaused() {
-        return this.#looper.isPaused;
+    get isOn() {return this.#timer.isOn}
+    get isPaused() {return this.#timer.isPaused}
+
+    preDestroy() {
+        this.#timer.stop();
+        this._elem?.remove();
     }
 }
 
