@@ -20,35 +20,37 @@ import {
     SpawnMaxY,
 } from "./const/game.js";
 
-import {ResourceManager} from "./resource.js";
 import Base from "../../lib-pvz/base.js";
 import MinionSpawner from "../../lib-pvz/spawner.js";
 import Loopbar from "../../lib-hotbar/loopbar.js";
 import HotbarButton from "../../lib-hotbar/button.js";
 import KeyUI from "../../lib-hotbar/keyui.js";
 
+import {ResourceManager} from "./lib/resource.js";
+
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-/** All global game variables to cache when the game is loaded. */
-export type GameCache = GameFlags & GameEngines & GameMenus;
-export type GameFlags = {
+type GameFlags = {
     isLoaded?: boolean;
     isPaused?: boolean;
 };
-export type GameEngines = {
+type GameEngines = {
     base?: Base;
     minionMan?: MinionSpawner;
     resourceMan?: ResourceManager;
     spellbar?: Loopbar;
     keyui?: KeyUI;
 };
-export type GameMenus = {
+type GameMenus = {
     menuTech?: HTMLDivElement;
 };
 
+/** All global game variables to cache when the game is loaded. */
+type GameCache = GameFlags & GameEngines & GameMenus;
+
 /** A function that needs access to a global game variable. */
-export type GameFunc<Return> = (cache: GameCache) => Return;
+type GameFunc<Return> = (cache: GameCache) => Return;
 
 /**
  * A decorator factory.
@@ -78,7 +80,8 @@ export const StartGame: () => void = GAME((cache) => {
     });
 });
 
-////////////////////////////////////////////////////////////////////////////////
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
+
 /**
  * Initializes the global {@link GameCache} \
  * Creates all {@link GameEngines} \
@@ -166,6 +169,8 @@ export const LoadGame: () => Promise<number | void> = GAME((cache) => {
 });
 
 ////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
 /**
  * Toggles visibility of #game-menuTech div.
  * Called when #game-nav-tech button is clicked.
@@ -189,6 +194,8 @@ export const ToggleTechMenu: () => void = GAME((cache) => {
 });
 
 ////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
 /**
  * Checks if any {@link GameMenus} are at full opacity. \
  * If any are at full opacity, pauses the Spellbar and all Minions. \

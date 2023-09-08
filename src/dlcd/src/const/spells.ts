@@ -1,7 +1,7 @@
 /** @format */
 
 import type {MinionSpawner} from "../../../lib-pvz/spawner";
-import type {ResourceManager} from "../resource";
+import type {ResourceManager} from "../lib/resource";
 import {RollbarOption} from "../../../lib-hotbar/types";
 
 import {ZLayerFxFlash, ZLayerFxParticles} from "../const/game.js";
