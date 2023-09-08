@@ -98,26 +98,14 @@ export class Minion extends ElemStyler {
     get spriteURL(): string {return this._spriteURL}
     set spriteURL(pathToFile) {this._spriteURL = this.setBgImg(pathToFile)}
 
-    /**
-     * Check if this Minion is paused. \
-     * While paused, a Minion will stop moving/attacking. \
-     * Pausing doesn't reset time to next movement/attack.
-     */
+    /** Check if this Minion is paused. */
     get isPaused() {return this.#isPaused}
     #isPaused: boolean = false;
 
-    /**
-     * Pause this Minion. \
-     * Does nothing if already paused. \
-     * While paused, a Minion will stop moving/attacking. \
-     * Pausing doesn't reset time to next movement/attack.
-     */
+    /** Pause this Minion. It will stop moving/attacking. Saves timer progress. */
     pause() {this.#timer.pause()}
 
-    /**
-     * Unpause this Minion. The Minion will resume moving/attacking.
-     * Does nothing if already not paused.
-     */
+    /** Unpause this Minion. It will resume moving/attacking. */
     unpause() {this.#timer.unpause()}
 
     /**

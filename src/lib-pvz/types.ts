@@ -44,9 +44,3 @@ export type SpawnGroup = {
     /** How long inbetween each minion spawn, in ms. */
     readonly timeStep: number;
 };
-
-/** A SpawnGroup that is currently being spawned by a MinionSpawner. */
-export type SpawnLevel = SpawnGroup & {
-    /** A globally unique id, different from all existing SpawnLevels. */
-    readonly uuid: string;
-};

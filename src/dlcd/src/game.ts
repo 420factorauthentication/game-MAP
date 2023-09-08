@@ -213,7 +213,8 @@ export const Pause: () => void = GAME((cache) => {
     if (cache.isPaused) return;
     cache.isPaused = true;
     cache.spellbar?.pause();
-    cache.minionMan?.pauseAll();
+    cache.minionMan?.pauseLevel();
+    cache.minionMan?.pauseMinions();
 });
 
 /** Unpause the Spellbar and all Minions. */
@@ -221,5 +222,6 @@ export const Unpause: () => void = GAME((cache) => {
     if (cache.isPaused === false) return;
     cache.isPaused = false;
     cache.spellbar?.unpause();
-    cache.minionMan?.unpauseAll();
+    cache.minionMan?.unpauseLevel();
+    cache.minionMan?.unpauseMinions();
 });
