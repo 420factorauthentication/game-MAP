@@ -11,7 +11,7 @@ import ElemQuery from "../lib-elem/query.js";
  * Minions spawn on the right and move left.
  * When they reach the given x, they begin damaging player HP.
  */
-export class Base extends ElemQuery {
+export class Base {
     /**
      * @param startingHP How much HP the player starts with.
      * @param x Minions stop here and begin attacking. Viewport width units (vw).
@@ -24,12 +24,8 @@ export class Base extends ElemQuery {
         readonly x: number,
         hpBarElem?: HTMLElement | string
     ) {
-        // Lookup HP Bar elem by selector. If not found, create one with default settings.
-        super(hpBarElem, "a", "width: 25%; height: 10%; background: red");
-
-        // Init HP bar
         this.#hp = startingHP;
-        this.#hpBar = new ClipBar(this._elem, this.hp, 0, this.hp);
+        this.#hpBar = new ClipBar(hpBarElem, this.hp, 0, this.hp);
     }
 
     /////////
@@ -42,8 +38,8 @@ export class Base extends ElemQuery {
     }
     set hp(newAmount) {
         this.#hp = newAmount;
-        this.#hpBar.value = this.#hp;
-        if (this.#hp <= 0) this.die();
+        this.#hpBar.value = newAmount;
+        if (newAmount <= 0) this.die();
     }
     #hp: number;
 
@@ -52,13 +48,18 @@ export class Base extends ElemQuery {
         console.log("GAME OVER");
     }
 
+    /** Garbage collection. */
+    gc() {
+        this.#hpBar.gc();
+    }
+
     ////////////////
     // COMPONENTS //
     ////////////////
 
     /** An element that visually shows current HP with it's background */
     get hpBarElem() {
-        return this._elem;
+        return this.#hpBar.elem;
     }
     #hpBar: ClipBar;
 }

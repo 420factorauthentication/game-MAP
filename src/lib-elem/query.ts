@@ -7,10 +7,8 @@
  * A class that manages a handle to a single element,
  * with a constructor for providing your own element,
  * or creating a new default element if none is provided.
- *
- * A boiler-plate template. Extend this with new classes.
  */
-export abstract class ElemQuery {
+export class ElemQuery {
     /**
      * @param elem Can be a CSS selector or existing DOM element or null,
      * in which case a new anchor element will be created.
@@ -53,18 +51,13 @@ export abstract class ElemQuery {
      * An element initialized in constructor and managed by this class.
      * When extending this class, add setters/getters to this as desired.
      */
-    // get elem() {return this._elem}
-    // set elem(v) {this._elem = v}
+    get elem() {
+        return this._elem;
+    }
     protected _elem: HTMLElement;
 
-    /**
-     * Begin the JS garbage collection process.
-     * After calling this, manually nullify/undefine
-     * all other handles to this class object instance.
-     *
-     * When extending this class, add garbage collection here.
-     */
-    preDestroy() {
+    /** Garbage collection. */
+    gc() {
         this._elem?.remove();
     }
 }

@@ -33,8 +33,8 @@ export class ClipBar extends ProgBar {
         _flow: ProgBarFlow = Flow.leftToRight
     ) {
         super(elem, _value, _min, _max, _flow);
-        this._elem.style.boxSizing = "border-box";
-        this._elem.style.backgroundClip = "content-box";
+        this.elem.style.boxSizing = "border-box";
+        this.elem.style.backgroundClip = "content-box";
         this.calcBarGraphics();
     }
 
@@ -45,8 +45,8 @@ export class ClipBar extends ProgBar {
     protected calcBarGraphics() {
         const dimension =
             this.flow == Flow.leftToRight || this.flow == Flow.rightToLeft
-                ? window.getComputedStyle(this._elem).width
-                : window.getComputedStyle(this._elem).height;
+                ? window.getComputedStyle(this.elem).width
+                : window.getComputedStyle(this.elem).height;
         const padding = `calc(
             ${dimension} * ${Math.min(Math.max(1 - this.percent, 0), 1)}
         )`;
@@ -54,16 +54,16 @@ export class ClipBar extends ProgBar {
         switch (this.flow) {
             default:
             case Flow.leftToRight:
-                this._elem.style.padding = `0 ${padding} 0 0`;
+                this.elem.style.padding = `0 ${padding} 0 0`;
                 break;
             case Flow.btmToTop:
-                this._elem.style.padding = `${padding} 0 0 0`;
+                this.elem.style.padding = `${padding} 0 0 0`;
                 break;
             case Flow.rightToLeft:
-                this._elem.style.padding = `0 0 0 ${padding}`;
+                this.elem.style.padding = `0 0 0 ${padding}`;
                 break;
             case Flow.topToBtm:
-                this._elem.style.padding = `0 0 ${padding} 0`;
+                this.elem.style.padding = `0 0 ${padding} 0`;
         }
     }
 }

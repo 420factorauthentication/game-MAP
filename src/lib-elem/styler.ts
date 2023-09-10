@@ -9,7 +9,7 @@ import ElemQuery from "./query.js";
  * A class that manages a handle to a single element,
  * with helper functions for setting CSS styles.
  */
-export abstract class ElemStyler extends ElemQuery {
+export class ElemStyler extends ElemQuery {
     constructor(
         elem?: HTMLElement | string,
         defaultTagName: keyof HTMLElementTagNameMap = "div",

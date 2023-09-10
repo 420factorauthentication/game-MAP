@@ -4,15 +4,14 @@ import type {Base} from "./base";
 import {MinionType, SpawnGroup} from "./types";
 
 import Minion from "./minion.js";
+import Manager from "../lib-manager/manager.js";
 import Timer from "../lib-timer/timer.js";
 import {rand} from "../lib-utils/math.js";
 
-import uuidv4 from "../../node_modules/uuid/dist/esm-browser/v4.js";
-
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-/** A singleton that handles spawning, killing, and fetching existing Minions. */
+/** A singleton that spawns, manages, and garbage-collects Minions. */
 export class MinionSpawner {
     /**
      * @param target Newly spawned minions will target this.
@@ -32,14 +31,14 @@ export class MinionSpawner {
     /////////////////////////////
     // API: GET MINION TARGETS //
     /////////////////////////////
-    #minions: Minion[] = [];
+    #minions = new Manager<Minion>();
 
     /**
-     * Get an array of all Minions currently tracked by this MinionSpawner.
+     * Get an array of all Minions currently tracked by this manager.
      * Returns a frozen non-live copy.
      */
     get minions(): readonly Minion[] {
-        return Object.freeze(Object.assign({}, this.#minions));
+        return this.#minions.items;
     }
 
     /**
@@ -47,7 +46,7 @@ export class MinionSpawner {
      * Returns a frozen non-live copy.
      */
     get minionsSortX(): readonly Minion[] {
-        const minionsCopy: Minion[] = Object.assign([], this.#minions);
+        const minionsCopy: Minion[] = Object.assign([], this.#minions.items);
         minionsCopy.sort((a, b) => {
             if (a.x < b.x) return -1;
             if (a.x > b.x) return 1;
@@ -63,7 +62,7 @@ export class MinionSpawner {
     #spawnCount: number;
 
     /**
-     * Spawns and tracks a Minion. Returns the new Minion.
+     * Create a new Minion and add it to this manager. Returns the new Minion.
      * @param elem Can be a CSS selector or existing DOM element or null,
      * in which case a new anchor element will be created.
      */
@@ -132,43 +131,33 @@ export class MinionSpawner {
     // API: MANAGE MINIONS //
     /////////////////////////
 
-    /** Pause all Minions tracked by this MinionSpawner. */
+    /** Stop movement and attacks of all Minions in this manager. */
     pauseMinions() {
-        for (const minion of this.#minions) minion.pause();
+        for (const minion of this.minions) minion.pause();
     }
 
-    /** Unpause all Minions tracked by this MinionSpawner. */
+    /** Resume movement and attacks of all Minions in this manager. */
     unpauseMinions() {
-        for (const minion of this.#minions) minion.unpause();
+        for (const minion of this.minions) minion.unpause();
     }
 
     /**
-     * Trigger death animations and begin JS garbage cleanup
-     * for all Minions tracked by this MinionSpawner.
+     * Add an existing Minion to this manager, if not already in this manager.
+     * Returns true if not already in this manager.
+     * Returns false if already in this manager.
      */
-    killAll() {
-        while (this.#minions.length > 0) this.#minions[0].die();
+    add(minion: Minion) {
+        return this.#minions.add(minion);
     }
 
-    /** Begin JS garbage cleanup for all Minions tracked by this MinionSpawner. */
-    preDestroyAll() {
-        while (this.#minions.length > 0) this.#minions[0].preDestroy();
+    /** Delete a Minion in this manager. */
+    delete(minion: Minion) {
+        return this.#minions.remove(minion);
     }
 
-    /** Add an existing Minion to this MinionSpawner's array of Minions. */
-    trackMinion(minion: Minion) {
-        // If this MinionSpawner already has a Minion with a matching uuid, return
-        if (this.#minions.some((e) => e.uuid === minion.uuid)) return;
-        // Add the existing Minion to the array
-        this.#minions.push(minion);
-    }
-
-    /** Remove an existing Minion from this MinionSpawner's array of Minions. */
-    stopTrackingMinion(minion: Minion) {
-        // If this MinionSpawner doesnt have a Minion with a matching uuid, return
-        if (!this.#minions.some((e) => e.uuid === minion.uuid)) return;
-        // Remove the existing Minion from the array
-        this.#minions.splice(this.#minions.indexOf(minion), 1);
+    /** Garbage collection. */
+    gc() {
+        this.#minions.gc();
     }
 }
 

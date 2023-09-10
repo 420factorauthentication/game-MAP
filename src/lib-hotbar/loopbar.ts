@@ -32,9 +32,9 @@ export class Loopbar extends Rollbar {
     get isOn() {return this.#timer.isOn}
     get isPaused() {return this.#timer.isPaused}
 
-    preDestroy() {
+    gc() {
+        super.gc();
         this.#timer.stop();
-        this._elem?.remove();
     }
 }
 

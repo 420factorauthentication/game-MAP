@@ -111,6 +111,11 @@ export class Scene {
         }
     }
 
+    /** Garbage collection. */
+    gc() {
+        this.unload(true);
+    }
+
     ////////////////
     // COMPONENTS //
     ////////////////

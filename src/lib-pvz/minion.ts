@@ -25,10 +25,10 @@ import uuidv4 from "../../node_modules/uuid/dist/esm-browser/v4.js";
  * 
  * All time values are in ms.
  */
-export class Minion extends ElemStyler {
+export class Minion {
     /**
-     * @param manager Contains records of all existing minions for cleanup.
-     * @param type Is used to define starting #stats.
+     * @param manager Tracks all Minions for garbage collection.
+     * @param type Is used to define starting stats.
      * @param target Is used to control Attack AI.
      * @param _x Is in viewport width units (vw).
      * @param _y Is in viewport height units (vh).
@@ -37,7 +37,7 @@ export class Minion extends ElemStyler {
      * @param minionElem DOM Element used to render Minion.
      * Can be a CSS selector or existing DOM element or null,
      * in which case a new anchor element will be created.
-     * @param hpBarElem DOM Element used to render the Minion's HP Bar.
+     * @param hpBarElem DOM Element used to render Minion HP Bar.
      * Can be a CSS selector or existing DOM element or null,
      * in which case a new anchor element will be created.
      */
@@ -52,7 +52,7 @@ export class Minion extends ElemStyler {
         hpBarElem?: HTMLElement | string,
     ) {
         // Lookup minion elem by selector. If not found, create one with default settings.
-        super(minionElem, "a", "width: 64px; height: 64px");
+        this.#minion = new ElemStyler(minionElem, "a", "width: 64px; height: 64px");
 
         // Generate a new uuid unique from all other Minions
         this.uuid = uuidv4();
@@ -68,16 +68,16 @@ export class Minion extends ElemStyler {
         
         // Init position
         this.minionElem.style.position = "absolute";
-        this.setX(_x);
-        this.setY(_y);
+        this.#minion.setX(_x);
+        this.#minion.setY(_y);
 
         // Init elem sprite image
         this.minionElem.style.backgroundRepeat = "no-repeat";
         this.minionElem.style.backgroundSize = "100% 100%";
-        this.setBgImg(_spriteURL);
+        this.#minion.setBgImg(_spriteURL);
 
-        // Tell the MinionSpawner to add this Minion to it's array
-        this.manager.trackMinion(this);
+        // Tell the MinionSpawner to add this Minion to it's manager
+        this.manager.add(this);
 
         // Start Minion moving
         this.#updateLooper();
@@ -96,7 +96,7 @@ export class Minion extends ElemStyler {
 
     /** Path to image. Used for minion background-image and for mask-image of fx. */
     get spriteURL(): string {return this._spriteURL}
-    set spriteURL(pathToFile) {this._spriteURL = this.setBgImg(pathToFile)}
+    set spriteURL(pathToFile) {this._spriteURL = this.#minion.setBgImg(pathToFile)}
 
     /** Check if this Minion is paused. */
     get isPaused() {return this.#isPaused}
@@ -108,27 +108,17 @@ export class Minion extends ElemStyler {
     /** Unpause this Minion. It will resume moving/attacking. */
     unpause() {this.#timer.unpause()}
 
-    /**
-     * TODO: Handle all game systems related to this minion's death here, like death animation.
-     * Also begin JS garbage cleanup.
-     */
+    /** TODO: Minion Death. Called when HP changes if HP < 0. */
     die() {
-        this.preDestroy();
+        this.gc();
     }
 
-    /**
-     * Begin the JS garbage collection process.
-     * Also tells the MinionSpawner to delete it's handle to this object.
-     * After calling this, manually nullify/undefine all other handles to this object.
-     */
-    preDestroy() {
-        // Stop loops
+    /** Garbage collection. */
+    gc() {
         this.#timer.stop();
-        // Destroy DOM Elements
-        this.#hpBar.preDestroy();
-        this.minionElem?.remove();
-        // Tell the MinionSpawner to delete it's handle to this Minion object
-        this.manager.stopTrackingMinion(this);
+        this.#hpBar.gc();
+        this.#minion.gc();
+        this.manager.delete(this);
     }
 
     ////////////////
@@ -137,8 +127,8 @@ export class Minion extends ElemStyler {
     get x (): number {return this._x}
     get y (): number {return this._y}
 
-    set x (vwNumber) {this._x = this.setX(vwNumber)}
-    set y (vhNumber) {this._y = this.setY(vhNumber)}
+    set x (vwNumber) {this._x = this.#minion.setX(vwNumber)}
+    set y (vhNumber) {this._y = this.#minion.setY(vhNumber)}
 
     get hp()     {return this.#stats.current("hp")}
     get movSpd() {return this.#stats.current("movSpd")}
@@ -162,18 +152,18 @@ export class Minion extends ElemStyler {
     ////////////////
     // COMPONENTS //
     ////////////////
-    get minionElem() {return this._elem}
     get hpBarElem() {return this.#hpBar.elem}
+    get minionElem() {return this.#minion.elem}
 
     #timer: Timer;
     #stats: Stats;
     #hpBar: ClipBar;
+    #minion: ElemStyler;
     // #anim: Spriteling;
 
     //////////////////////
     // HELPER FUNCTIONS //
     //////////////////////
-
     #move() {if (--this.x <= this.target.x) this.#updateLooper("attack")}
     #attack() {this.target.hp -= this.#stats.current("atkDmg")}
 
@@ -203,7 +193,10 @@ export class Minion extends ElemStyler {
     }
 
     #onStatAdjust(stat: MinionStat) {
-        switch (this.#state) {
+        if (stat == "hp") {
+            this.#hpBar.value = this.hp;
+            if (this.hp <= 0) this.die();
+        } else switch (this.#state) {
             case "move":
                 if (stat == "movSpd") this.#updateLooper();
                 break;

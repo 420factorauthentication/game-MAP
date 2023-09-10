@@ -37,33 +37,37 @@ export class Rollbar extends Hotbar {
     // API //
     /////////
 
-    /** Randomly select new settings to update existing buttons with. */
+    /**
+     * Randomly add new button settings from this.rollOptions.
+     * Each roll replaces settings added from previous rolls,
+     * but not initial cached settings.
+     */
     roll() {
         // Grab a random sample from this.rollOptions
         const rolls: RollbarOption[] = sample(
             this.rollOptions || [],
-            this._items?.length || 0
+            this.buttons.length
         );
 
         // For each sampled option, update an existing button
         let i = 0;
         for (i; i < rolls.length; i++) {
-            this._items[i].onPress = new Array<() => void>()
+            this.buttons[i].onPress = new Array<() => void>()
                 .concat(this.#initialOnPress[i], rolls[i].onPress)
                 .filter((x) => x);
 
-            this._items[i].conditions = new Array<() => boolean>()
+            this.buttons[i].conditions = new Array<() => boolean>()
                 .concat(this.#initialConds[i], rolls[i].conditions || [])
                 .filter((x) => x);
 
-            this._items[i].elem.style.cssText = [
+            this.buttons[i].elem.style.cssText = [
                 this.#initialCssText[i],
                 rolls[i].styleCssText,
             ]
                 .filter((x) => x)
                 .join(" ");
 
-            this._items[i].elem.innerHTML = [
+            this.buttons[i].elem.innerHTML = [
                 this.#initialInnerHTML[i],
                 rolls[i].innerHTML,
             ]
@@ -72,25 +76,21 @@ export class Rollbar extends Hotbar {
         }
 
         // If less samples than items, reset the remaining items
-        for (i; i < (this._items?.length || 0); i++) {
-            this._items[i].onPress = this.#initialOnPress[i];
-            this._items[i].conditions = this.#initialConds[i];
-            this._items[i].elem.style.cssText = this.#initialCssText[i];
-            this._items[i].elem.innerHTML = this.#initialInnerHTML[i];
-        }
+        this.reset(i);
 
         // If the setting is on, enable all buttons in this Hotbar
         // Overrides cached style.opacity and style.pointerEvents
-        if (this.enableAllOnRoll) this.enableAll();
+        if (this.enableAllOnRoll)
+            for (const button of this.buttons) button.isEnabled = true;
     }
 
     /** Remove all rolled button settings, leaving just initial cached settings. */
-    reset() {
-        for (let i = 0; i < this._items.length; i++) {
-            this._items[i].onPress = this.#initialOnPress[i];
-            this._items[i].conditions = this.#initialConds[i];
-            this._items[i].elem.style.cssText = this.#initialCssText[i];
-            this._items[i].elem.innerHTML = this.#initialInnerHTML[i];
+    reset(startIndex = 0) {
+        for (let i = startIndex; i < this.buttons.length; i++) {
+            this.buttons[i].onPress = this.#initialOnPress[i];
+            this.buttons[i].conditions = this.#initialConds[i];
+            this.buttons[i].elem.style.cssText = this.#initialCssText[i];
+            this.buttons[i].elem.innerHTML = this.#initialInnerHTML[i];
         }
     }
 
@@ -98,34 +98,23 @@ export class Rollbar extends Hotbar {
     // PARENT CLASS EXTENSIONS //
     /////////////////////////////
 
-    add(item: HotbarButton) {
-        if (super.add(item) === undefined) return;
-        this.#initialOnPress.push(item.onPress);
-        this.#initialConds.push(item.conditions);
-        this.#initialCssText.push(item.elem.style.cssText);
-        this.#initialInnerHTML.push(item.elem.innerHTML);
-        return item;
+    add(button: HotbarButton) {
+        if (!super.add(button)) return false;
+        this.#initialOnPress.push(button.onPress);
+        this.#initialConds.push(button.conditions);
+        this.#initialCssText.push(button.elem.style.cssText);
+        this.#initialInnerHTML.push(button.elem.innerHTML);
+        return true;
     }
 
-    remove(v: number | HotbarButton): boolean;
-    remove(index: number): boolean;
-    remove(item: HotbarButton): boolean;
-    remove(v: number | HotbarButton): boolean {
-        if (super.remove(v) === false) return false;
-        let index = typeof v === "number" ? v : this._items.indexOf(v);
+    delete(button: HotbarButton) {
+        let index = this.buttons.indexOf(button);
+        if (!super.delete(button)) return false;
         this.#initialOnPress.splice(index, 1);
         this.#initialConds.splice(index, 1);
         this.#initialCssText.splice(index, 1);
         this.#initialInnerHTML.splice(index, 1);
         return true;
-    }
-
-    removeAll() {
-        super.removeAll();
-        this.#initialOnPress = [];
-        this.#initialConds = [];
-        this.#initialCssText = [];
-        this.#initialInnerHTML = [];
     }
 
     ///////////////////

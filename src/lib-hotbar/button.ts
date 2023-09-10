@@ -10,7 +10,7 @@ import ElemQuery from "../lib-elem/query.js";
 ////////////////////////////////////////////////////////////////////////////////
 
 /** A button that calls functions when clicked, or when a key is pressed. */
-export class HotbarButton extends ElemQuery {
+export class HotbarButton {
     /**
      * @param _hotbar The parent Hotbar. Automatically adds to it's array.
      * @param elem Can be a CSS selector or existing DOM element or null,
@@ -38,7 +38,7 @@ export class HotbarButton extends ElemQuery {
         public singleBarUse: boolean = false
     ) {
         // Lookup elem by selector. If not found, create a new one.
-        super(elem, "button");
+        this.#button = new ElemQuery(elem, "button");
 
         // Apply "flex: 1 1 0" to automatically size equally with siblings
         this.elem.style.flex = "1 1 0";
@@ -48,7 +48,7 @@ export class HotbarButton extends ElemQuery {
 
         // Setup event listeners
         addEventListener("keydown", this);
-        this._elem.addEventListener("click", this);
+        this.elem.addEventListener("click", this);
     }
 
     /////////
@@ -62,24 +62,20 @@ export class HotbarButton extends ElemQuery {
     set isEnabled(newSetting) {
         this.#isEnabled = newSetting;
         if (newSetting == true) {
-            this._elem.style.opacity = "1";
-            this._elem.style.pointerEvents = "auto";
+            this.elem.style.opacity = "1";
+            this.elem.style.pointerEvents = "auto";
         } else {
-            this._elem.style.opacity = "0";
-            this._elem.style.pointerEvents = "none";
+            this.elem.style.opacity = "0";
+            this.elem.style.pointerEvents = "none";
         }
     }
     #isEnabled: boolean = true;
 
-    /**
-     * Begin the JS garbage collection process.
-     * After calling this, manually nullify/undefine
-     * all other handles to this class object instance.
-     */
-    preDestroy() {
+    /** Garbage collection. */
+    gc() {
         removeEventListener("keydown", this);
-        this._elem?.removeEventListener("click", this);
-        this._elem?.remove();
+        this.elem?.removeEventListener("click", this);
+        this.elem?.remove();
     }
 
     ////////////////
@@ -93,8 +89,9 @@ export class HotbarButton extends ElemQuery {
 
     /** The button element. Is a child of this.hotbar.elem. */
     get elem() {
-        return this._elem;
+        return this.#button.elem;
     }
+    #button: ElemQuery;
 
     ////////////
     // EVENTS //
@@ -122,7 +119,8 @@ export class HotbarButton extends ElemQuery {
 
         // If single use, disable appropriate buttons
         if (this.singleButtonUse === true) this.isEnabled = false;
-        if (this.singleBarUse === true) this.hotbar.disableAll();
+        if (this.singleBarUse === true)
+            for (const item of this._hotbar.buttons) item.isEnabled = false;
     }
 }
 

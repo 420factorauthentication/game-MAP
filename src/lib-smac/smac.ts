@@ -70,6 +70,11 @@ export class StateMachine {
         return this.set(this.#state.origin, ...args);
     }
 
+    /** Garbage collection. */
+    gc() {
+        clearInterval(this.#loopID);
+    }
+
     /** Used for onLoop garbage collection. */
     #loopID: NodeJS.Timeout;
 }

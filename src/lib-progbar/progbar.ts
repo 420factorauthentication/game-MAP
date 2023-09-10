@@ -17,7 +17,7 @@ import ElemQuery from "../lib-elem/query.js";
  * Different implementations should use different CSS and HTML features to show
  * a bar graphic that changes proportionally to min, max, and current bar value.
  */
-export abstract class ProgBar extends ElemQuery {
+export abstract class ProgBar {
     /**
      * @param elem
      * Can be a CSS selector or existing DOM element or null,
@@ -43,16 +43,27 @@ export abstract class ProgBar extends ElemQuery {
         private _flow: ProgBarFlow = Flow.leftToRight
     ) {
         // Lookup elem by selector. If not found, create one with default settings.
-        super(elem, "a", "width: 100%; height: 25%; background: darkred");
+        this.#progbar = new ElemQuery(
+            elem,
+            "a",
+            "width: 100%; height: 25%; background: darkred"
+        );
     }
+
+    /**
+     * Recalculate bar graphics.
+     * Should be automatically called after changing something.
+     */
+    protected abstract calcBarGraphics(): void;
 
     /**
      * A lone element or parent element with children.
      * CSS and HTML of elem(s) will change based on min, max, and current bar value.
      */
     get elem() {
-        return this._elem;
+        return this.#progbar.elem;
     }
+    #progbar: ElemQuery;
 
     /**
      * Current bar value, as a percent:
@@ -114,7 +125,7 @@ export abstract class ProgBar extends ElemQuery {
      * because this way should also recalc bar graphics on set.
      */
     set width(cssStyleText: string) {
-        this._elem.style.width = cssStyleText;
+        this.elem.style.width = cssStyleText;
         switch (this.flow) {
             default:
                 return;
@@ -130,7 +141,7 @@ export abstract class ProgBar extends ElemQuery {
      * because this way should also recalc bar graphics on set.
      */
     set height(cssStyleText: string) {
-        this._elem.style.height = cssStyleText;
+        this.elem.style.height = cssStyleText;
         switch (this.flow) {
             default:
                 return;
@@ -140,11 +151,10 @@ export abstract class ProgBar extends ElemQuery {
         }
     }
 
-    /**
-     * Recalculate bar graphics.
-     * Should be automatically called after changing something.
-     */
-    protected abstract calcBarGraphics(): void;
+    /** Garbage collection. */
+    gc() {
+        this.#progbar.gc();
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
