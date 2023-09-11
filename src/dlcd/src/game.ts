@@ -123,10 +123,10 @@ export const LoadGame: () => Promise<number | void> = GAME((cache) => {
             SpawnMaxY
         );
 
-        cache.resourceMan = new ResourceManager(
-            GameScreen.containerElem.querySelector("#robux-counter"),
-            GameScreen.containerElem.querySelector("#cringes-counter")
-        );
+        cache.resourceMan = new ResourceManager({
+            robux: GameScreen.containerElem.querySelector("#robux-counter"),
+            cringes: GameScreen.containerElem.querySelector("#cringes-counter"),
+        });
 
         cache.spellbar = new Loopbar(
             SpellbarSpeed,

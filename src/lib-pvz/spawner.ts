@@ -73,7 +73,6 @@ export class MinionSpawner {
             this.target,
             rand(this.minX, this.maxX),
             rand(this.minY, this.maxY),
-            type.spriteURL,
             elem
         );
     }

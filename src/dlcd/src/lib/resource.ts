@@ -1,32 +1,27 @@
 /** @format */
 
+import {ResourceNames} from "../const/resources.js";
+
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-/** Manages player resources. */
+export type ResourceName = (typeof ResourceNames)[keyof typeof ResourceNames];
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
 export class ResourceManager {
-    constructor(
-        private _robuxCounter: HTMLSpanElement,
-        private _cringesCounter: HTMLSpanElement
-    ) {}
+    constructor(private _ui: {[key in ResourceName]: HTMLSpanElement}) {
+        for (const key in ResourceNames) this.#resources[key] = 0;
+        for (const key in _ui) _ui[key].innerText = "0";
+    }
 
-    /** Robux = Gold */
-    get robux() {
-        return this.#robux;
+    #resources: {[key in ResourceName]?: number} = {};
+    get(resource: ResourceName) {
+        return this.#resources[resource];
     }
-    set robux(newAmount) {
-        this.#robux = newAmount;
-        this._robuxCounter.innerText = newAmount.toString();
+    set(resource: ResourceName, newAmount: number) {
+        this.#resources[resource] = newAmount;
+        this._ui[resource].innerText = newAmount.toString();
     }
-    #robux: number = 0;
-
-    /** Cringe Memories = Tech */
-    get cringes() {
-        return this.#cringes;
-    }
-    set cringes(newAmount) {
-        this.#cringes = newAmount;
-        this._cringesCounter.innerText = newAmount.toString();
-    }
-    #cringes: number = 0;
 }

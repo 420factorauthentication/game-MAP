@@ -32,8 +32,6 @@ export class Minion {
      * @param target Is used to control Attack AI.
      * @param _x Is in viewport width units (vw).
      * @param _y Is in viewport height units (vh).
-     * @param _spriteURL Path to image.
-     * Used for minion background-image and for mask-image of fx.
      * @param minionElem DOM Element used to render Minion.
      * Can be a CSS selector or existing DOM element or null,
      * in which case a new anchor element will be created.
@@ -47,7 +45,6 @@ export class Minion {
         readonly target: Base,
         private _x: number,
         private _y: number,
-        private _spriteURL: string,
         minionElem?: HTMLElement | string,
         hpBarElem?: HTMLElement | string,
     ) {
@@ -74,7 +71,7 @@ export class Minion {
         // Init elem sprite image
         this.minionElem.style.backgroundRepeat = "no-repeat";
         this.minionElem.style.backgroundSize = "100% 100%";
-        this.#minion.setBgImg(_spriteURL);
+        this.spriteURL = type.spriteURL;
 
         // Tell the MinionSpawner to add this Minion to it's manager
         this.manager.add(this);
@@ -95,8 +92,9 @@ export class Minion {
     #state: "move" | "attack" = "move";
 
     /** Path to image. Used for minion background-image and for mask-image of fx. */
-    get spriteURL(): string {return this._spriteURL}
-    set spriteURL(pathToFile) {this._spriteURL = this.#minion.setBgImg(pathToFile)}
+    get spriteURL(): string {return this.#spriteURL}
+    set spriteURL(pathToFile) {this.#spriteURL = this.#minion.setBgImg(pathToFile)}
+    #spriteURL: string;
 
     /** Check if this Minion is paused. */
     get isPaused() {return this.#isPaused}
@@ -130,10 +128,10 @@ export class Minion {
     set x (vwNumber) {this._x = this.#minion.setX(vwNumber)}
     set y (vhNumber) {this._y = this.#minion.setY(vhNumber)}
 
-    get hp()     {return this.#stats.current("hp")}
-    get movSpd() {return this.#stats.current("movSpd")}
-    get atkSpd() {return this.#stats.current("atkSpd")}
-    get atkDmg() {return this.#stats.current("atkDmg")}
+    /** Get current value of a stat. */
+    get(stat: MinionStat) {
+        return this.#stats.current(stat);
+    }
 
     /** Adjust a stat for a set time, in ms. */
     mod(stat: MinionStat, amount: number, time: number) {
@@ -194,8 +192,8 @@ export class Minion {
 
     #onStatAdjust(stat: MinionStat) {
         if (stat == "hp") {
-            this.#hpBar.value = this.hp;
-            if (this.hp <= 0) this.die();
+            this.#hpBar.value = this.get("hp");
+            if (this.get("hp") <= 0) this.die();
         } else switch (this.#state) {
             case "move":
                 if (stat == "movSpd") this.#updateLooper();
