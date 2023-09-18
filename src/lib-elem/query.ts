@@ -1,5 +1,7 @@
 /** @format */
 
+import ElemBase from "./base.js";
+
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -8,7 +10,7 @@
  * with a constructor for providing your own element,
  * or creating a new default element if none is provided.
  */
-export class ElemQuery {
+export class ElemQuery extends ElemBase {
     /**
      * @param elem Can be a CSS selector or existing DOM element or null,
      * in which case a new anchor element will be created.
@@ -26,18 +28,13 @@ export class ElemQuery {
         defaultInlineStyle?: string,
         defaultParent: HTMLElement | string = document.body
     ) {
-        // Lookup element by selector
-        if (elem)
-            this._elem =
-                typeof elem === "string"
-                    ? (document.querySelector(elem) as HTMLElement)
-                    : elem;
-
-        // No element found. Create one with default settings and parent.
+        super(elem);
         if (!this._elem) {
             this._elem = document.createElement(defaultTagName);
+
             if (defaultInlineStyle)
                 this._elem.setAttribute("style", defaultInlineStyle);
+
             (typeof defaultParent === "string"
                 ? (document.querySelector(defaultParent) as HTMLElement)
                 : defaultParent
@@ -45,20 +42,6 @@ export class ElemQuery {
             if (!this._elem.parentElement)
                 throw new Error("ClassWithElem parent selector not found");
         }
-    }
-
-    /**
-     * An element initialized in constructor and managed by this class.
-     * When extending this class, add setters/getters to this as desired.
-     */
-    get elem() {
-        return this._elem;
-    }
-    protected _elem: HTMLElement;
-
-    /** Garbage collection. */
-    gc() {
-        this._elem?.remove();
     }
 }
 
