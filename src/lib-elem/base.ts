@@ -9,7 +9,7 @@
  */
 export class ElemBase {
     /**
-     * @param elem Can be a CSS selector or existing DOM element or null,
+     * @param elem Can be a CSS selector or existing DOM element or undefined,
      * in which case it does nothing or prints a provided error message.
      * @param error If elem not found, nothing happens, unless this is provided. \
      * In that case, it throws an Error with this message instead.

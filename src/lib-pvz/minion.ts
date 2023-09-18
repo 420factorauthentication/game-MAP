@@ -32,11 +32,11 @@ export class Minion {
      * @param target Is used to control Attack AI.
      * @param _x Is in viewport width units (vw).
      * @param _y Is in viewport height units (vh).
-     * @param minionElem DOM Element used to render Minion.
-     * Can be a CSS selector or existing DOM element or null,
+     * @param minionElem DOM element used to render Minion.
+     * Can be a CSS selector or existing DOM element or undefined,
      * in which case a new anchor element will be created.
-     * @param hpBarElem DOM Element used to render Minion HP Bar.
-     * Can be a CSS selector or existing DOM element or null,
+     * @param hpBarElem DOM element used to render Minion HP Bar.
+     * Can be a CSS selector or existing DOM element or undefined,
      * in which case a new anchor element will be created.
      */
     constructor(
@@ -49,7 +49,7 @@ export class Minion {
         hpBarElem?: HTMLElement | string,
     ) {
         // Lookup minion elem by selector. If not found, create one with default settings.
-        this.#minion = new ElemStyler(minionElem, "a", "width: 64px; height: 64px");
+        this.#minion = new ElemStyler(minionElem, "a");
 
         // Generate a new uuid unique from all other Minions
         this.uuid = uuidv4();
@@ -71,7 +71,13 @@ export class Minion {
         // Init elem sprite image
         this.minionElem.style.backgroundRepeat = "no-repeat";
         this.minionElem.style.backgroundSize = "100% 100%";
+        this.minionElem.style.width = type.width.magnitude.toString() + type.width.unit;
+        this.minionElem.style.height = type.height.magnitude.toString() + type.height.unit;
         this.spriteURL = type.spriteURL;
+
+        // Init optional config
+        if (type.extraClasses)
+            this.minionElem.className += " " + type.extraClasses
 
         // Tell the MinionSpawner to add this Minion to it's manager
         this.manager.add(this);

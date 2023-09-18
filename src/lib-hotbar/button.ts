@@ -13,7 +13,7 @@ import ElemQuery from "../lib-elem/query.js";
 export class HotbarButton {
     /**
      * @param _hotbar The parent Hotbar. Automatically adds to it's array.
-     * @param elem Can be a CSS selector or existing DOM element or null,
+     * @param elem Can be a CSS selector or existing DOM element or undefined,
      * in which case a new button element will be created. \
      * Applies "flex: 1 1 0" to automatically size equally with siblings.
      * @param hotkey When this key is pressed, onPress functions are called.

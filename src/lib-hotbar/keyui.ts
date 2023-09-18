@@ -14,7 +14,7 @@ import ElemQuery from "../lib-elem/query.js";
  */
 export class KeyUI {
     /**
-     * @param elem Can be a CSS selector or existing DOM element or null,
+     * @param elem Can be a CSS selector or existing DOM element or undefined,
      * in which case a new div element will be created. \
      * Applies "display: flex" to automatically size children equally. \
      * Methods create children spans with "flex: 1 1 0" automatically.

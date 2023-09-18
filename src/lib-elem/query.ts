@@ -12,7 +12,7 @@ import ElemBase from "./base.js";
  */
 export class ElemQuery extends ElemBase {
     /**
-     * @param elem Can be a CSS selector or existing DOM element or null,
+     * @param elem Can be a CSS selector or existing DOM element or undefined,
      * in which case a new anchor element will be created.
      * @param defaultTagName If elem is not provided, creates new elem of this tag.
      * @param defaultInlineStyle If elem is not provided,

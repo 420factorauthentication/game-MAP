@@ -7,6 +7,7 @@ import Minion from "./minion.js";
 import Manager from "../lib-manager/manager.js";
 import Timer from "../lib-timer/timer.js";
 import {rand} from "../lib-utils/math.js";
+import {isElem} from "../lib-utils/elem.js";
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -63,37 +64,75 @@ export class MinionSpawner {
 
     /**
      * Create a new Minion and add it to this manager. Returns the new Minion.
-     * @param elem Can be a CSS selector or existing DOM element or null,
+     * @param minionElem DOM element used to render Minion.
+     * Can be a CSS selector or existing DOM element or undefined,
+     * in which case a new anchor element will be created.
+     * @param hpBarElem Dom element used to render Minion HP Bar.
+     * Can be a CSS selector or existing DOM element or undefined,
      * in which case a new anchor element will be created.
      */
-    spawn(type: MinionType, elem?: HTMLElement | string): Minion {
+    spawn(
+        type: MinionType,
+        minionElem?: HTMLElement | string,
+        hpBarElem?: HTMLElement | string
+    ): Minion {
         return new Minion(
             this,
             type,
             this.target,
             rand(this.minX, this.maxX),
             rand(this.minY, this.maxY),
-            elem
+            minionElem,
+            hpBarElem
         );
     }
 
     /**
      * Spawn a group of Minions over time.
      * If a new level is started while one is in progress, stops the old one.
+     * @param minionModel Optionally provide a template to clone new Minions from.
+     * Clones the first Element Node found in the template.
+     * @param hpBarModel Optionally provide a template to clone new Minion HP Bars from.
+     * Clones the first Element Node found in the template.
+     * @param container All newly spawned Minions will be appended as children to this DOM Node.
      */
-    startLevel(spawns: SpawnGroup) {
+    startLevel(
+        spawns: SpawnGroup,
+        minionModel?: HTMLTemplateElement,
+        hpBarModel?: HTMLTemplateElement,
+        container: Node = document.body
+    ) {
+        // Reset state
         this.#levelTimer?.stop();
         this.#spawnCount = 0;
         if (spawns.amount <= 0) return;
 
+        // Helper functions
+        const cloneModel = (model?: HTMLTemplateElement) => {
+            if (!model) return;
+            for (const child of model.content.cloneNode(true).childNodes)
+                if (isElem(child)) {
+                    container.appendChild(child);
+                    return child;
+                }
+        };
+
+        const spawnMinion = () => {
+            const minionElem = cloneModel(minionModel);
+            const hpBarElem = cloneModel(hpBarModel);
+            this.spawn(spawns.type, minionElem, hpBarElem);
+        };
+
+        // Time start
         this.#levelTimer = new Timer(() => {
             this.#levelTimer.stop();
-            this.spawn(spawns.type);
+            spawnMinion();
             if (++this.#spawnCount >= spawns.amount) return;
 
+            // Time step
             this.#levelTimer = new Timer(
                 () => {
-                    this.spawn(spawns.type);
+                    spawnMinion();
                     if (++this.#spawnCount >= spawns.amount)
                         this.#levelTimer.stop();
                 },

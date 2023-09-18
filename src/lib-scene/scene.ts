@@ -37,7 +37,7 @@ export class Scene {
      * Exception: Returns void if Scene is already loaded.
      *
      * @param containerElem The elem to contain all newly created Scene elems.
-     * Can be a css selector or existing DOM element or null,
+     * Can be a css selector or existing DOM element or undefined,
      * in which case a new div element will be created.
      * @param containerClasses Can optionally provide classes
      * to append to containerElem's classList during loading.

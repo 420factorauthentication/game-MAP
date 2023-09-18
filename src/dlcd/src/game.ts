@@ -7,6 +7,7 @@ import {Wood as WoodBase} from "./const/bases.js";
 
 import {
     GameScreen,
+    GameComponents,
     GameStyleComponents,
     GameStyleSettings,
 } from "./const/scenes.js";
@@ -68,16 +69,24 @@ const GAME: <Return>(func: GameFunc<Return>) => () => Return = (() => {
 
 /** Starts the game if not started. Does nothing if already started. */
 export const StartGame: () => void = GAME((cache) => {
-    LoadGame().then((httpStatus) => {
-        if (!cache.isLoaded)
-            throw new Error(`Error loading game. HTTP Status: ${httpStatus}`);
+    GameComponents.load().then(() =>
+        LoadGame().then((httpStatus) => {
+            if (!cache.isLoaded)
+                throw new Error(
+                    `Error loading game. HTTP Status: ${httpStatus}`
+                );
+            const minionModel: HTMLTemplateElement =
+                document.querySelector("#new-minion");
+            const hpBarModel: HTMLTemplateElement =
+                document.querySelector("new-minion-hp-bar");
 
-        // Init game systems
-        cache.spellbar.start();
-        cache.minionMan.startLevel(LvlOne);
-        // Hide all menus
-        ToggleTechMenu();
-    });
+            // Init game systems
+            cache.spellbar.start();
+            cache.minionMan.startLevel(LvlOne, minionModel, hpBarModel);
+            // Hide all menus
+            ToggleTechMenu();
+        })
+    );
 });
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //

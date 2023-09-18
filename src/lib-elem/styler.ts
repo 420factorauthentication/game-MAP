@@ -50,19 +50,28 @@ export class ElemStyler extends ElemQuery {
     // GET //
     /////////
 
-    getX(origin: "left" | "right" = "left"): CSSUnitValue | null {
+    getX(
+        origin: "left" | "right" = "left"
+    ): {magnitude: number; unit: string} | null {
         return this.#getPos(origin);
     }
 
-    getY(origin: "top" | "bottom" = "top"): CSSUnitValue | null {
+    getY(
+        origin: "top" | "bottom" = "top"
+    ): {magnitude: number; unit: string} | null {
         return this.#getPos(origin);
     }
 
-    #getPos(origin: "left" | "right" | "top" | "bottom"): CSSUnitValue | null {
+    #getPos(
+        origin: "left" | "right" | "top" | "bottom"
+    ): {magnitude: number; unit: string} | null {
         const styleText = this._elem.style[origin];
         const matches = /(-?\d+)([A-Za-z]+)/.exec(styleText);
         return matches
-            ? new CSSUnitValue(parseFloat(matches[1]), matches[2])
+            ? {
+                  magnitude: parseFloat(matches[1]),
+                  unit: matches[2],
+              }
             : null;
     }
 

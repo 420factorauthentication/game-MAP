@@ -16,7 +16,7 @@ export class Base {
      * @param startingHP How much HP the player starts with.
      * @param x Minions stop here and begin attacking. Viewport width units (vw).
      * @param hpBarElem An element to create a ClipBar to use as an HP bar.
-     * Can be a CSS selector or existing DOM element or null,
+     * Can be a CSS selector or existing DOM element or undefined,
      * in which case a new anchor element will be created.
      */
     constructor(

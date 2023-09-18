@@ -21,7 +21,7 @@ import ProgBar from "./progbar.js";
 export class ClipBar extends ProgBar {
     /**
      * @param elem
-     * Can be a CSS selector or existing DOM element or null,
+     * Can be a CSS selector or existing DOM element or undefined,
      * in which case a new anchor element will be created. \
      * A lone elem. BG will change proportionally to min, max, and current bar value.
      */

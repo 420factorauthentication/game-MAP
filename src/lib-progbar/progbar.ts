@@ -20,7 +20,7 @@ import ElemQuery from "../lib-elem/query.js";
 export abstract class ProgBar {
     /**
      * @param elem
-     * Can be a CSS selector or existing DOM element or null,
+     * Can be a CSS selector or existing DOM element or undefined,
      * in which case a new anchor element will be created. \
      * A lone elem or parent elem with children.
      * CSS and HTML of elem(s) will change based on min, max, and current bar value.
