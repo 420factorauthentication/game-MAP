@@ -27,6 +27,8 @@ import Loopbar from "../../lib-hotbar/loopbar.js";
 import HotbarButton from "../../lib-hotbar/button.js";
 import KeyUI from "../../lib-hotbar/keyui.js";
 
+import {cloneTemplate} from "../../lib-utils/elem.js";
+
 import {ResourceManager} from "./lib/resource.js";
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -153,10 +155,13 @@ export const LoadGame: () => Promise<number | void> = GAME((cache) => {
                 };
             })
         );
+        const spellbarButtonModel: HTMLTemplateElement = document.querySelector(
+            "#new-spellbar-button"
+        );
         for (let i = 0; i < SpellbarMax; i++)
             new HotbarButton(
                 cache.spellbar,
-                document.createElement("button"),
+                cloneTemplate(spellbarButtonModel),
                 Object.values(SpellKeys)[i].default,
                 [],
                 [],

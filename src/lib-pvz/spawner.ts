@@ -7,7 +7,7 @@ import Minion from "./minion.js";
 import Manager from "../lib-manager/manager.js";
 import Timer from "../lib-timer/timer.js";
 import {rand} from "../lib-utils/math.js";
-import {isElem} from "../lib-utils/elem.js";
+import {isElem, cloneTemplate} from "../lib-utils/elem.js";
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -108,18 +108,9 @@ export class MinionSpawner {
         if (spawns.amount <= 0) return;
 
         // Helper functions
-        const cloneModel = (model?: HTMLTemplateElement) => {
-            if (!model) return;
-            for (const child of model.content.cloneNode(true).childNodes)
-                if (isElem(child)) {
-                    container.appendChild(child);
-                    return child;
-                }
-        };
-
         const spawnMinion = () => {
-            const minionElem = cloneModel(minionModel);
-            const hpBarElem = cloneModel(hpBarModel);
+            const minionElem = cloneTemplate(minionModel, container);
+            const hpBarElem = cloneTemplate(hpBarModel, container);
             this.spawn(spawns.type, minionElem, hpBarElem);
         };
 
