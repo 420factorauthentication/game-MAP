@@ -71,24 +71,31 @@ const GAME: <Return>(func: GameFunc<Return>) => () => Return = (() => {
 
 /** Starts the game if not started. Does nothing if already started. */
 export const StartGame: () => void = GAME((cache) => {
-    GameComponents.load().then(() =>
-        LoadGame().then((httpStatus) => {
-            if (!cache.isLoaded)
-                throw new Error(
-                    `Error loading game. HTTP Status: ${httpStatus}`
-                );
-            const minionModel: HTMLTemplateElement =
-                document.querySelector("#new-minion");
-            const hpBarModel: HTMLTemplateElement =
-                document.querySelector("new-minion-hp-bar");
+    LoadGame().then((httpStatus) => {
+        if (!cache.isLoaded)
+            throw new Error(`Error loading game. HTTP Status: ${httpStatus}`);
 
-            // Init game systems
-            cache.spellbar.start();
-            cache.minionMan.startLevel(LvlOne, minionModel, hpBarModel);
-            // Hide all menus
-            ToggleTechMenu();
-        })
-    );
+        // Init game systems
+        cache.spellbar.start();
+
+        // Start spawning Minions
+        const minionModel: HTMLTemplateElement =
+            document.querySelector("#new-minion");
+        const hpBarModel: HTMLTemplateElement =
+            document.querySelector("new-minion-hp-bar");
+        const scene = document.querySelector("#game");
+        const comments = [
+            "####################################################################",
+            "############################# Minions ##############################",
+            "####################################################################",
+        ];
+        for (const comment of comments)
+            scene.append(document.createComment(comment));
+        cache.minionMan.startLevel(LvlOne, minionModel, hpBarModel, scene);
+
+        // Hide all menus
+        ToggleTechMenu();
+    });
 });
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
@@ -100,86 +107,96 @@ export const StartGame: () => void = GAME((cache) => {
  */
 export const LoadGame: () => Promise<number | void> = GAME((cache) => {
     if (cache.isLoaded) return;
-    return GameScreen.load(undefined, "scene", "game").then((httpStatus) => {
-        if (httpStatus != 200) return httpStatus;
-        cache.isLoaded = true;
 
-        // Load CSS
-        GameStyleComponents.load();
-        GameStyleSettings.load();
+    document.body.append(
+        document.createComment("~~~~~~~~~~~~~~~~ GAME ~~~~~~~~~~~~~~~~")
+    );
 
-        // Query elements
-        if (!cache.menuTech) {
-            cache.menuTech = document.querySelector("#game-techmenu");
-            if (!cache.menuTech) throw new Error("#game-techmenu not found");
-        }
+    return GameComponents.load(undefined, "game-templates").then(() =>
+        GameScreen.load(undefined, "game", "scene").then((httpStatus) => {
+            if (httpStatus != 200) return httpStatus;
+            cache.isLoaded = true;
 
-        // Setup button onclicks
-        const gameNavTechButton: HTMLButtonElement =
-            GameScreen.containerElem.querySelector("#game-nav-tech");
-        gameNavTechButton.onclick = ToggleTechMenu;
+            // Load CSS
+            GameStyleComponents.load();
+            GameStyleSettings.load();
 
-        // Init game components
-        cache.base = new Base(
-            WoodBase.hp,
-            WoodBase.x,
-            GameScreen.containerElem.querySelector("#game-hpbar") as HTMLElement
-        );
+            // Cache frequently used elements, like menus
+            if (!cache.menuTech) {
+                cache.menuTech = document.querySelector("#game-techmenu");
+                if (!cache.menuTech)
+                    throw new Error("#game-techmenu not found");
+            }
 
-        cache.minionMan = new MinionSpawner(
-            cache.base,
-            SpawnMinX,
-            SpawnMaxX,
-            SpawnMinY,
-            SpawnMaxY
-        );
+            // Setup button onclicks
+            const gameNavTechButton: HTMLButtonElement =
+                GameScreen.containerElem.querySelector("#game-nav-tech");
+            gameNavTechButton.onclick = ToggleTechMenu;
 
-        cache.resourceMan = new ResourceManager({
-            robux: GameScreen.containerElem.querySelector("#robux-counter"),
-            cringes: GameScreen.containerElem.querySelector("#cringes-counter"),
-        });
-
-        cache.spellbar = new Loopbar(
-            SpellbarSpeed,
-            GameScreen.containerElem.querySelector(
-                "#game-spellbar"
-            ) as HTMLElement,
-            Object.values(Spells).map((v) => {
-                const {getOnPress, getCondition, ...otherProps} = v;
-                return {
-                    ...otherProps,
-                    onPress: [getOnPress(cache.minionMan)],
-                    conditions: getCondition
-                        ? [getCondition(cache.resourceMan)]
-                        : [],
-                };
-            })
-        );
-        const spellbarButtonModel: HTMLTemplateElement = document.querySelector(
-            "#new-spellbar-button"
-        );
-        for (let i = 0; i < SpellbarMax; i++)
-            new HotbarButton(
-                cache.spellbar,
-                cloneTemplate(spellbarButtonModel),
-                Object.values(SpellKeys)[i].default,
-                [],
-                [],
-                true,
-                true
+            // Init game components
+            cache.base = new Base(
+                WoodBase.hp,
+                WoodBase.x,
+                GameScreen.containerElem.querySelector(
+                    "#game-hpbar"
+                ) as HTMLElement
             );
 
-        cache.keyui = new KeyUI(
-            GameScreen.containerElem.querySelector(
-                "#game-keyui"
-            ) as HTMLElement,
-            SpellbarMax,
-            Object.values(SpellKeys).map((v) => v.default)
-        );
+            cache.minionMan = new MinionSpawner(
+                cache.base,
+                SpawnMinX,
+                SpawnMaxX,
+                SpawnMinY,
+                SpawnMaxY
+            );
 
-        // Return HTTP Status Code
-        return httpStatus;
-    });
+            cache.resourceMan = new ResourceManager({
+                robux: GameScreen.containerElem.querySelector("#robux-counter"),
+                cringes:
+                    GameScreen.containerElem.querySelector("#cringes-counter"),
+            });
+
+            cache.spellbar = new Loopbar(
+                SpellbarSpeed,
+                GameScreen.containerElem.querySelector(
+                    "#game-spellbar"
+                ) as HTMLElement,
+                Object.values(Spells).map((v) => {
+                    const {getOnPress, getCondition, ...otherProps} = v;
+                    return {
+                        ...otherProps,
+                        onPress: [getOnPress(cache.minionMan)],
+                        conditions: getCondition
+                            ? [getCondition(cache.resourceMan)]
+                            : [],
+                    };
+                })
+            );
+            const spellbarButtonModel: HTMLTemplateElement =
+                document.querySelector("#new-spellbar-button");
+            for (let i = 0; i < SpellbarMax; i++)
+                new HotbarButton(
+                    cache.spellbar,
+                    cloneTemplate(spellbarButtonModel),
+                    Object.values(SpellKeys)[i].default,
+                    [],
+                    [],
+                    true,
+                    true
+                );
+
+            cache.keyui = new KeyUI(
+                GameScreen.containerElem.querySelector(
+                    "#game-keyui"
+                ) as HTMLElement,
+                SpellbarMax,
+                Object.values(SpellKeys).map((v) => v.default)
+            );
+
+            // Return HTTP Status Code
+            return httpStatus;
+        })
+    );
 });
 
 ////////////////////////////////////////////////////////////////////////////////

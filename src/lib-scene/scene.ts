@@ -37,17 +37,17 @@ export class Scene {
      * Exception: Returns void if Scene is already loaded.
      *
      * @param containerElem The elem to contain all newly created Scene elems.
-     * Can be a css selector or existing DOM element or undefined,
+     * Can be a CSS selector or existing DOM element or undefined,
      * in which case a new div element will be created.
-     * @param containerClasses Can optionally provide classes
-     * to append to containerElem's classList during loading.
      * @param containerId Can optionally provide an id
      * to set containerElem's id during loading.
+     * @param containerClasses Can optionally provide classes
+     * to append to containerElem's classList during loading.
      */
     async load(
         containerElem?: HTMLElement | string,
-        containerClasses?: string | string[],
-        containerId?: string
+        containerId?: string,
+        containerClasses?: string | string[]
     ): Promise<number | void> {
         if (this.#isLoaded) return;
 
