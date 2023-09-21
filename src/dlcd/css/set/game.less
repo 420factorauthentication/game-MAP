@@ -1,5 +1,7 @@
 /** @format */
 
+@plugin "lists";
+
 /* ##################################################################### */
 /* ############################### STYLE ############################### */
 /* ##################################################################### */
@@ -14,13 +16,16 @@
 /* ############################### LAYOUT ############################## */
 /* ##################################################################### */
 
+@grid-row: 1fr, 8fr, 3fr;
+@grid-col: 1fr, 2fr;
+
 // Game Scene Container //
 #game {
     padding: 5vh 5vw;
     box-sizing: border-box;
     display: grid;
-    grid-template: 1fr 8fr 3fr / 1fr 2fr;
     gap: 32px 32px;
+    grid-template: join(@grid-row, " ") / join(@grid-col, " ");
 }
 
 #game * {
@@ -34,7 +39,20 @@
     grid-area: 1 / 1 / 2 / 2;
 }
 #game-base {
-    grid-area: 2 / 1 / 3 / 2;
+    // $less and grid-area: 2 / 1 / 3 / 2;
+    grid-row-start: 2;
+    grid-column-start: 1;
+    grid-row-end: 3;
+    grid-column-end: 2;
+    // center and aspect-ratio: 1 / 1
+    box-sizing: border-box;
+    @width-numerator: unit(extract(@grid-col, $grid-column-start));
+    @height-numerator: unit(extract(@grid-row, $grid-row-start));
+    @width-denominator: ~"(" replace(join(@grid-col, " + "), "fr", "", "g") ~")";
+    @height-denominator: ~"(" replace(join(@grid-row, " + "), "fr", "", "g") ~")";
+    @width: ~"@{width-numerator} / @{width-denominator} * 100vi";
+    @height: ~"@{height-numerator} / @{height-denominator} * 100vb";
+    padding: calc((@height - @width) / 2) calc((@width - @height) / 2);
 }
 #game-techmenu {
     grid-area: 2 / 2 / 3 / 3;
