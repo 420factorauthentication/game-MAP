@@ -1,5 +1,7 @@
 /** @format */
 
+import {indentedAppend} from "../lib-utils/elem.js";
+
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -47,9 +49,9 @@ export class SceneLink {
 
             // Create a new link elem and apply the stylesheet href
             this.#linkElem = document.createElement("link");
-            document.head.append(this.#linkElem);
             this.#linkElem.setAttribute("rel", "stylesheet");
             this.#linkElem.setAttribute("href", this.cssFile);
+            indentedAppend(document.head, this.#linkElem);
 
             // Success: Return status code
             return result.status;

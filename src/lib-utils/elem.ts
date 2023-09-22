@@ -20,7 +20,7 @@ export function isElem(o): o is HTMLElement {
         : o &&
               typeof o === "object" &&
               o !== null &&
-              o.nodeType === 1 &&
+              o.nodeType === Node.ELEMENT_NODE &&
               typeof o.nodeName === "string";
 }
 
@@ -54,6 +54,44 @@ export function cloneTemplate(
     for (const child of template.content.cloneNode(true).childNodes)
         if (isElem(child)) {
             container.appendChild(child);
+            container.appendChild(document.createTextNode("\n"));
             return child;
         }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+/** @see https://stackoverflow.com/questions/19736663/appending-elements-to-dom-with-indentation-spacing */
+export function indentedAppend(
+    parent: ParentNode,
+    child: Node,
+    indentStep = "    ",
+    indentStart = ""
+) {
+    let indent = indentStart;
+    let elem: ParentNode | null = parent;
+
+    while (elem && elem !== document) {
+        indent += indentStep;
+        elem = elem.parentNode;
+    }
+
+    if (
+        parent.hasChildNodes() &&
+        parent.lastChild?.nodeType === Node.TEXT_NODE &&
+        /^\s*[\r\n]\s*$/.test(parent.lastChild.textContent || "")
+    ) {
+        parent.insertBefore(
+            document.createTextNode("\n" + indent),
+            parent.lastChild
+        );
+        parent.insertBefore(child, parent.lastChild);
+    } else {
+        parent.append(
+            document.createTextNode("\n" + indent),
+            child,
+            document.createTextNode("\n" + indent.slice(0, -2))
+        );
+    }
 }

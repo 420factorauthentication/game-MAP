@@ -72,10 +72,17 @@ export class Scene {
                         ? (document.querySelector(containerElem) as HTMLElement)
                         : containerElem;
 
-            // containerElem not found. Let's create one instead.
+            // containerElem not found. Let's create one instead. And make inner HTML neater.
             if (!this.#containerElem) {
                 this.#containerElem = document.createElement("div");
-                document.body.appendChild(this.#containerElem);
+                document.body.append(
+                    "\n",
+                    this.#containerElem,
+                    "\n\n",
+                    document.createComment(" - - - - - - - - - - - - - - - - "),
+                    document.createComment(" - - - - - - - - - - - - - - - - "),
+                    "\n"
+                );
             }
 
             // Optional class and id parameters
@@ -87,7 +94,7 @@ export class Scene {
             if (containerId) this.#containerElem.id = containerId;
 
             // Create new elements from htmlFile
-            this.#containerElem.innerHTML = result.responseText;
+            this.#containerElem.innerHTML = "\n" + result.responseText;
 
             // Success: Return status code
             return result.status;

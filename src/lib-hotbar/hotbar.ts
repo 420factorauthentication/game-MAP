@@ -24,6 +24,9 @@ export class Hotbar {
             "width: 25%; height: 10%; background: gray"
         );
 
+        // Make inner HTML neater
+        this.elem.append("\n");
+
         // Apply "display: flex" to automatically size children equally
         this.elem.style.display = "flex";
     }
@@ -38,7 +41,7 @@ export class Hotbar {
      * Returns false if already in this manager.
      */
     add(button: HotbarButton) {
-        this.elem?.appendChild(button.elem);
+        this.elem?.append(button.elem, "\n");
         return this._buttons.add(button);
     }
 

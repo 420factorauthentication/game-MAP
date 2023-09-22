@@ -51,6 +51,9 @@ export class Minion {
         // Lookup minion elem by selector. If not found, create one with default settings.
         this.#minion = new ElemStyler(minionElem, "a");
 
+        // Make inner HTML neater
+        this.minionElem.append("\n");
+
         // Generate a new uuid unique from all other Minions
         this.uuid = uuidv4();
 
@@ -59,7 +62,7 @@ export class Minion {
         this.#hpBar = new ClipBar(hpBarElem, this.#stats.base["hp"], 0, this.#stats.base["hp"]);
 
         // Init HP Bar style
-        this.minionElem.appendChild(this.hpBarElem);
+        this.minionElem.append(this.hpBarElem, "\n");
         this.hpBarElem.style.position = "absolute";
         this.hpBarElem.style.inset = "-33% 0 0 0";
         

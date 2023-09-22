@@ -74,23 +74,27 @@ export const StartGame: () => void = GAME((cache) => {
     LoadGame().then((httpStatus) => {
         if (!cache.isLoaded)
             throw new Error(`Error loading game. HTTP Status: ${httpStatus}`);
+        const scene = document.querySelector("#game");
 
         // Init game systems
         cache.spellbar.start();
+
+        // Make inner HTML neater
+        scene.append(
+            "\n",
+            document.createComment("#########################################"),
+            "\n",
+            document.createComment("################ Minions ################"),
+            "\n",
+            document.createComment("#########################################"),
+            "\n"
+        );
 
         // Start spawning Minions
         const minionModel: HTMLTemplateElement =
             document.querySelector("#new-minion");
         const hpBarModel: HTMLTemplateElement =
             document.querySelector("new-minion-hp-bar");
-        const scene = document.querySelector("#game");
-        const comments = [
-            "####################################################################",
-            "############################# Minions ##############################",
-            "####################################################################",
-        ];
-        for (const comment of comments)
-            scene.append(document.createComment(comment));
         cache.minionMan.startLevel(LvlOne, minionModel, hpBarModel, scene);
 
         // Hide all menus
@@ -108,10 +112,10 @@ export const StartGame: () => void = GAME((cache) => {
 export const LoadGame: () => Promise<number | void> = GAME((cache) => {
     if (cache.isLoaded) return;
 
-    document.body.append(
-        document.createComment("~~~~~~~~~~~~~~~~ GAME ~~~~~~~~~~~~~~~~")
-    );
+    // Make inner HTML neater
+    document.body.append(document.createComment("Code injected by dlcd-game"));
 
+    // Load Game
     return GameComponents.load(undefined, "game-templates").then(() =>
         GameScreen.load(undefined, "game", "scene").then((httpStatus) => {
             if (httpStatus != 200) return httpStatus;

@@ -35,12 +35,12 @@ export class ElemQuery extends ElemBase {
             if (defaultInlineStyle)
                 this._elem.setAttribute("style", defaultInlineStyle);
 
-            (typeof defaultParent === "string"
-                ? (document.querySelector(defaultParent) as HTMLElement)
-                : defaultParent
-            )?.appendChild(this._elem);
-            if (!this._elem.parentElement)
-                throw new Error("ClassWithElem parent selector not found");
+            const parent =
+                typeof defaultParent === "string"
+                    ? (document.querySelector(defaultParent) as HTMLElement)
+                    : defaultParent;
+            if (!parent) throw new Error("ElemQuery parent selector not found");
+            parent.append("\n", this._elem, "\n");
         }
     }
 }

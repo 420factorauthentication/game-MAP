@@ -30,6 +30,9 @@ export class KeyUI {
         // Lookup elem by selector. If not found, create one with default settings.
         this.#keyui = new ElemQuery(elem, "div", "width: 25%; height: 10%");
 
+        // Make inner HTML neater
+        this.elem.append("\n");
+
         // Apply "display: flex" to automatically size children equally
         this.elem.style.display = "flex";
 
@@ -89,7 +92,8 @@ export class KeyUI {
 
     #newChild() {
         const i = this.elem.childElementCount;
-        const child = this.elem.appendChild(document.createElement("span"));
+        const child = document.createElement("span");
+        this.elem.append(child, "\n");
         child.style.flex = "1 1 0";
         child.style.textAlign = "end";
         child.style.padding = "2%";
