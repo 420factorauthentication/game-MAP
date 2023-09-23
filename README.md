@@ -202,9 +202,3 @@ VSCode Commands (from extension
 <br>
 <br>
 <br>
-
-<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
-
-## License
-
-[WTFPL License](http://www.wtfpl.net/txt/copying/)
