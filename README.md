@@ -72,8 +72,9 @@ Update:
 ### Globally Installed Preprocessors
 
 -   [TypeScript](https://www.typescriptlang.org/)
--   [Less CSS](https://lesscss.org/)
 -   [TypeDoc](https://typedoc.org/)
+-   [Less CSS](https://lesscss.org/)
+    -   [Less Plugin: Lists](https://github.com/seven-phases-max/less-plugin-lists)
 
 <br>
 

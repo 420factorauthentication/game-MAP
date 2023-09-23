@@ -1,5 +1,7 @@
 /** @format */
 
+import {indentedAppend} from "../lib-utils/elem.js";
+
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -17,9 +19,9 @@ export class SceneLink {
 
     /** Is this Scene currently loaded? */
     get isLoaded() {
-        return this._isLoaded;
+        return this.#isLoaded;
     }
-    protected _isLoaded: boolean = false;
+    #isLoaded: boolean = false;
 
     /**
      * Checks if this.cssFile exists with an XMLHttpRequest.
@@ -29,8 +31,8 @@ export class SceneLink {
      * Returns a Promise that returns the numerical HTTP status code
      * of the XMLHttpRequest when it's readyState is 4 (DONE).
      */
-    async load(): Promise<number> {
-        if (this._isLoaded) return;
+    async load(): Promise<number | void> {
+        if (this.#isLoaded) return;
 
         return new Promise<XMLHttpRequest>((resolve) => {
             let xhr = new XMLHttpRequest();
@@ -38,18 +40,18 @@ export class SceneLink {
             xhr.onloadend = () => resolve(xhr);
             xhr.open("HEAD", this.cssFile);
             xhr.send();
-        }).then<number>((result) => {
-            if (this._isLoaded) return;
-            this._isLoaded = true;
+        }).then<number | void>((result) => {
+            if (this.#isLoaded) return;
+            this.#isLoaded = true;
 
             // Failure: Return status code
             if (result.status != 200) return result.status;
 
             // Create a new link elem and apply the stylesheet href
-            this._linkElem = document.createElement("link");
-            document.head.append(this._linkElem);
-            this._linkElem.setAttribute("rel", "stylesheet");
-            this._linkElem.setAttribute("href", this.cssFile);
+            this.#linkElem = document.createElement("link");
+            this.#linkElem.setAttribute("rel", "stylesheet");
+            this.#linkElem.setAttribute("href", this.cssFile);
+            indentedAppend(document.head, this.#linkElem);
 
             // Success: Return status code
             return result.status;
@@ -58,10 +60,10 @@ export class SceneLink {
 
     /** Destroy this.linkElem. */
     unload() {
-        if (!this._isLoaded) return;
-        this._isLoaded = false;
-        this._linkElem.remove();
-        this._linkElem = null;
+        if (!this.#isLoaded) return;
+        this.#isLoaded = false;
+        this.#linkElem?.remove();
+        this.#linkElem = null;
     }
 
     ////////////////
@@ -76,9 +78,9 @@ export class SceneLink {
      * Returns null if this element was destroyed during an unload.
      */
     get linkElem() {
-        return this._linkElem;
+        return this.#linkElem;
     }
-    protected _linkElem: HTMLElement | undefined | null;
+    #linkElem: HTMLElement | undefined | null;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

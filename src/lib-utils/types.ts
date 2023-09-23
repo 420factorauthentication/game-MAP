@@ -1,5 +1,4 @@
-// source: https://stackoverflow.com/questions/62158066/typescript-type-where-an-object-consists-of-exactly-a-single-property-of-a-set-o
-
+/** @see https://stackoverflow.com/questions/62158066/typescript-type-where-an-object-consists-of-exactly-a-single-property-of-a-set-o */
 export type Explode<T> = keyof T extends infer K
     ? K extends unknown
         ? {[I in keyof T]: I extends K ? T[I] : never}

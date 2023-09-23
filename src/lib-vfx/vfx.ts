@@ -9,23 +9,24 @@ import {insertAt, replaceAt} from "../lib-utils/string.js";
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
- * Creates a temporary HTMLImageElement on top of a target element.
+ * Creates a temporary HTMLImageElement on top of a target element. \
+ * The temp elem will be removed after durationMS with a Promise<void>. \
+ * Returns tuple [tempElem, promise].
  *
- * Returns an object that consists of:
- * - A handle to the temporary HTMLImageElement
- * - A Promise that resolves when the temp elem is removed after durationMS
- *
- * @param target The element/position to create the VFX on top of.
  * @param durationMS How long the VFX will be shown, in milliseconds.
+ * @param target The element/position to create the VFX on top of.
  * @param vfxStyle CSS to apply to the temp elem.
  * @param vfxImgSrc Path to an image file to apply to src of the temp elem.
  */
 export function vfx(
-    target: HTMLElement | {rect: DOMRect; zIndex: number},
     durationMS: number,
+    target: HTMLElement | {rect: DOMRect; zIndex: number},
     vfxStyle?: VfxStyle,
     vfxImgSrc?: string
-) {
+): [HTMLImageElement, Promise<void>] {
+    const tempElem = document.body.appendChild(document.createElement("img"));
+
+    // Find target position, size, and z-index
     const rect: DOMRect =
         target instanceof Element
             ? target.getBoundingClientRect()
@@ -35,53 +36,59 @@ export function vfx(
             ? getComputedStyle(target).zIndex
             : (target.zIndex + 1).toString();
 
-    const tempElem = document.createElement("img");
-    document.body.append(tempElem);
-    if (vfxImgSrc) tempElem.src = vfxImgSrc;
-    tempElem.alt = " ";
-    for (const [k, v] of Object.entries(vfxStyle)) tempElem.style[k] = v;
-    tempElem.style.zIndex = zIndex;
+    // Apply style
     absPos(tempElem, rect);
+    tempElem.style.zIndex = zIndex;
+    for (const [k, v] of Object.entries(vfxStyle || [])) tempElem.style[k] = v;
 
-    return {
-        tempElem: tempElem,
-        promise: new Promise<boolean>((resolve) => {
+    // Apply image
+    tempElem.src = vfxImgSrc ? vfxImgSrc : "";
+    tempElem.alt = " ";
+
+    // Return tuple
+    return [
+        tempElem,
+        new Promise<void>((resolve) => {
             setTimeout(resolve, durationMS);
         }).then(() => {
             tempElem?.remove();
         }),
-    };
+    ];
 }
 
 /**
- * Creates a temporary HTMLImageElement on top of a target element.
- * Using CSS transitions, it will start with one look, and end with another.
+ * Creates a temporary HTMLImageElement on top of a target element. \
+ * Using CSS transitions, it will start with one look, and end with another. \
+ * It will be removed after durationMS with a Promise<void>. \
+ * Returns tuple [tempElem, promise].
  *
- * Returns an object that consists of:
- * - A handle to the temporary HTMLImageElement
- * - A Promise that resolves when the temp elem is removed after durationMS
- *
- * @param target The element/position to create the vfx on top of.
  * @param durationMS How long the VFX will be shown, in milliseconds.
+ * @param target The element/position to create the vfx on top of.
  * @param vfxStyleStart The VFX starts with this CSS.
  * @param vfxStyleEnd The VFX will transition to this CSS over durationMS.
  * @param vfxImgSrc Path to an image file to apply to src of the temp elem.
  */
 export function transitionVFX(
-    target: HTMLElement | {rect: DOMRect; zIndex: number},
     durationMS: number,
+    target: HTMLElement | {rect: DOMRect; zIndex: number},
     vfxStyleStart?: VfxStyle,
     vfxStyleEnd?: VfxStyle,
     vfxImgSrc?: string
-) {
-    const newVFX = vfx(target, durationMS, vfxStyleStart, vfxImgSrc);
-    const tempElem = newVFX.tempElem;
+): [HTMLImageElement, Promise<void>] {
+    const newVFX = vfx(durationMS, target, vfxStyleStart, vfxImgSrc);
+    const tempElem = newVFX[0];
 
-    // Replace camelCase CSS with hyphen-separated CSS and set transition
+    // Replace camelCase JS style props with hyphen-separated CSS
+    if (!vfxStyleEnd) return newVFX;
+    let loopCounter = 0;
     let transitionProperty = Object.keys(vfxStyleEnd).join(", ");
     const capsChars = transitionProperty.matchAll(/[A-Z]/g);
-    let loopCounter = 0;
     for (const match of capsChars) {
+        //////////////////////////////////////
+        // bandaid fix for compiler error:  //
+        // "match.index possibly undefined" //
+        if (!match.index) continue; //////////
+        //////////////////////////////////////
         transitionProperty = replaceAt(
             transitionProperty,
             match.index + loopCounter,
@@ -93,6 +100,8 @@ export function transitionVFX(
             "-'"
         );
     }
+
+    // Set transition
     tempElem.style.transitionProperty = transitionProperty;
     tempElem.style.transitionDuration = durationMS.toString() + "ms";
 
@@ -101,5 +110,6 @@ export function transitionVFX(
         for (const [k, v] of Object.entries(vfxStyleEnd)) tempElem.style[k] = v;
     }, 10);
 
+    // Return tuple
     return newVFX;
 }

@@ -1,13 +1,13 @@
 import type {Base} from "./base"
 import type {MinionSpawner} from "./spawner";
-import {MinionType} from "./types";
-import {State} from "../lib-smac/types";
+import {MinionType, MinionStat} from "./types";
 
-import StateMachine from "../lib-smac/smac.js";
+import Timer from "../lib-timer/timer.js";
 import Stats from "../lib-statsys/stats.js";
 import ClipBar from "../lib-progbar/clipbar.js";
+import ElemStyler from "../lib-elem/styler.js";
 
-import Spriteling from "../../node_modules/spriteling/dist/spriteling.js";
+// import Spriteling from "../../node_modules/spriteling/dist/spriteling.js";
 import uuidv4 from "../../node_modules/uuid/dist/esm-browser/v4.js";
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -18,7 +18,7 @@ import uuidv4 from "../../node_modules/uuid/dist/esm-browser/v4.js";
  * Spawns on the right and moves left until it reaches a target Base,
  * then automatically attacks it.
  *
- * Each Minion has it's own current stats that can change in real time. \
+ * Each Minion has it's own current #stats that can change in real time. \
  * Stats start out as the base number from MinionType. \
  * modStat() adjusts a stat for a set time. \
  * changeStat() adjusts a stat permanently.
@@ -27,12 +27,16 @@ import uuidv4 from "../../node_modules/uuid/dist/esm-browser/v4.js";
  */
 export class Minion {
     /**
-     * @param manager Contains records of all existing minions for cleanup.
+     * @param manager Tracks all Minions for garbage collection.
      * @param type Is used to define starting stats.
      * @param target Is used to control Attack AI.
      * @param _x Is in viewport width units (vw).
      * @param _y Is in viewport height units (vh).
-     * @param elem Can be a css selector or existing DOM element or null,
+     * @param minionElem DOM element used to render Minion.
+     * Can be a CSS selector or existing DOM element or undefined,
+     * in which case a new anchor element will be created.
+     * @param hpBarElem DOM element used to render Minion HP Bar.
+     * Can be a CSS selector or existing DOM element or undefined,
      * in which case a new anchor element will be created.
      */
     constructor(
@@ -41,48 +45,48 @@ export class Minion {
         readonly target: Base,
         private _x: number,
         private _y: number,
-        private _spriteURL: string,
-        elem?: HTMLElement | string
+        minionElem?: HTMLElement | string,
+        hpBarElem?: HTMLElement | string,
     ) {
-        // Lookup element by selector
-        if (elem)
-            this._elem =
-                typeof elem === "string"
-                    ? (document.querySelector(elem) as HTMLElement)
-                    : elem;
+        // Lookup minion elem by selector. If not found, create one with default settings.
+        this.#minion = new ElemStyler(minionElem, "a");
 
-        // No element found. Let's create one instead.
-        if (!this._elem) this._elem = Minion.elemInit;
+        // Make inner HTML neater
+        this.minionElem.append("\n");
 
-        // Init elem sprite image
-        this._setBG(_spriteURL);
-        this._elem.style.backgroundRepeat = "no-repeat";
-        this._elem.style.backgroundSize = "100% 100%";
-
-        // Generate a new uuid
+        // Generate a new uuid unique from all other Minions
         this.uuid = uuidv4();
 
         // Init components
-        this.stats = new Stats(type);
-        this.moveState = this.moveStateInit;
-        this.attackState = this.attackStateInit;
-        this.ai = new StateMachine(this.moveState);
-        this.hpBar = new ClipBar(
-            this.hpBarElemInit,
-            this.stats.current("hp"),
-            0, this.stats.base["hp"]
-        );
+        this.#stats = new Stats(type);
+        this.#hpBar = new ClipBar(hpBarElem, this.#stats.base["hp"], 0, this.#stats.base["hp"]);
+
+        // Init HP Bar style
+        this.minionElem.append(this.hpBarElem, "\n");
+        this.hpBarElem.style.position = "absolute";
+        this.hpBarElem.style.inset = "-33% 0 0 0";
         
         // Init position
-        this._elem.style.position = "absolute";
-        this._setElemX(_x);
-        this._setElemY(_y);
+        this.minionElem.style.position = "absolute";
+        this.#minion.setX(_x);
+        this.#minion.setY(_y);
 
-        // Add Minion class
-        this._elem.classList.add("minion");
+        // Init elem sprite image
+        this.minionElem.style.backgroundRepeat = "no-repeat";
+        this.minionElem.style.backgroundSize = "100% 100%";
+        this.minionElem.style.width = type.width.magnitude.toString() + type.width.unit;
+        this.minionElem.style.height = type.height.magnitude.toString() + type.height.unit;
+        this.spriteURL = type.spriteURL;
 
-        // Tell the MinionSpawner to add this Minion to it's array
-        this.manager.trackMinion(this);
+        // Init optional config
+        if (type.extraClasses)
+            this.minionElem.className += " " + type.extraClasses
+
+        // Tell the MinionSpawner to add this Minion to it's manager
+        this.manager.add(this);
+
+        // Start Minion moving
+        this.#updateLooper();
     }
 
     /////////
@@ -92,186 +96,122 @@ export class Minion {
     /** A globally unique id, different from all existing Minions. */
     readonly uuid: string;
 
+    /** What the Minion is currently doing. */
+    get state() {return this.#state}
+    #state: "move" | "attack" = "move";
+
     /** Path to image. Used for minion background-image and for mask-image of fx. */
-    get spriteURL() {return this._spriteURL;}
-    set spriteURL(v) {this._spriteURL = v; this._setBG(v);}
+    get spriteURL(): string {return this.#spriteURL}
+    set spriteURL(pathToFile) {this.#spriteURL = this.#minion.setBgImg(pathToFile)}
+    #spriteURL: string;
 
-    /**
-     * Handle all game systems related to this minion's death here.
-     * Also begin JS garbage cleanup.
-     */
+    /** Check if this Minion is paused. */
+    get isPaused() {return this.#isPaused}
+    #isPaused: boolean = false;
+
+    /** Pause this Minion. It will stop moving/attacking. Saves timer progress. */
+    pause() {this.#timer.pause()}
+
+    /** Unpause this Minion. It will resume moving/attacking. */
+    unpause() {this.#timer.unpause()}
+
+    /** TODO: Minion Death. Called when HP changes if HP < 0. */
     die() {
-        this.preDestroy();
-        // Todo: Play death animation
+        this.gc();
     }
 
-    /**
-     * Begin the JS garbage collection process.
-     * Also tells the MinionSpawner to delete it's handle to this object instance.
-     * After calling this, manually nullify/undefine all other handles to this object instance.
-     */
-    preDestroy() {
-        // Stop all AI behaviors
-        this.ai.set(undefined);
-
-        // Destroy DOM Elements
-        this.hpBar.preDestroy();
-        this._elem?.remove();
-
-        // Tell the MinionSpawner to delete it's handle to this Minion object instance.
-        this.manager.stopTrackingMinion(this);
+    /** Garbage collection. */
+    gc() {
+        this.#timer.stop();
+        this.#hpBar.gc();
+        this.#minion.gc();
+        this.manager.delete(this);
     }
 
-    // Stats //
-    get x() {return this._x;}
-    get y() {return this._y;}
+    ////////////////
+    // API: STATS //
+    ////////////////
+    get x (): number {return this._x}
+    get y (): number {return this._y}
 
-    set x (v) {this._x = v; this._setElemX(v);}
-    set y (v) {this._y = v; this._setElemY(v);}
+    set x (vwNumber) {this._x = this.#minion.setX(vwNumber)}
+    set y (vhNumber) {this._y = this.#minion.setY(vhNumber)}
 
-    get hp()     {return this.stats.current("hp");}
-    get movSpd() {return this.stats.current("movSpd");}
-    get atkSpd() {return this.stats.current("atkSpd");}
-    get atkDmg() {return this.stats.current("atkDmg");}
+    /** Get current value of a stat. */
+    get(stat: MinionStat) {
+        return this.#stats.current(stat);
+    }
 
-    // Adjust a stat for a set time, in ms. //
-    modHp(amount: number, time: number) {
+    /** Adjust a stat for a set time, in ms. */
+    mod(stat: MinionStat, amount: number, time: number) {
         if (time <= 0) return;
-        this.stats.addMod("hp", amount, time)[1].then(() => {
-            this._onHpChange();
-        }); this._onHpChange();
-    }
-    modMovSpd(amount: number, time: number) {
-        if (time <= 0) return;
-        this.stats.addMod("movSpd", amount, time)[1].then(() => {
-            this._onMovChange();
-        }); this._onMovChange();
-    }
-    modAtkSpd(amount: number, time: number) {
-        if (time <= 0) return;
-        this.stats.addMod("atkSpd", amount, time)[1].then(() => {
-            this._onAtkChange();
-        }); this._onAtkChange();
-    }
-    modAtkDmg(amount: number, time: number) {
-        if (time <= 0) return;
-        this.stats.addMod("atkDmg", amount, time)[1].then(() => {
-            this._onAtkChange();
-        }); this._onAtkChange();
+        this.#stats.addMod(stat, amount, time)[1].then(() => {
+            this.#onStatAdjust(stat);
+        }); this.#onStatAdjust(stat);
     }
 
-    // Adjust a stat permanently //
-    changeHp(amount: number) {
-        this.stats.change("hp", amount);
-        this._onHpChange();
-    }
-    changeMovSpd(amount: number) {
-        this.stats.change("movSpd", amount);
-        this._onMovChange();
-    }
-    changeAtkSpd(amount: number) {
-        this.stats.change("atkSpd", amount);
-        this._onAtkChange();
-    }
-    changeAtkDmg(amount: number) {
-        this.stats.change("atkDmg", amount);
-        this._onAtkChange();
+    /** Adjust a stat permanently. */
+    change(stat: MinionStat, amount: number) {
+        this.#stats.change(stat, amount);
+        this.#onStatAdjust(stat);
     }
 
     ////////////////
     // COMPONENTS //
     ////////////////
-    get elem() {return this._elem;}
-    protected _elem: HTMLElement;
+    get hpBarElem() {return this.#hpBar.elem}
+    get minionElem() {return this.#minion.elem}
 
-    protected stats: Stats;
-    protected moveState: State;
-    protected attackState: State;
-    protected ai: StateMachine;
-    protected hpBar: ClipBar;
-    protected anim: Spriteling;
-
-    //////////
-    // INIT //
-    //////////
-    private static get elemInit() {
-        const elem = <HTMLElement>document.createElement("a");
-        document.body.appendChild(elem);
-        elem.style.width = "64px";
-        elem.style.height = "64px";
-        return elem;
-    }
-
-    private get hpBarElemInit() {
-        const elem = <HTMLElement>document.createElement("a");
-        this._elem.appendChild(elem);
-        elem.style.position = "absolute";
-        elem.style.width = this._elem.style.width;
-        elem.style.height = `calc(${this._elem.style.height} / 4)`;
-        elem.style.top = `calc(-${this._elem.style.height} / 3)`;
-        elem.style.background = "darkred";
-        return elem;
-    }
-
-    // private get spritelingInit() {
-    //     return new Spriteling();
-    // }
-
-    private get moveStateInit() {
-        const moveState: State = {
-            uuid: "minionMove",
-            loopInterval: 1000 / this.stats.current("movSpd"),
-            onLoop: () => {
-                if (--this.x <= this.target.x) this.ai.set(this.attackState);
-            },
-        };
-        return moveState;
-    }
-
-    private get attackStateInit() {
-        const attackState: State = {
-            uuid: "minionAttack",
-            loopInterval: 1000 / this.stats.current("atkSpd"),
-            onLoop: () => {
-                this.target.hp -= this.stats.current("atkDmg");
-            },
-        };
-        return attackState;
-    }
+    #timer: Timer;
+    #stats: Stats;
+    #hpBar: ClipBar;
+    #minion: ElemStyler;
+    // #anim: Spriteling;
 
     //////////////////////
     // HELPER FUNCTIONS //
     //////////////////////
-    private _onHpChange() {
-        this.hpBar.value = this.stats.current("hp");
-        if (this.hp <= 0) this.die();
+    #move() {if (--this.x <= this.target.x) this.#updateLooper("attack")}
+    #attack() {this.target.hp -= this.#stats.current("atkDmg")}
+
+    #updateLooper(state: "move" | "attack" = this.#state) {
+        this.#timer?.stop();
+        switch (state) {
+            case "move":
+                this.#state = "move";
+                this.#timer = new Timer(
+                    () => this.#move(),
+                    1000 / this.#stats.current("movSpd"),
+                    true
+                );
+                this.#timer.start();
+                break;
+            case "attack":
+                this.#state = "attack";
+                this.#timer = new Timer(
+                    () => this.#attack(),
+                    1000 / this.#stats.current("atkSpd"),
+                    true
+                );
+                this.#timer.start();
+                break;
+            default:
+        }
     }
 
-    private _onMovChange() {
-        this.moveState = this.moveStateInit;
-        if (this.ai.state?.uuid == "minionMove")
-            this.ai.set(this.moveState);
-    }
-
-    private _onAtkChange() {
-        this.attackState = this.attackStateInit;
-        if (this.ai.state?.uuid == "minionAttack")
-            this.ai.set(this.attackState);
-    }
-
-    /** Set elem left position, in viewport width (vw) units. */
-    private _setElemX(left: number) {
-        this._elem.style.left = "" + left + "vw";
-    }
-
-    /** Set elem top position, in viewport height (vh) units. */
-    private _setElemY(top: number) {
-        this._elem.style.top = "" + top + "vh";
-    }
-
-    /** Set elem background-image to url */
-    private _setBG(path: string) {
-        this._elem.style.backgroundImage = "url('" + path + "')";
+    #onStatAdjust(stat: MinionStat) {
+        if (stat == "hp") {
+            this.#hpBar.value = this.get("hp");
+            if (this.get("hp") <= 0) this.die();
+        } else switch (this.#state) {
+            case "move":
+                if (stat == "movSpd") this.#updateLooper();
+                break;
+            case "attack":
+                if (stat == "atkDmg" || stat == "atkSpd") this.#updateLooper();
+                break;
+            default:
+        }
     }
 }
 

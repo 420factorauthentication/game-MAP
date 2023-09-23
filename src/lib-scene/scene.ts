@@ -23,9 +23,9 @@ export class Scene {
 
     /** Is this Scene currently loaded? */
     get isLoaded() {
-        return this._isLoaded;
+        return this.#isLoaded;
     }
-    protected _isLoaded: boolean = false;
+    #isLoaded: boolean = false;
 
     /**
      * Attempts to fetch the contents of this.htmlFile with an XMLHttpRequest.
@@ -37,19 +37,19 @@ export class Scene {
      * Exception: Returns void if Scene is already loaded.
      *
      * @param containerElem The elem to contain all newly created Scene elems.
-     * Can be a css selector or existing DOM element or null,
+     * Can be a CSS selector or existing DOM element or undefined,
      * in which case a new div element will be created.
-     * @param containerClasses Can optionally provide classes
-     * to append to containerElem's classList during loading.
      * @param containerId Can optionally provide an id
      * to set containerElem's id during loading.
+     * @param containerClasses Can optionally provide classes
+     * to append to containerElem's classList during loading.
      */
     async load(
-        containerElem: HTMLElement | string = undefined,
-        containerClasses: string | string[] = undefined,
-        containerId: string = undefined
-    ): Promise<number> {
-        if (this._isLoaded) return;
+        containerElem?: HTMLElement | string,
+        containerId?: string,
+        containerClasses?: string | string[]
+    ): Promise<number | void> {
+        if (this.#isLoaded) return;
 
         return new Promise<XMLHttpRequest>((resolve) => {
             let xhr = new XMLHttpRequest();
@@ -58,36 +58,43 @@ export class Scene {
             xhr.onloadend = () => resolve(xhr);
             xhr.open("GET", this.htmlFile);
             xhr.send();
-        }).then<number>((result) => {
-            if (this._isLoaded) return;
-            this._isLoaded = true;
+        }).then<number | void>((result) => {
+            if (this.#isLoaded) return;
+            this.#isLoaded = true;
 
             // Failure: Return status code
             if (result.status != 200) return result.status;
 
             // Lookup containerElem by selector
             if (containerElem)
-                this._containerElem =
+                this.#containerElem =
                     typeof containerElem === "string"
                         ? (document.querySelector(containerElem) as HTMLElement)
                         : containerElem;
 
-            // containerElem not found. Let's create one instead.
-            if (!this._containerElem) {
-                this._containerElem = document.createElement("div");
-                document.body.append(this._containerElem);
+            // containerElem not found. Let's create one instead. And make inner HTML neater.
+            if (!this.#containerElem) {
+                this.#containerElem = document.createElement("div");
+                document.body.append(
+                    "\n",
+                    this.#containerElem,
+                    "\n\n",
+                    document.createComment(" - - - - - - - - - - - - - - - - "),
+                    document.createComment(" - - - - - - - - - - - - - - - - "),
+                    "\n"
+                );
             }
 
             // Optional class and id parameters
             if (containerClasses) {
                 containerClasses = Array.prototype.concat(containerClasses);
                 for (const classString of containerClasses)
-                    this._containerElem.classList.add(classString);
+                    this.#containerElem.classList.add(classString);
             }
-            if (containerId) this._containerElem.id = containerId;
+            if (containerId) this.#containerElem.id = containerId;
 
             // Create new elements from htmlFile
-            this._containerElem.innerHTML = result.responseText;
+            this.#containerElem.innerHTML = "\n" + result.responseText;
 
             // Success: Return status code
             return result.status;
@@ -99,16 +106,21 @@ export class Scene {
      * @param delContainer If true, also destroys containerElem.
      */
     unload(delContainer: boolean = true) {
-        if (!this._isLoaded) return;
-        this._isLoaded = false;
+        if (!this.#isLoaded) return;
+        this.#isLoaded = false;
 
-        if (this._containerElem) {
-            for (const elem of this._containerElem.childNodes) elem.remove();
+        if (this.#containerElem) {
+            for (const elem of this.#containerElem.childNodes) elem.remove();
             if (delContainer) {
-                this._containerElem.remove();
-                this._containerElem = null;
+                this.#containerElem.remove();
+                this.#containerElem = null;
             }
         }
+    }
+
+    /** Garbage collection. */
+    gc() {
+        this.unload(true);
     }
 
     ////////////////
@@ -125,10 +137,10 @@ export class Scene {
      * Returns undefined if this Scene has never been loaded at all.
      * Returns null if this element was destroyed during an unload.
      */
-    get containerElem(): HTMLElement | undefined | null {
-        return this._containerElem;
+    get containerElem() {
+        return this.#containerElem;
     }
-    protected _containerElem: HTMLElement;
+    #containerElem: HTMLElement | undefined | null;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

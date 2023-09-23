@@ -6,11 +6,16 @@ import SceneLink from "../../../lib-scene/slink.js";
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-export const GameStyles: Readonly<SceneLink> = new SceneLink(
-    "../../_out/dlcd/css/game.css"
+export const StartScreen = new Scene("html/set/start.html");
+export const StartStyleComponents = new SceneLink(
+    "../../_out/dlcd/css/reuse/start.css"
 );
 
-export const StartScreen: Readonly<Scene> = new Scene("html/start.html");
-export const GameScreen: Readonly<Scene> = new Scene("html/game.html");
-
-export const TechMenu: Readonly<Scene> = new Scene("html/menu-tech.html");
+export const GameScreen = new Scene("html/set/game.html");
+export const GameComponents = new Scene("html/reuse/game.html");
+export const GameStyleComponents = new SceneLink(
+    "../../_out/dlcd/css/reuse/game.css"
+);
+export const GameStyleSettings = new SceneLink(
+    "../../_out/dlcd/css/set/game.css"
+);

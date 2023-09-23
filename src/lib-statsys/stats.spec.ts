@@ -14,15 +14,6 @@ const flushPromises = () =>
 //   https://gist.github.com/apieceofbart/e6dea8d884d29cf88cdb54ef14ddbcc4 //
 /////////////////////////////////////////////////////////////////////////////
 
-describe("A STATS INSTANCE", () => {
-    it("is not extensible", () => {
-        const stats = new Stats({a: 1});
-        expect(() => {
-            Object.defineProperty(stats, "newProp", {value: 42});
-        }).toThrow();
-    });
-});
-
 describe("STATS.BASE", () => {
     it("is writable", () => {
         const stats = new Stats({a: 1});

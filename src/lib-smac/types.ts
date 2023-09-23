@@ -10,11 +10,11 @@ export interface State {
     /** The period between each onLoop execution, in ms. */
     readonly loopInterval?: number;
     /** Runs when the StateMachine goes from this State to another State. */
-    onExit?: (...args) => void;
+    readonly onExit?: (...args) => void;
     /** Runs when the StateMachine is set to this State. */
-    onEnter?: (...args) => void;
+    readonly onEnter?: (...args) => void;
     /** Runs on a loop while the StateMachine is set to this State. */
-    onLoop?: (...args) => void;
+    readonly onLoop?: (...args) => void;
 }
 
 /** A State that also automatically goes to another State after a set time. */

@@ -1,159 +1,79 @@
 /** @format */
 
-import type {HotbarButton} from "./button";
+import {HotbarButton} from "./button";
+
+import ElemQuery from "../lib-elem/query.js";
+import Manager from "../lib-manager/manager.js";
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-/**
- * A row of buttons that call functions when clicked, or when a key is pressed.
- */
+/** A row of buttons that call functions when clicked, or when a key is pressed. */
 export class Hotbar {
     /**
-     * @param _maxItems Prevents user from adding more buttons than this limit.
-     * @param autoSize If true, auto-resizes button styles based on maxItems
-     * @param elem Can be a css selector or existing DOM element or null,
-     * in which case a new div element will be created.
+     * @param elem Can be a CSS selector or existing DOM element or undefined,
+     * in which case a new div element will be created. \
+     * Applies "display: flex" to automatically size children equally. \
+     * Children HotbarButtons are automatically given "flex: 1 1 0" in their class.
      */
-    constructor(
-        private _maxItems: number,
-        public autoSize: boolean = true,
-        elem?: HTMLElement | string
-    ) {
-        // Lookup element by selector
-        if (elem)
-            this._elem =
-                typeof elem === "string"
-                    ? (document.querySelector(elem) as HTMLElement)
-                    : elem;
+    constructor(elem?: HTMLElement | string) {
+        // Lookup elem by selector. If not found, create one with default settings.
+        this.#hotbar = new ElemQuery(
+            elem,
+            "div",
+            "width: 25%; height: 10%; background: gray"
+        );
 
-        // No element found. Let's create one instead.
-        if (!this._elem) this._elem = Hotbar.elemInit;
+        // Make inner HTML neater
+        this.elem.append("\n");
+
+        // Apply "display: flex" to automatically size children equally
+        this.elem.style.display = "flex";
     }
 
     /////////
     // API //
     /////////
 
-    /** Prevents user from adding more buttons than this limit. */
-    get maxItems() {
-        return this._maxItems;
-    }
-    set maxItems(v) {
-        if (v < this._items.length)
-            throw new Error("Cant set max items below current length");
-        this._maxItems = v;
-        if (this.autoSize) this.updateAllSizes();
-    }
-
-    /** Add a button to this Hotbar, and update graphics. */
-    add(item: HotbarButton) {
-        // If items array has an item whose elem matches the added item,
-        // the added item is already added to this Hotbar, so do nothing.
-        if (this._items.some((e) => e.elem === item.elem)) return;
-
-        // If user attempts to add more than max, throw an Error
-        if (this._items.length >= this.maxItems) throw new Error("Max items");
-
-        // Init
-        this._items.push(item);
-        this._elem.appendChild(item.elem);
-        if (this.autoSize) this.updateSize(item);
-
-        // Return the added item
-        return item;
-    }
-
-    /** Remove a button from this Hotbar, and update graphics. */
-    remove(v: number | HotbarButton): void;
-    remove(index: number): void;
-    remove(item: HotbarButton): void;
-    remove(v: number | HotbarButton) {
-        let index = typeof v === "number" ? v : this._items.indexOf(v);
-        let item = typeof v === "number" ? this._items[v] : v;
-
-        // If item not found, do nothing
-        if (!item) return;
-        if (!this._items.some((e) => e.elem === item.elem)) return;
-
-        // Cleanup garbage
-        item.preDestroy();
-        this._items.splice(index, 1);
-    }
-
-    /** Remove all buttons from this Hotbar. */
-    removeAll() {
-        for (const item of this._items) {
-            item.preDestroy();
-        }
-        this._items = [];
-    }
-
-    /** Enable all buttons in this Hotbar. */
-    enableAll() {
-        for (const item of this._items) item.isEnabled = true;
-    }
-
-    /** Disable all buttons in this Hotbar. */
-    disableAll() {
-        for (const item of this._items) item.isEnabled = false;
-    }
-
     /**
-     * Begin the JS garbage collection process.
-     * After calling this, manually nullify/undefine all handles to this object instance.
+     * Add an existing HotbarButton to this manager, if not already in this manager.
+     * Returns true if not already in this manager.
+     * Returns false if already in this manager.
      */
-    preDestroy() {
-        this._elem?.remove();
+    add(button: HotbarButton) {
+        this.elem?.append(button.elem, "\n");
+        return this._buttons.add(button);
+    }
+
+    /** Delete a HotbarButton in this manager. */
+    delete(button: HotbarButton) {
+        return this._buttons.remove(button);
+    }
+
+    /** Garbage collection. */
+    gc() {
+        this.#hotbar.gc();
+        this._buttons.gc();
     }
 
     ////////////////
     // COMPONENTS //
     ////////////////
 
-    /** All buttons in this Hotbar. */
-    get items(): readonly HotbarButton[] {
-        return this._items;
+    /**
+     * Get an array of all HotbarButtons currently in this Hotbar.
+     * Returns a frozen non-live copy.
+     */
+    get buttons(): readonly HotbarButton[] {
+        return this._buttons.items;
     }
-    protected _items: HotbarButton[] = [];
+    protected _buttons = new Manager<HotbarButton>();
 
     /** The Hotbar element. Button elements will be children to this. */
     get elem() {
-        return this._elem;
+        return this.#hotbar.elem;
     }
-    protected _elem: HTMLElement;
-
-    //////////
-    // INIT //
-    //////////
-    private static get elemInit() {
-        const elem = <HTMLElement>document.createElement("div");
-        document.body.appendChild(elem);
-        elem.style.position = "absolute";
-        elem.style.left = "25vw";
-        elem.style.top = "80vh";
-        elem.style.width = "50vw";
-        elem.style.height = "15vh";
-        elem.style.background = "gray";
-        elem.style.display = "flex";
-        elem.style.flexDirection = "row";
-        return elem;
-    }
-
-    //////////////////////
-    // HELPER FUNCTIONS //
-    //////////////////////
-
-    /** Recalculate DOM Element size of a button, to fit based on maxItems. */
-    protected updateSize(item: HotbarButton) {
-        item.elem.style.width = "" + 100 / this._maxItems + "%";
-        item.elem.style.height = "100%";
-    }
-
-    /** Recalculate DOM Element size of all buttons in this Hotbar. */
-    protected updateAllSizes() {
-        for (const item of this._items) this.updateSize(item);
-    }
+    #hotbar: ElemQuery;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

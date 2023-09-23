@@ -13,33 +13,23 @@ export class Stats {
      * @param base Can be any object.
      * All of it's accessible properties serve as starting numbers.
      */
-    constructor(public base: object) {
-        Object.preventExtensions(this);
-    }
+    constructor(public base: object) {}
 
     /**
      * Get the current number of a Base property: Base Number + StatMods + Changes.
      * If Base property isn't a number, returns the Base property.
-     *
      * @param key The key of the Base property.
      */
     current(key: string): number | any {
         if (typeof this.base[key] !== "number") return this.base[key];
-
-        // Start with base number
-        let value = this.base[key];
-
-        // Add Changes and StatMods
-        if (this.#diffs[key]) value += this.#diffs[key];
-
-        // Return total
-        return value;
+        return this.#diffs[key]
+            ? this.base[key] + this.#diffs[key]
+            : this.base[key];
     }
 
     /**
      * Adjust a number permanently, without tracking it through a StatMod.
-     * Useful when you want to permanently change numbers with no extra overhead.
-     *
+     * Useful when you want to permanently change numbers with less overhead.
      * @param key The key of the Base property being adjusted.
      * The Base property is not mutated; this adjustment is tracked separately.
      * @param amount The number adjustment.
@@ -52,7 +42,7 @@ export class Stats {
         if (!this.#diffs[key]) this.#diffs[key] = 0;
         if (!this.#changes[key]) this.#changes[key] = 0;
 
-        // Write down number adjustment
+        // Adjust number
         this.#diffs[key] += amount;
         this.#changes[key] += amount;
 
@@ -61,16 +51,15 @@ export class Stats {
         if (this.#changes[key] == 0) this.#changes[key] = undefined;
     }
 
-    /**
-     * Remove all Changes and revert their number adjustments.
-     */
+    /** Remove all Changes and revert their number adjustments. */
     removeAllChanges() {
         for (const key in this.#changes) this.#diffs[key] -= this.#changes[key];
         for (const key in this.#changes) this.#changes[key] = undefined;
     }
 
     /**
-     * Get a readonly list of all Changes.
+     * Get a key-value object of all currently active Changes.
+     * Returns a frozen non-live copy.
      */
     get changes(): Readonly<{}> {
         return Object.freeze(Object.assign({}, this.#changes));
@@ -78,11 +67,10 @@ export class Stats {
     #changes = {};
 
     /**
-     * Add a timed (or sometimes permanent) effect that adjusts a number.
+     * Add a timed (or sometimes permanent) effect that adjusts a number. \
+     * Returns Tuple [Uuid, Promise].
      *
-     * Returns Tuple [Uuid, Promise]. \
-     * After StatMod Time, Promise resolves to:
-     *
+     * After StatMod Time, Promise resolves to: \
      * TRUE if StatMod ended naturally or StatMod Time is 0 (permanent). \
      * FALSE if StatMod was manually removed before the full StatMod Time elapsed.
      *
@@ -114,9 +102,8 @@ export class Stats {
         // If StatMod Time is 0 (permanent), return insta-resolving promise
         let modEndPromise: Promise<boolean>;
         if (time <= 0) modEndPromise = new Promise<boolean>(() => true);
-
         // Otherwise, return a promise that resolves after StatMod Time
-        if (time > 0)
+        else
             modEndPromise = new Promise<boolean>((resolve) => {
                 setTimeout(resolve, time);
             }).then(() => this.removeMod(uuid));
@@ -134,29 +121,25 @@ export class Stats {
      * @param uuid The globally unique id of the StatMod to remove.
      */
     removeMod(uuid: string): boolean {
-        if (!this.containsMod(uuid)) return false;
+        const mod = this.getMod(uuid);
+        if (!mod) return false;
 
-        // Remove written down StatMod object
+        // Cleanup StatMod object
         this.#mods.splice(this.getModIndex(uuid), 1);
 
-        // Remove written down number adjustment
-        const mod = this.getMod(uuid);
+        // Revert stat number adjustment
         this.change(mod.key, -mod.amount);
 
         // StatMod was found and successfully removed
         return true;
     }
 
-    /**
-     * Remove all StatMods prematurely and revert their number adjustments.
-     */
+    /** Remove all StatMods prematurely and revert their number adjustments. */
     removeAllMods() {
         for (const key in this.#mods) this.removeMod(this.mods[key].uuid);
     }
 
-    /**
-     * Get a readonly list of all StatMods.
-     */
+    /** Get an array of all currently active StatMods. Returns a frozen non-live copy. */
     get mods(): readonly StatMod[] {
         return Object.freeze(Object.assign({}, this.#mods));
     }
@@ -168,18 +151,18 @@ export class Stats {
     containsMod(uuid: string) {
         return this.#mods.some((mod) => mod.uuid === uuid);
     }
-
     getModIndex(uuid: string) {
         return this.#mods.findIndex((mod) => mod.uuid === uuid);
     }
-
     getMod(uuid: string) {
         return this.#mods.find((mod) => mod.uuid === uuid);
     }
 
-    /**
-     * A private cache of Changes + StatMods to calculate current numbers faster.
-     */
+    ///////////////////
+    // PRIVATE CACHE //
+    ///////////////////
+
+    /** A private cache of Changes + StatMods to calculate current numbers faster. */
     #diffs = {};
 }
 

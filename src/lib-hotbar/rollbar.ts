@@ -4,196 +4,70 @@ import {RollbarOption} from "./types";
 import type {HotbarButton} from "./button";
 
 import Hotbar from "./hotbar.js";
+
 import {sample} from "../../node_modules/underscore/underscore-esm.js";
-import uuidv4 from "../../node_modules/uuid/dist/esm-browser/v4.js";
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
- * A Hotbar that rolls new button settings periodically, from a pool of options.
- * Preserves existing button settings, and merges with newly rolled settings.
- * Only removes/overwrites what was applied by previous rollOptions.
+ * A Hotbar that caches the initial settings of added HotbarButtons:
+ * - onPress
+ * - conditions
+ * - cssText
+ * - innerHTML
  *
- * NOTE: Existing button settings are cached when rolling is turned on with this.start().
- * Accessing this.items[i] and changing onPress, elem.style.cssText, or elem.innerHTML,
- * will do nothing, as every roll will reset the items back to the initial cache.
+ * It can randomly roll additional button settings to add onto each HotbarButton. \
+ * Each roll removes settings added from previous rolls, but not initial cached settings.
  */
 export class Rollbar extends Hotbar {
     /**
-     * @param maxItems Prevents user from adding more buttons than this limit.
-     * @param autoSize If true, auto-resizes button styles based on maxItems
      * @param rollOptions Every roll, it picks a random sample from this array.
-     * @param elem Can be a css selector or existing DOM element or null,
-     * in which case a new div element will be created.
+     * @param enableAllOnRoll If true, enables all HotbarButtons on every roll.
      */
     constructor(
-        maxItems: number,
-        autoSize: boolean,
+        elem?: HTMLElement | string,
         public rollOptions: RollbarOption[] = [],
-        elem?: HTMLElement | string
+        public enableAllOnRoll: boolean = true
     ) {
-        super(maxItems, autoSize, elem);
-
-        // Init private cache of initial button settings
-        this.#initialOnPress = [];
-        this.#initialCssText = [];
-        this.#initialInnerHTML = [];
+        super(elem);
     }
 
     /////////
     // API //
     /////////
 
-    /** If true, enables all buttons in this Hotbar on every new roll. */
-    enableAllOnRoll: boolean = true;
-
     /**
-     * Turn it on. It will roll new button settings periodically.
-     * If called while already on, it will just update intervalTime,
-     * and reset current roll timer to 0.
-     * @param intervalTime Time between each new roll, in ms.
+     * Randomly add new button settings from this.rollOptions.
+     * Each roll replaces settings added from previous rolls,
+     * but not initial cached settings.
      */
-    start(intervalTime: number) {
-        this._isOn = true;
-
-        // Cache initial button settings
-        for (let i = 0; i < this._items.length; i++) {
-            this.#initialOnPress[i] = this._items[i].onPress;
-            this.#initialCssText[i] = this._items[i].elem.style.cssText;
-            this.#initialInnerHTML[i] = this._items[i].elem.innerHTML;
-        }
-
-        // Start new loop with new UUID to stop old loops
-        let newUUID = uuidv4();
-        this.#loopUUID = newUUID;
-        this.loop(intervalTime, newUUID);
-    }
-
-    /** Turn it off. It will stop rolling new button settings periodically. */
-    stop() {
-        this._isOn = false;
-
-        // Reset cache of initial button settings
-        this.#initialOnPress = [];
-        this.#initialCssText = [];
-        this.#initialInnerHTML = [];
-    }
-
-    /** Check if this is currently on. */
-    get isOn() {
-        return this._isOn;
-    }
-    protected _isOn: boolean = false;
-
-    /////////////////////////////
-    // PARENT CLASS EXTENSIONS //
-    /////////////////////////////
-
-    /** Add a button to this Hotbar, and update graphics. */
-    add(item: HotbarButton) {
-        // If items array has an item whose elem matches the added item,
-        // the added item is already added to this Hotbar, so do nothing.
-        if (this._items.some((e) => e.elem === item.elem)) return;
-
-        // If user attempts to add more than max, throw an Error
-        if (this._items.length >= this.maxItems) throw new Error("Max items");
-
-        // EXTENSION: Also update cache initial button settings,
-        // in case button is added while rolling is on.
-        this.#initialOnPress[this._items.length] = item.onPress;
-        this.#initialCssText.push(item.elem.style.cssText);
-        this.#initialInnerHTML.push(item.elem.innerHTML);
-
-        // Init
-        this._items.push(item);
-        this._elem.appendChild(item.elem);
-        if (this.autoSize) this.updateSize(item);
-
-        // Return the added item
-        return item;
-    }
-
-    /** Remove a button from this Hotbar, and update graphics. */
-    remove(v: number | HotbarButton): void;
-    remove(index: number): void;
-    remove(item: HotbarButton): void;
-    remove(v: number | HotbarButton) {
-        let index = typeof v === "number" ? v : this._items.indexOf(v);
-        let item = typeof v === "number" ? this._items[v] : v;
-
-        // If item not found, do nothing
-        if (!item) return;
-        if (!this._items.some((e) => e.elem === item.elem)) return;
-
-        // Cleanup garbage
-        item.preDestroy();
-        this._items.splice(index, 1);
-
-        // EXTENSION: Also cleanup cache of initial button settings,
-        // in case button is removed while rolling is on.
-        this.#initialOnPress.splice(index, 1);
-        this.#initialCssText.splice(index, 1);
-        this.#initialInnerHTML.splice(index, 1);
-    }
-
-    /** Remove all buttons from this Hotbar. */
-    removeAll() {
-        super.removeAll();
-        // EXTENSION: Also cleanup cache of initial button settings,
-        // in case buttons are removed while rolling is on.
-        this.#initialOnPress = [];
-        this.#initialCssText = [];
-        this.#initialInnerHTML = [];
-    }
-
-    //////////////////////
-    // HELPER FUNCTIONS //
-    //////////////////////
-
-    /**
-     * Uses promises to automatically start a new roll after prev roll finishes.
-     * @param intervalTime Time between each new roll, in ms.
-     * @param uuid A globally unique id, used to prevent old loops from firing
-     * when a new loop is started.
-     */
-    private loop(intervalTime: number, uuid: string) {
-        new Promise((resolve) => {
-            setTimeout(resolve, intervalTime);
-        }).then(() => {
-            if (!this.isOn) return;
-            if (this.#loopUUID != uuid) return;
-            this.rollAndReplace();
-            this.loop(intervalTime, uuid);
-        });
-    }
-
-    /** Randomly select new settings to update existing buttons with. */
-    private rollAndReplace() {
-        // If the setting is on, enable all buttons in this Hotbar
-        if (this.enableAllOnRoll) this.enableAll();
-
+    roll() {
         // Grab a random sample from this.rollOptions
         const rolls: RollbarOption[] = sample(
-            this.rollOptions,
-            this._items.length
+            this.rollOptions || [],
+            this.buttons.length
         );
 
         // For each sampled option, update an existing button
         let i = 0;
         for (i; i < rolls.length; i++) {
-            this._items[i].onPress = new Array<Function>()
+            this.buttons[i].onPress = new Array<() => void>()
                 .concat(this.#initialOnPress[i], rolls[i].onPress)
                 .filter((x) => x);
 
-            this._items[i].elem.style.cssText = [
+            this.buttons[i].conditions = new Array<() => boolean>()
+                .concat(this.#initialConds[i], rolls[i].conditions || [])
+                .filter((x) => x);
+
+            this.buttons[i].elem.style.cssText = [
                 this.#initialCssText[i],
                 rolls[i].styleCssText,
             ]
                 .filter((x) => x)
                 .join(" ");
 
-            this._items[i].elem.innerHTML = [
+            this.buttons[i].elem.innerHTML = [
                 this.#initialInnerHTML[i],
                 rolls[i].innerHTML,
             ]
@@ -202,14 +76,45 @@ export class Rollbar extends Hotbar {
         }
 
         // If less samples than items, reset the remaining items
-        for (i; i < this._items.length; i++) {
-            this._items[i].onPress = this.#initialOnPress[i];
-            this._items[i].elem.style.cssText = this.#initialCssText[i];
-            this._items[i].elem.innerHTML = this.#initialInnerHTML[i];
-        }
+        this.reset(i);
 
-        // Re-apply style sizes, since they were overwritten
-        if (this.autoSize) this.updateAllSizes();
+        // If the setting is on, enable all buttons in this Hotbar
+        // Overrides cached style.opacity and style.pointerEvents
+        if (this.enableAllOnRoll)
+            for (const button of this.buttons) button.isEnabled = true;
+    }
+
+    /** Remove all rolled button settings, leaving just initial cached settings. */
+    reset(startIndex = 0) {
+        for (let i = startIndex; i < this.buttons.length; i++) {
+            this.buttons[i].onPress = this.#initialOnPress[i];
+            this.buttons[i].conditions = this.#initialConds[i];
+            this.buttons[i].elem.style.cssText = this.#initialCssText[i];
+            this.buttons[i].elem.innerHTML = this.#initialInnerHTML[i];
+        }
+    }
+
+    /////////////////////////////
+    // PARENT CLASS EXTENSIONS //
+    /////////////////////////////
+
+    add(button: HotbarButton) {
+        if (!super.add(button)) return false;
+        this.#initialOnPress.push(button.onPress);
+        this.#initialConds.push(button.conditions);
+        this.#initialCssText.push(button.elem.style.cssText);
+        this.#initialInnerHTML.push(button.elem.innerHTML);
+        return true;
+    }
+
+    delete(button: HotbarButton) {
+        let index = this.buttons.indexOf(button);
+        if (!super.delete(button)) return false;
+        this.#initialOnPress.splice(index, 1);
+        this.#initialConds.splice(index, 1);
+        this.#initialCssText.splice(index, 1);
+        this.#initialInnerHTML.splice(index, 1);
+        return true;
     }
 
     ///////////////////
@@ -217,15 +122,10 @@ export class Rollbar extends Hotbar {
     ///////////////////
 
     // Cache of initial button settings, merged with new settings of each roll.
-    #initialOnPress: Function[][];
-    #initialCssText: string[];
-    #initialInnerHTML: string[];
-
-    /**
-     * UUID of current loop.
-     * Used to prevent old loops from firing when a new loop is started.
-     */
-    #loopUUID: string;
+    #initialOnPress: (() => void)[][] = [];
+    #initialConds: (() => boolean)[][] = [];
+    #initialCssText: string[] = [];
+    #initialInnerHTML: string[] = [];
 }
 
 ////////////////////////////////////////////////////////////////////////////////

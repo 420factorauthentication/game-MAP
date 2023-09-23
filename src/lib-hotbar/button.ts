@@ -2,45 +2,53 @@
 
 import type {Hotbar} from "./hotbar";
 
+import {isLoopbar} from "./const.js";
+
+import ElemQuery from "../lib-elem/query.js";
+
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-/** A button that calls a function when clicked, or when a key is pressed. */
+/** A button that calls functions when clicked, or when a key is pressed. */
 export class HotbarButton {
     /**
      * @param _hotbar The parent Hotbar. Automatically adds to it's array.
-     * @param elem Can be a css selector or existing DOM element or null,
-     * in which case a new div element will be created.
+     * @param elem Can be a CSS selector or existing DOM element or undefined,
+     * in which case a new button element will be created. \
+     * Applies "flex: 1 1 0" to automatically size equally with siblings.
      * @param hotkey When this key is pressed, onPress functions are called.
      * Can be undefined, in which case the button can only be clicked with mouse.
      * @param onPress When hotkey is pressed, or button is clicked, these are called.
      * Can be empty, in which case nothing happens on button press/click.
-     * @param disableAllOnPress
+     * @param conditions All these functions are called before onPress.
+     * If one returns false, onPress wont call, and singleUse wont trigger.
+     * @param singleButtonUse
+     * If true, disables this button after pressing/clicking it.
+     * If singleBarUse is true, will be disabled regardless of singleButtonUse.
+     * @param singleBarUse
      * If true, disables all buttons in parent Hotbar after button press/click.
      */
     constructor(
         private _hotbar: Hotbar,
         elem?: HTMLElement | string,
         public hotkey?: string,
-        public onPress: Array<Function> = [],
-        public disableAllOnPress: boolean = false
+        public onPress: (() => void)[] = [],
+        public conditions: (() => boolean)[] = [],
+        public singleButtonUse: boolean = false,
+        public singleBarUse: boolean = false
     ) {
-        // Lookup element by selector
-        if (elem)
-            this._elem =
-                typeof elem === "string"
-                    ? (document.querySelector(elem) as HTMLElement)
-                    : elem;
+        // Lookup elem by selector. If not found, create a new one.
+        this.#button = new ElemQuery(elem, "button");
 
-        // No element found. Let's create one instead.
-        if (!this._elem) this._elem = HotbarButton.elemInit;
+        // Apply "flex: 1 1 0" to automatically size equally with siblings
+        this.elem.style.flex = "1 1 0";
 
-        // Register this button as a child of the parent Hotbar
+        // Add as child to given Hotbar
         this.hotbar.add(this);
 
         // Setup event listeners
         addEventListener("keydown", this);
-        this._elem.addEventListener("click", this);
+        this.elem.addEventListener("click", this);
     }
 
     /////////
@@ -51,26 +59,23 @@ export class HotbarButton {
     get isEnabled() {
         return this.#isEnabled;
     }
-    set isEnabled(v) {
-        this.#isEnabled = v;
-        if (v) {
-            this._elem.style.opacity = "1";
-            this._elem.style.pointerEvents = "auto";
+    set isEnabled(newSetting) {
+        this.#isEnabled = newSetting;
+        if (newSetting == true) {
+            this.elem.style.opacity = "1";
+            this.elem.style.pointerEvents = "auto";
         } else {
-            this._elem.style.opacity = "0";
-            this._elem.style.pointerEvents = "none";
+            this.elem.style.opacity = "0";
+            this.elem.style.pointerEvents = "none";
         }
     }
     #isEnabled: boolean = true;
 
-    /**
-     * Begin the JS garbage collection process.
-     * After calling this, manually nullify/undefine all handles to this object instance.
-     */
-    preDestroy() {
+    /** Garbage collection. */
+    gc() {
         removeEventListener("keydown", this);
-        this._elem?.removeEventListener("click", this);
-        this._elem?.remove();
+        this.elem?.removeEventListener("click", this);
+        this.elem?.remove();
     }
 
     ////////////////
@@ -84,27 +89,17 @@ export class HotbarButton {
 
     /** The button element. Is a child of this.hotbar.elem. */
     get elem() {
-        return this._elem;
+        return this.#button.elem;
     }
-    protected _elem: HTMLElement;
+    #button: ElemQuery;
 
-    //////////
-    // INIT //
-    //////////
-    static get elemInit() {
-        const elem = <HTMLElement>document.createElement("button");
-        elem.style.display = "block";
-        elem.style.boxSizing = "border-box";
-        elem.style.background = "content-box radial-gradient(slategray, gray)";
-        elem.style.border = "2px solid black";
-        return elem;
-    }
-
-    //////////////////////
-    // HELPER FUNCTIONS //
-    //////////////////////
-    handleEvent(e: KeyboardEvent) {
+    ////////////
+    // EVENTS //
+    ////////////
+    handleEvent(e) {
         if (!this.isEnabled) return;
+
+        // If wrong events, do nothing
         switch (e.type) {
             default:
                 return;
@@ -112,8 +107,20 @@ export class HotbarButton {
                 if (e.key != this.hotkey) return;
             case "click":
         }
+
+        // If paused Rollbar, do nothing
+        if (isLoopbar(this._hotbar) && this._hotbar.isPaused) return;
+
+        // If conditions not met, do nothing
+        for (const cond of this.conditions) if (!cond()) return;
+
+        // Call onPress functions
         for (const func of this.onPress) func();
-        if (this.disableAllOnPress === true) this.hotbar.disableAll();
+
+        // If single use, disable appropriate buttons
+        if (this.singleButtonUse === true) this.isEnabled = false;
+        if (this.singleBarUse === true)
+            for (const item of this._hotbar.buttons) item.isEnabled = false;
     }
 }
 

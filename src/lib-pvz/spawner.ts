@@ -1,17 +1,18 @@
 /** @format */
 
 import type {Base} from "./base";
-import {MinionType, SpawnGroup, SpawnLevel} from "./types";
+import {MinionType, SpawnGroup} from "./types";
 
 import Minion from "./minion.js";
+import Manager from "../lib-manager/manager.js";
+import Timer from "../lib-timer/timer.js";
 import {rand} from "../lib-utils/math.js";
-
-import uuidv4 from "../../node_modules/uuid/dist/esm-browser/v4.js";
+import {isElem, cloneTemplate} from "../lib-utils/elem.js";
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-/** A singleton that handles spawning, killing, and fetching existing Minions. */
+/** A singleton that spawns, manages, and garbage-collects Minions. */
 export class MinionSpawner {
     /**
      * @param target Newly spawned minions will target this.
@@ -28,136 +29,164 @@ export class MinionSpawner {
         public maxY: number = 50
     ) {}
 
-    /** Get an array of all existing Minions tracked by this MinionSpawner. */
-    get minions(): readonly Minion[] {
-        return this.#minions;
-    }
-    #minions: Minion[] = [];
+    /////////////////////////////
+    // API: GET MINION TARGETS //
+    /////////////////////////////
+    #minions = new Manager<Minion>();
 
-    /** Get minions array, sorted from lowest x to highest x. */
+    /**
+     * Get an array of all Minions currently tracked by this manager.
+     * Returns a frozen non-live copy.
+     */
+    get minions(): readonly Minion[] {
+        return this.#minions.items;
+    }
+
+    /**
+     * Get an array of all Minions, sorted from lowest x to highest x.
+     * Returns a frozen non-live copy.
+     */
     get minionsSortX(): readonly Minion[] {
-        const minionsCopy = [...this.minions];
+        const minionsCopy: Minion[] = Object.assign([], this.#minions.items);
         minionsCopy.sort((a, b) => {
             if (a.x < b.x) return -1;
             if (a.x > b.x) return 1;
             return 0;
         });
-        return minionsCopy;
+        return Object.freeze(minionsCopy);
     }
 
-    /** Get info about what this MinionSpawner is currently spawning. */
-    get currentLevel(): Readonly<SpawnLevel> | undefined {
-        return this.#currentLevel;
-    }
-    #currentLevel: SpawnLevel | undefined;
+    ////////////////////////
+    // API: SPAWN MINIONS //
+    ////////////////////////
+    #levelTimer: Timer;
+    #spawnCount: number;
 
     /**
-     * Spawn a group of Minions.
-     * Each Minion will have a new HTMLElement.
-     *
-     * Returns a Promise that resolves to:
-     *  ANOTHER PROMISE while there's more Minions to spawn.
-     *  TRUE if all Minions were successfully spawned.
-     *  FALSE if stopCurrentLevel() is called before all Minions are spawned.
-     *    (still waits full timeStep before returning false)
-     */
-    startLevel(spawns: SpawnGroup): Promise<boolean> {
-        // If no Minions to spawn, return an insta-resolving Promise
-        if (spawns.amount <= 0) return new Promise<boolean>(() => true);
-
-        // Update current level info
-        const newUUID = uuidv4();
-        this.#currentLevel = Object.assign({uuid: newUUID}, spawns);
-
-        // Wait timeStart to spawn first Minion
-        // Wait timeStep inbetween spawning each Minion
-        let i = 0;
-        const spawnEndPromise = new Promise((resolve) => {
-            setTimeout(resolve, spawns.timeStart);
-        }).then(() => {
-            return this.loop(0, spawns, newUUID);
-        });
-
-        // Return a promise that can be used to await spawning status updates
-        return spawnEndPromise;
-    }
-
-    /** Uses promises to wait timeStep inbetween spawning each Minion */
-    private async loop(
-        i: number,
-        spawns: SpawnGroup,
-        newUUID: string
-    ): Promise<boolean> {
-        return new Promise((resolve) => {
-            setTimeout(resolve, spawns.timeStep);
-        }).then(() => {
-            // If current level's uuid no longer matches, level was stopped
-            if (this.currentLevel?.uuid != newUUID) return false;
-            // Otherwise, spawn a Minion
-            this.spawn(spawns.type);
-            // If all Minions were successfully spawned, return true
-            if (++i >= spawns.amount) return true;
-            // Otherwise, keep looping
-            return this.loop(i, spawns, newUUID);
-        });
-    }
-
-    /** Stop the current level before it finishes spawning all Minions. */
-    stopCurrentLevel() {
-        this.#currentLevel = undefined;
-    }
-
-    /**
-     * Spawns a Minion. Returns the new Minion.
-     * @param elem Can be a css selector or existing DOM element or null,
+     * Create a new Minion and add it to this manager. Returns the new Minion.
+     * @param minionElem DOM element used to render Minion.
+     * Can be a CSS selector or existing DOM element or undefined,
+     * in which case a new anchor element will be created.
+     * @param hpBarElem Dom element used to render Minion HP Bar.
+     * Can be a CSS selector or existing DOM element or undefined,
      * in which case a new anchor element will be created.
      */
-    spawn(type: MinionType, elem?: HTMLElement | string): Minion {
+    spawn(
+        type: MinionType,
+        minionElem?: HTMLElement | string,
+        hpBarElem?: HTMLElement | string
+    ): Minion {
         return new Minion(
             this,
             type,
             this.target,
             rand(this.minX, this.maxX),
             rand(this.minY, this.maxY),
-            type.spriteURL,
-            elem
+            minionElem,
+            hpBarElem
         );
     }
 
     /**
-     * Kill all Minions tracked by this MinionSpawner.
-     * Triggers things like death animations before destruction.
-     * Also begin JS garbage cleanup.
+     * Spawn a group of Minions over time.
+     * If a new level is started while one is in progress, stops the old one.
+     * @param minionModel Optionally provide a template to clone new Minions from.
+     * Clones the first Element Node found in the template.
+     * @param hpBarModel Optionally provide a template to clone new Minion HP Bars from.
+     * Clones the first Element Node found in the template.
+     * @param container All newly spawned Minions will be appended as children to this DOM Node.
      */
-    killAll() {
-        while (this.minions.length > 0) this.minions[0].die();
+    startLevel(
+        spawns: SpawnGroup,
+        minionModel?: HTMLTemplateElement,
+        hpBarModel?: HTMLTemplateElement,
+        container: Node = document.body
+    ) {
+        // Reset state
+        this.#levelTimer?.stop();
+        this.#spawnCount = 0;
+        if (spawns.amount <= 0) return;
+
+        // Helper functions
+        const spawnMinion = () => {
+            const minionElem = cloneTemplate(minionModel, container);
+            const hpBarElem = cloneTemplate(hpBarModel, container);
+            this.spawn(spawns.type, minionElem, hpBarElem);
+        };
+
+        // Time start
+        this.#levelTimer = new Timer(() => {
+            this.#levelTimer.stop();
+            spawnMinion();
+            if (++this.#spawnCount >= spawns.amount) return;
+
+            // Time step
+            this.#levelTimer = new Timer(
+                () => {
+                    spawnMinion();
+                    if (++this.#spawnCount >= spawns.amount)
+                        this.#levelTimer.stop();
+                },
+                spawns.timeStep,
+                true
+            );
+            this.#levelTimer.start();
+        }, spawns.timeStart);
+        this.#levelTimer.start();
+    }
+
+    /** Stop the current level before it finishes spawning all Minions. */
+    stopLevel() {
+        this.#levelTimer?.stop();
     }
 
     /**
-     * Instantly destroy all Minions tracked by this MinionSpawner.
-     * Doesn't trigger things like death animations.
-     * Also begin JS garbage cleanup.
+     * Pause the current level.
+     * It will temporarily stop spawning Minions but remember it's progress.
      */
-    destroyAll() {
-        while (this.minions.length > 0) this.minions[0].preDestroy();
+    pauseLevel() {
+        this.#levelTimer?.pause();
     }
 
-    /** Add an existing Minion to this MinionSpawner's array of Minions. */
-    trackMinion(minion: Minion) {
-        // If this MinionSpawner already has a Minion with a matching uuid, return
-        if (this.minions.some((e) => e.uuid === minion.uuid)) return;
-
-        // Add the existing Minion to the array
-        this.#minions.push(minion);
+    /**
+     * Unpause the current level.
+     * It will resume spawning Minions from where it left off.
+     */
+    unpauseLevel() {
+        this.#levelTimer?.unpause();
     }
 
-    /** Remove an existing Minion from this MinionSpawner's array of Minions. */
-    stopTrackingMinion(minion: Minion) {
-        // If this MinionSpawner doesnt have a Minion with a matching uuid, return
-        if (!this.minions.some((e) => e.uuid === minion.uuid)) return;
+    /////////////////////////
+    // API: MANAGE MINIONS //
+    /////////////////////////
 
-        // Remove the existing Minion from the array
-        this.#minions.splice(this.#minions.indexOf(minion), 1);
+    /** Stop movement and attacks of all Minions in this manager. */
+    pauseMinions() {
+        for (const minion of this.minions) minion.pause();
+    }
+
+    /** Resume movement and attacks of all Minions in this manager. */
+    unpauseMinions() {
+        for (const minion of this.minions) minion.unpause();
+    }
+
+    /**
+     * Add an existing Minion to this manager, if not already in this manager.
+     * Returns true if not already in this manager.
+     * Returns false if already in this manager.
+     */
+    add(minion: Minion) {
+        return this.#minions.add(minion);
+    }
+
+    /** Delete a Minion in this manager. */
+    delete(minion: Minion) {
+        return this.#minions.remove(minion);
+    }
+
+    /** Garbage collection. */
+    gc() {
+        this.#minions.gc();
     }
 }
 

@@ -1,0 +1,68 @@
+/** @format */
+
+/* ##################################################################### */
+/* ############################### STYLE ############################### */
+/* ##################################################################### */
+
+.ui-bg0 {
+    background-color: #999;
+    outline: thick double #9e9e9e;
+}
+
+.ui-bg1 {
+    background-color: darkcyan;
+    outline: thick double #32a1ce;
+}
+
+.ui-icon-narrow {
+    // Temp: replace with icon image
+    // background-color: darksalmon;
+    outline: thick double blanchedalmond;
+}
+
+.ui-icon-wide {
+    // Temp: replace with icon image
+    background-color: wheat;
+    outline: thick double antiquewhite;
+}
+
+/* ##################################################################### */
+/* ############################### LAYOUT ############################## */
+/* ##################################################################### */
+
+// ~~~ Flexbox: Equally Sized Children ~~~ //
+.flex-row {
+    display: flex;
+    flex-flow: row nowrap;
+}
+.flex-col {
+    display: flex;
+    flex-flow: column nowrap;
+}
+.flex-row *,
+.flex-col * {
+    flex: 1 1 0;
+}
+
+// ~~~~~ Grid: Equally Sized Children ~~~~ //
+.grid(@rows, @cols) {
+    display: grid;
+    grid-template: repeat(@rows, 1fr) / repeat(@cols, 1fr);
+}
+.grid-2x2 {
+    .grid(2, 2);
+}
+.grid-4x4 {
+    .grid(4, 4);
+}
+
+// Restrict size to 1:1 aspect ratio
+// Equally space grid children using gap
+.grid-square-spaced(@width, @height, @rows, @cols) {
+    .grid(@rows, @cols);
+    box-sizing: border-box;
+
+    @space-width: calc((@width - @height) / (@cols - 1));
+    @space-height: calc((@height - @width) / (@rows - 1));
+    gap: @space-height @space-width;
+}

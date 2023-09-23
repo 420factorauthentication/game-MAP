@@ -4,11 +4,15 @@ import {ProgBarFlow} from "./types";
 
 import {Flow} from "./const.js";
 
+import ElemQuery from "../lib-elem/query.js";
+
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
- * An HP Bar or similar.
+ * An element with a fill texture and an empty texture. \
+ * The area of each texture is proportional to a given progress percentage.
+
  * ProgBar is base abstract class.
  * Different implementations should use different CSS and HTML features to show
  * a bar graphic that changes proportionally to min, max, and current bar value.
@@ -16,9 +20,10 @@ import {Flow} from "./const.js";
 export abstract class ProgBar {
     /**
      * @param elem
-     * Required. Can be a css selector or existing DOM element.
-     * A lone node or parent node with children.
-     * CSS and HTML of node(s) will change based on min, max, and current bar value.
+     * Can be a CSS selector or existing DOM element or undefined,
+     * in which case a new anchor element will be created. \
+     * A lone elem or parent elem with children.
+     * CSS and HTML of elem(s) will change based on min, max, and current bar value.
      * @param _value
      * Starting bar value. Can be any number.
      *  If outside min/max:
@@ -31,31 +36,34 @@ export abstract class ProgBar {
      * On set, recalcs bar graphics.
      */
     constructor(
-        elem: HTMLElement | string,
+        elem?: HTMLElement | string,
         private _value: number = 100,
         private _min: number = 0,
         private _max: number = 100,
         private _flow: ProgBarFlow = Flow.leftToRight
     ) {
-        // Lookup element by selector.
-        if (elem)
-            this._elem =
-                typeof elem === "string"
-                    ? (document.querySelector(elem) as HTMLElement)
-                    : elem;
-
-        // No element found. Error.
-        if (!this._elem) throw new Error("ClipBar elem not found!");
+        // Lookup elem by selector. If not found, create one with default settings.
+        this.#progbar = new ElemQuery(
+            elem,
+            "a",
+            "width: 100%; height: 25%; background: darkred"
+        );
     }
 
     /**
-     * A lone node or parent node with children.
-     * CSS and HTML of node(s) will change based on min, max, and current bar value.
+     * Recalculate bar graphics.
+     * Should be automatically called after changing something.
+     */
+    protected abstract calcBarGraphics(): void;
+
+    /**
+     * A lone element or parent element with children.
+     * CSS and HTML of elem(s) will change based on min, max, and current bar value.
      */
     get elem() {
-        return this._elem;
+        return this.#progbar.elem;
     }
-    protected _elem: HTMLElement;
+    #progbar: ElemQuery;
 
     /**
      * Current bar value, as a percent:
@@ -72,15 +80,12 @@ export abstract class ProgBar {
     /**
      * Current bar value. Can be any number.
      * On set, recalcs bar graphics.
-     *  If outside max-min:
-     *  - this.percent WILL go past 0% or 100%
-     *  - Bar graphics WONT go past 0% or 100%
      */
     get value(): number {
         return this._value;
     }
-    set value(v) {
-        this._value = v;
+    set value(newNumber) {
+        this._value = newNumber;
         this.calcBarGraphics();
     }
 
@@ -88,8 +93,8 @@ export abstract class ProgBar {
     get min(): number {
         return this._min;
     }
-    set min(v) {
-        this._min = v;
+    set min(newNumber) {
+        this._min = newNumber;
         this.calcBarGraphics();
     }
 
@@ -97,8 +102,8 @@ export abstract class ProgBar {
     get max(): number {
         return this._max;
     }
-    set max(v) {
-        this._max = v;
+    set max(newNumber) {
+        this._max = newNumber;
         this.calcBarGraphics();
     }
 
@@ -109,8 +114,8 @@ export abstract class ProgBar {
     get flow(): ProgBarFlow {
         return this._flow;
     }
-    set flow(v) {
-        this._flow = v;
+    set flow(newFlowSetting) {
+        this._flow = newFlowSetting;
         this.calcBarGraphics();
     }
 
@@ -120,7 +125,7 @@ export abstract class ProgBar {
      * because this way should also recalc bar graphics on set.
      */
     set width(cssStyleText: string) {
-        this._elem.style.width = cssStyleText;
+        this.elem.style.width = cssStyleText;
         switch (this.flow) {
             default:
                 return;
@@ -133,9 +138,10 @@ export abstract class ProgBar {
     /**
      * Set elem height (CSS Style Text).
      * Set it this way instead of setting this.elem.style.height directly,
-     * because this way should also recalc bar graphics on set. */
+     * because this way should also recalc bar graphics on set.
+     */
     set height(cssStyleText: string) {
-        this._elem.style.height = cssStyleText;
+        this.elem.style.height = cssStyleText;
         switch (this.flow) {
             default:
                 return;
@@ -145,19 +151,10 @@ export abstract class ProgBar {
         }
     }
 
-    /**
-     * Begin the JS garbage collection process.
-     * After calling this, manually nullify/undefine all handles to this object instance.
-     */
-    preDestroy() {
-        this._elem?.remove();
+    /** Garbage collection. */
+    gc() {
+        this.#progbar.gc();
     }
-
-    /**
-     * Recalculate bar graphics.
-     * Should be automatically called after changing something.
-     */
-    protected abstract calcBarGraphics();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

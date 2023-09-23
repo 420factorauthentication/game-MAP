@@ -1,106 +1,67 @@
+/** @format */
 
-import {BaseType} from "./types"
-
-import {Flow} from "../lib-progbar/const.js";
 import ClipBar from "../lib-progbar/clipbar.js";
+import ElemQuery from "../lib-elem/query.js";
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
- * An entity with HP that can be attacked by Minions.
+ * A singleton that tracks player HP and configures minion walking distance.
  * Minions spawn on the right and move left.
- * When they reach the same x, they will automatically attack the Base.
+ * When they reach the given x, they begin damaging player HP.
  */
-export class Base implements BaseType {
+export class Base {
     /**
-     * @param x Is in viewport width units (vw).
-     * @param y Is in viewport height units (vh).
-     * @param elem Can be a css selector or existing DOM element or null,
+     * @param startingHP How much HP the player starts with.
+     * @param x Minions stop here and begin attacking. Viewport width units (vw).
+     * @param hpBarElem An element to create a ClipBar to use as an HP bar.
+     * Can be a CSS selector or existing DOM element or undefined,
      * in which case a new anchor element will be created.
      */
     constructor(
-        private _hp: number,
+        startingHP: number,
         readonly x: number,
-        readonly y: number,
-        elem?: HTMLElement | string
+        hpBarElem?: HTMLElement | string
     ) {
-        // Lookup element by selector
-        if (elem)
-            this._elem =
-                typeof elem === "string"
-                    ? (document.querySelector(elem) as HTMLElement)
-                    : elem;
-
-        // No element found. Let's create one instead.
-        if (!this._elem) this._elem = this.elemInit;
-        
-        // Init components
-        this.hpBar = new ClipBar(
-            this.hpBarElemInit,
-            this.hp, 0, this.hp,
-            Flow.btmToTop
-        );
+        this.#hp = startingHP;
+        this.#hpBar = new ClipBar(hpBarElem, this.hp, 0, this.hp);
     }
 
     /////////
     // API //
     /////////
-    get hp() {return this._hp;}
-    set hp(v) {
-        this._hp = v;
-        this.hpBar.value = this.hp;
-        if (this.hp <= 0) this.die();
-    }
 
+    /** Current player HP. If less than or equal to 0, triggers a game over. */
+    get hp() {
+        return this.#hp;
+    }
+    set hp(newAmount) {
+        this.#hp = newAmount;
+        this.#hpBar.value = newAmount;
+        if (newAmount <= 0) this.die();
+    }
+    #hp: number;
+
+    /** Trigger a game over. */
     die() {
-        console.log("GAME OVER")
+        console.log("GAME OVER");
     }
 
-    /**
-     * Begin the JS garbage collection process.
-     * After calling this, manually nullify/undefine all handles to this object instance.
-     */
-    preDestroy() {
-        this._elem?.remove();
+    /** Garbage collection. */
+    gc() {
+        this.#hpBar.gc();
     }
 
     ////////////////
     // COMPONENTS //
     ////////////////
-    get elem() {return this._elem;}
-    protected _elem: HTMLElement;
 
-    protected hpBar: ClipBar;
-
-    //////////
-    // INIT //
-    //////////
-    private get elemInit() {
-        const elem = <HTMLElement>document.createElement("a");
-        document.body.appendChild(elem);
-        elem.style.position = "absolute";
-        elem.style.transform = "translate(-100%, -50%)";
-        elem.style.left = "" + this.x + "vw";
-        elem.style.top = "" + this.y + "vh";
-        elem.style.width = "5vw";
-        elem.style.height = "90vh";
-        elem.style.background = "content-box radial-gradient(yellow, gold)";
-        elem.style.zIndex = "1";
-        return elem;
+    /** An element that visually shows current HP with it's background */
+    get hpBarElem() {
+        return this.#hpBar.elem;
     }
-
-    private get hpBarElemInit() {
-        const elem = <HTMLElement>document.createElement("a");
-        this._elem.appendChild(elem);
-        elem.style.position = "absolute";
-        elem.style.height = this._elem.style.height;
-        elem.style.width = `calc(${this._elem.style.width} / 2)`;
-        elem.style.left = `calc(${this._elem.style.width} / 2)`;
-        elem.style.background = "darkgreen";
-        elem.style.zIndex = "2";
-        return elem;
-    }
+    #hpBar: ClipBar;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

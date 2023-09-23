@@ -1,0 +1,96 @@
+/** @format */
+
+@import (reference) "../reuse/game.less";
+
+@plugin "lists";
+
+/* ##################################################################### */
+/* ############################### STYLE ############################### */
+/* ##################################################################### */
+
+#game-hpbar {
+    background-color: #ab0e0e;
+    outline: thick double #9e9e9e;
+    border-radius: 2vw 5vw 5vw 2vw / 4vw 10vw 10vw 4vw;
+}
+
+/* ##################################################################### */
+/* ############################### LAYOUT ############################## */
+/* ##################################################################### */
+
+// Set #game grid-template here, as a comma-separated list of fr values.
+@grid-row: 1fr, 8fr, 3fr;
+@grid-col: 1fr, 2fr;
+
+// Set #game-base number of rows and cols here.
+@base-rows: 4;
+@base-cols: 4;
+
+// ~~~~~~~~~ Game Scene Container ~~~~~~~~ //
+#game {
+    padding: 5vh 5vw;
+    box-sizing: border-box;
+    display: grid;
+    gap: 32px 32px;
+    grid-template: join(@grid-row, " ") / join(@grid-col, " ");
+}
+
+#game * {
+    z-index: 10;
+}
+
+#game-nav {
+    grid-area: 1 / 2 / 2 / 3;
+}
+#game-hpbar {
+    grid-area: 1 / 1 / 2 / 2;
+}
+#game-base {
+    grid-row-start: 2;
+    grid-column-start: 1;
+    grid-row-end: 3;
+    grid-column-end: 2;
+    .game-base-grid($grid-column-start, $grid-row-start);
+}
+#game-techmenu {
+    grid-area: 2 / 2 / 3 / 3;
+}
+#game-resources {
+    grid-area: 3 / 1 / 4 / 2;
+}
+#game-spellbar,
+#game-keyui {
+    grid-area: 3 / 2 / 4 / 3;
+}
+
+// ~~~ Resource Titles + Wide Icon BGs ~~~ //
+#game-resources a {
+    display: flex;
+    align-items: end;
+    justify-content: center;
+}
+
+// ~~~~~~~~~~ Resource Counters ~~~~~~~~~~ //
+#game-resources span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+}
+
+// ##################################################################### //
+// ########################### HELPER MIXINS ########################### //
+// ##################################################################### //
+
+//  Game Base Grid Children - Aspect Ratio 1:1 - Equally Spaced  //
+.game-base-grid(@grid-col-start, @grid-row-start) {
+    @width-numerator: unit(extract(@grid-col, @grid-col-start));
+    @height-numerator: unit(extract(@grid-row, @grid-row-start));
+    @width-denominator: ~"(" replace(join(@grid-col, " + "), "fr", "", "g") ~")";
+    @height-denominator: ~"(" replace(join(@grid-row, " + "), "fr", "", "g") ~")";
+
+    @width: ~"@{width-numerator} / @{width-denominator} * 100vi";
+    @height: ~"@{height-numerator} / @{height-denominator} * 100vb";
+
+    .grid-square-spaced(@width, @height, @base-rows, @base-cols); //reuse/game//
+}
